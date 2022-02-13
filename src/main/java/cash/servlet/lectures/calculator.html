@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>mega calculator</title>
+</head>
+<body>
+<h1>Calculator Java Script</h1>
+<input type="number" id="a" value="1" class="items">
+<input type="number" id="b" value="1" class="items">
+<button onclick="calcAndShow(this.id)" id="plus" >&plus;</button>
+<button onclick="calcAndShow(this.id)" id="minus" >&minus;</button>
+<button onclick="calcAndShow2(this.id)" id="times" >&times;</button>
+<button onclick="calcAndShow2  (this.id)" id="div" >&div;</button>
+<hr>
+Result:
+<span id="result"></span>
+<script>
+    function calcAndShow(str) {
+        const a = document.getElementById("a").value;
+        const b = document.getElementById("b").value;
+        const result = document.getElementById("result");
+        if (str.length == 0 || a.length == 0 || b.length == 0) {
+            result.innerHTML = "ERROR"
+        } else if (str == "plus") {
+            result.innerHTML = parseInt(a) + parseInt(b);
+        } else if (str == "minus") {
+            result.innerHTML = parseInt(a) - parseInt(b);
+        } else if (str == "times") {
+            result.innerHTML = parseInt(a) * parseInt(b);
+        } else if (str == "div") {
+            result.innerHTML = parseInt(a) / parseInt(b);
+        }
+    }
+
+    function calcAndShow2(str) {
+        const items = document.getElementsByClassName("items");
+        const arr = Array.from(items).map(z => parseInt(z.value));
+        const result = document.getElementById("result");
+        if (str.length == 0 || items.length == 0) {
+            result.innerHTML = "ERROR"
+        } else if (str == "times") {
+            result.innerHTML = arr.reduce((a, b) => a * b);
+        } else if (str == "div") {
+            result.innerHTML = arr.reduce((a, b) => a / b);
+        }
+    }
+</script>
+
+</body>
+</html>
