@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 public class ReportService {
     public static void getXreport(HttpServletRequest request) {
         Date date = Date.valueOf(request.getParameter("date"));
+        System.out.println(date);
 
         List<Receipt> receiptList = new ReceiptImpl().findReceiptByDate(date);
         List<Receipt> returnList = receiptList.stream().filter(r -> r.getType() == OperationType.RETURN).collect(Collectors.toList());

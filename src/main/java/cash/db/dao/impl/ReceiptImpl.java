@@ -17,7 +17,7 @@ public class ReceiptImpl implements ReceiptDao {
     public static final String SELECT_RECEIPT_BY_NUMBER = "SELECT * FROM receipt  WHERE number = ?";
     public static final String SELECT_RETURN_BY_DATE = "SELECT receipt.id_receipt, receipt.type, receipt.status, receipt.number," +
             "sum(product_has_receipt.amount * product_has_receipt.price) as total, receipt.date FROM receipt JOIN product_has_receipt" +
-            "   ON receipt.id_receipt=product_has_receipt.receipt_id_receipt WHERE  receipt.status ='closed' and date > ?" +
+            "   ON receipt.id_receipt=product_has_receipt.receipt_id_receipt WHERE  receipt.status ='closed' and date = ?" +
             "GROUP BY receipt.id_receipt";
     public static final String SELECT_ALL_RECEIPT = "SELECT * FROM receipt";
     public static final String SET_RECEIPT = "UPDATE receipt SET status=?  WHERE number = ?";

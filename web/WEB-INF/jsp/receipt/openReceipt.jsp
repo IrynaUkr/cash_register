@@ -12,7 +12,7 @@
     select status of check:
     <select name="status">
         <option value="CREATED" selected>CREATED</option>
-        <option value="FINISHED"> FINISHED</option>
+        <option value="CLOSED"> CLOSED</option>
     </select> <br><br>
     select type of check:
     <select name="type">

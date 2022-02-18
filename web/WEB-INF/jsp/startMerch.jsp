@@ -13,18 +13,22 @@ you are logged in as a MERCHANDISER.<br>
 
 <h2>${sessionScope.message}</h2><br>
 
-<form action="/merch/createProductcreateProduct" target="_blank">
+<form action="/merch/createProduct" target="_blank">
     <button>create Product</button>
 </form>
 <br>
-нужно ли отделить создание товара с установкой количества?
-(К текущему остатку добавить приход?)
-<br>
-<form action="/merch/setAmountProduct" target="_blank">
-    <button>set Amount of product</button>
-</form>
+
 <br>
 
+<form action="/merch/setAmountProduct" target="_blank">
+    <button>add product quantity</button>
+</form>
+<br>
+//to do
+<form action="/merch/delete/Product" target="_blank">
+    <button>delete product</button>
+</form>
+<br>
 <form action="/logout" target="_blank" method="post">
     <button>logout</button>
 </form>

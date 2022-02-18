@@ -19,6 +19,7 @@ public class ProductDaoImpl implements ProductDao {
             " (code, name, description, price, amount, uom) VALUES (?, ?, ?, ?,?,?)";
     public static final String SET_PRODUCT = "UPDATE product SET code = ?, name = ?, " +
             "description = ?, price = ?, amount= ?, uom= ? WHERE id_product = ?";
+    public static final String SET_AMOUNT_PRODUCT = "UPDATE product SET  amount= ? WHERE id_product = ?";
 
     public static final String DELETE_PRODUCT_BY_ID = "DELETE FROM product WHERE id_product = ?";
 
@@ -161,11 +162,10 @@ public class ProductDaoImpl implements ProductDao {
     @Override
     public boolean update(Product product) {
         if (product == null) {
-           return false;
+            return false;
         }
         product.getId();
         if (findEntityById(product.getId()) != null) {
-            System.out.println("this id has been found");
             PreparedStatement pstmt = null;
             Connection con = null;
             int result = 0;
@@ -173,7 +173,32 @@ public class ProductDaoImpl implements ProductDao {
                 con = DBManager.getInstance().getConnection();
                 pstmt = con.prepareStatement(SET_PRODUCT);
                 mapProduct(product, pstmt);
-                pstmt.setInt(7,product.getId());
+                pstmt.setInt(7, product.getId());
+                result = pstmt.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return result > 0;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean updateAmount(Product product, Double amount) {
+        if (product == null) {
+            return false;
+        }
+        product.getId();
+        Double storeAmount = product.getAmount();
+        if (findEntityById(product.getId()) != null) {
+            PreparedStatement pstmt = null;
+            Connection con = null;
+            int result = 0;
+            try {
+                con = DBManager.getInstance().getConnection();
+                pstmt = con.prepareStatement(SET_AMOUNT_PRODUCT);
+                pstmt.setDouble(1, storeAmount+amount);
+                pstmt.setInt(2, product.getId());
                 result = pstmt.executeUpdate();
             } catch (SQLException e) {
                 e.printStackTrace();

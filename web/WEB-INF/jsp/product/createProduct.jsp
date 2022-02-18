@@ -9,7 +9,7 @@ Surname: <h3> ${sessionScope.user.surname} </h3>
 role: ${sessionScope.user.role}<br>
 Create new Product:<br>
 
-<form action="/createProduct" method="post">
+<form action="/merch/createProduct" method="post">
     <input type="text" name="code"> code<br><br>
     <input type="text" name="name"> name<br> <br>
     <input type="text" name="description"> description<br> <br>
