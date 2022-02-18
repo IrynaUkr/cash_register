@@ -17,17 +17,19 @@
         <param-name>FILE_DIR</param-name>
         <param-value>files</param-value>
     </context-param>
-    <servlet>
-        <servlet-name>main</servlet-name>
-        <servlet-class>cash.servlet.lectures.ServletMain</servlet-class>
+
+    <!--Encoding filter UTF-8-->
+    <filter>
+        <filter-name>EncodingFilter</filter-name>
+       <filter-class>cash.servlet.filters.EncodingFilter</filter-class>
         <init-param>
-            <param-name>PARAM_1</param-name>
-            <param-value>VALUE_1</param-value>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
         </init-param>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>main</servlet-name>
-        <url-pattern>/main</url-pattern>
-    </servlet-mapping>
+    </filter>
+    <filter-mapping>
+        <filter-name>EncodingFilter</filter-name>
+        <url-pattern>/</url-pattern>
+    </filter-mapping>
 
 </web-app>

@@ -3,13 +3,13 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>X-report</title>
+    <title>Z-report</title>
 </head>
 <body>
 
 <h3> Hello, ${sessionScope.user.surname} !</h3>
 you are logged in as ${sessionScope.user.role}<br>
-<h1>X-REPORT</h1>
+<h3>  ${sessionScope.message1} !</h3><h3>  ${sessionScope.message2} !</h3>
 
 <h4> Returns list </h4>
 <c:forEach var="bean" items="${sessionScope.returnList}">
@@ -30,7 +30,7 @@ you are logged in as ${sessionScope.user.role}<br>
 <h4> CASH_OUTFLOW list </h4>
 <c:forEach var="bean" items="${sessionScope.payOut}">
     id.......${bean.id}; date..... ${bean.date} ;
- type.....${bean.type} ; sum......${bean.value} <br>
+    type.....${bean.type} ; sum......${bean.value} <br>
 </c:forEach><br>
 <h4> CASH_OUTFLOW- total  ${sessionScope.payOutSum} </h4>
 

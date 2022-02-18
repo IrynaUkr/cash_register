@@ -15,37 +15,46 @@ ${message}
     <li>- закрити замовлення (чек).</li>
 </ul>
 
-<ul> Реализована транзакция:
-    <li>1. cоздан счет</li>
-    <li>2. добавлены товары</li>
-    <li>3. изменился остаток на складе в зависимости от типа операции(возврат или продажа)</li>
+<ul>Создание счета
+    <li>1. открыть чек</li>
+    <li>2. редактировать наполнение(добавлять/удалять товары) до схранения чека </li>
+    <li>3. сохранить чек: реализована транзакция  в БД будут записаны  <br>
+        -чек(табл чеки)<br>
+        -список продуктов и их количество(табл чек-продукт)<br>
+        -изменится остаток на складе в зависимости от типа операции(возврат или продажа)</li>
 </ul>
-<ul> Реализовать:
-    <li>1. суммирование товаров в чеке с одним ИД</li>
-    <li>2. динамическое формирование длины списка товаров и передача в массива</li>
-</ul>
-<form action="/createReceipt" target="_blank">
-    <button>create Receipt</button>
+
+<br>
+<form action="/cashier/openReceipt" target="_blank">
+    <button>open receipt</button>
 </form>
 <br>
+
+<form action="/cashier/printReceipt" target="_blank">
+    <button>print Receipt</button>
+</form>
 _________________________________________________________________
 <ul> Реализована транзакция:
-    <li>1. для выбранных товаров можно установить новое значение "amount"</li>
+    <li>1. для присутствующих в чеке товаров можно установить новое значение "amount"</li>
     <li>2. изменится остаток на складе в зависимости от типа операции(возврат или продажа)</li>
 </ul>
 Изменению подлежат только вновь созданные счета со статусом "CREATED"<br>
 если счет закрыт- оплата прията от покупателя, чек выдан. <br>
 Если удален старшим кассиром-то были на то основания, изменять нельзя.<br>
 you can update receipt only if status is "CREATED"<br>
-<form action="/updateAmountReceipt" target="_blank">
+<form action="/cashier/updateAmountReceipt" target="_blank">
     <button>update Receipt</button>
 </form>
 
 <br>
 Статус "CREATED" можно изменить только на "CLOSED"
-<form action="/closeReceipt" target="_blank">
+<form action="/cashier/closeReceipt" target="_blank">
     <button>close Receipt</button>
 </form>
 
+
+<form action="/logout" target="_blank" method="post">
+    <button>logout</button>
+</form>
 </body>
 </html>

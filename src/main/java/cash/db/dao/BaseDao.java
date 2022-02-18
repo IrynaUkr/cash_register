@@ -12,8 +12,6 @@ public interface BaseDao<T extends Entity> {
 
     boolean delete(T t);//чтобы избавиться от выброса исключения использ boolean
 
-    boolean delete(Integer id);//чтобы избавиться от выброса исключения использ boolean
-
     boolean create(T t);
 
     boolean update(T t);

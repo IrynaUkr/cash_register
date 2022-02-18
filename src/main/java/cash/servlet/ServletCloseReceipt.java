@@ -10,7 +10,7 @@ import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet("/closeReceipt")
+@WebServlet("/cashier/closeReceipt")
 public class ServletCloseReceipt extends HttpServlet {
     ReceiptImpl receiptDao = new ReceiptImpl();
     @Override
@@ -25,7 +25,6 @@ public class ServletCloseReceipt extends HttpServlet {
         String number = request.getParameter("number");
         Receipt receipt = receiptDao.findReceiptByNumber(number);
         System.out.println(receipt);
-
         boolean closed = receiptDao.updateStatus(OperationStatus.CLOSED, receipt);
         if( closed){
             request.getSession().setAttribute("message", "receipt was closed!");

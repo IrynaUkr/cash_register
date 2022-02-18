@@ -38,9 +38,6 @@ public class ServletLogin extends HttpServlet {
                 case MERCHANDISER -> request.getRequestDispatcher("/WEB-INF/jsp/startMerch.jsp").forward(request,response);
                 case CHIEF_CASHIER -> request.getRequestDispatcher("/WEB-INF/jsp/startChief.jsp").forward(request,response);
             }
-//request.getSession().setAttribute("isCHIEF_CASHIER", new Object());
-//                    response.sendRedirect("uploadDownload.html");
-
             System.out.println(user);
             System.out.println(userPassword);
 

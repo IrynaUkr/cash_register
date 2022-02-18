@@ -15,10 +15,17 @@ public class ReceiptImpl implements ReceiptDao {
     public static final String SELECT_RECEIPT_BY_TYPE = "SELECT * FROM receipt  WHERE type = ?";
     public static final String SELECT_RECEIPT_BY_STATUS = "SELECT * FROM receipt  WHERE status = ?";
     public static final String SELECT_RECEIPT_BY_NUMBER = "SELECT * FROM receipt  WHERE number = ?";
-    public static final String SELECT_RECEIPT_BY_DATE = "SELECT * FROM receipt  WHERE date = ?";
+    public static final String SELECT_RETURN_BY_DATE = "SELECT receipt.id_receipt, receipt.type, receipt.status, receipt.number," +
+            "sum(product_has_receipt.amount * product_has_receipt.price) as total, receipt.date FROM receipt JOIN product_has_receipt" +
+            "   ON receipt.id_receipt=product_has_receipt.receipt_id_receipt WHERE  receipt.status ='closed' and date > ?" +
+            "GROUP BY receipt.id_receipt";
     public static final String SELECT_ALL_RECEIPT = "SELECT * FROM receipt";
     public static final String SET_RECEIPT = "UPDATE receipt SET status=?  WHERE number = ?";
     public static final String DELETE_RECEIPT_BY_ID = "DELETE FROM receipt WHERE id_receipt = ?";
+    public static final String SQL_JOIN = "select   product_has_receipt.amount," +
+            " product_has_receipt.price , product_has_receipt.product_id_product , product.name, product.code, product.uom" +
+            "            FROM product_has_receipt JOIN product ON product_has_receipt.product_id_product = product.id_product" +
+            "            WHERE receipt_id_receipt=?";
 
 
     @Override
@@ -49,7 +56,7 @@ public class ReceiptImpl implements ReceiptDao {
         receipt.setDate(rs.getDate("date"));
         receipt.setStatus(OperationStatus.valueOf(rs.getString("status")));
         receipt.setOperationType(OperationType.valueOf(rs.getString("type")));
-        receipt.setTotal(rs.getDouble("total"));
+        receipt.setSum(rs.getDouble("total"));
         return receipt;
     }
 
@@ -69,6 +76,7 @@ public class ReceiptImpl implements ReceiptDao {
             }
             rs.close();
             pstmt.close();
+            con.close();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -95,6 +103,7 @@ public class ReceiptImpl implements ReceiptDao {
                 pstmt.setInt(1, id);
                 executeUpdate = pstmt.executeUpdate();
                 pstmt.close();
+                con.close();
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
@@ -102,7 +111,7 @@ public class ReceiptImpl implements ReceiptDao {
         }
     }
 
-    @Override
+
     public boolean delete(Integer id) {
         int executeUpdate = 0;
         PreparedStatement pstmt = null;
@@ -116,6 +125,7 @@ public class ReceiptImpl implements ReceiptDao {
                 pstmt.setInt(1, id);
                 executeUpdate = pstmt.executeUpdate();
                 pstmt.close();
+                con.close();
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
@@ -135,12 +145,12 @@ public class ReceiptImpl implements ReceiptDao {
     }
 //update  Status by Number
 
-    public boolean updateStatus(OperationStatus status,Receipt receipt) {
+    public boolean updateStatus(OperationStatus status, Receipt receipt) {
         if (receipt == null) {
             throw new IllegalArgumentException();
         }
         receipt.getId();
-        if (findEntityById(receipt.getId())!=null) {
+        if (findEntityById(receipt.getId()) != null) {
             PreparedStatement pstmt = null;
             Connection con = null;
             int result = 0;
@@ -151,6 +161,7 @@ public class ReceiptImpl implements ReceiptDao {
                 pstmt.setString(2, receipt.getNumber());
                 result = pstmt.executeUpdate();
                 pstmt.close();
+                con.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -161,7 +172,7 @@ public class ReceiptImpl implements ReceiptDao {
     }
 
 
-    private   void mapReceipt(Receipt receipt, PreparedStatement pstmt) throws SQLException {
+    private void mapReceipt(Receipt receipt, PreparedStatement pstmt) throws SQLException {
         int k = 0;
         pstmt.setString(1, receipt.getNumber());
         pstmt.setString(2, String.valueOf(receipt.getStatus()));
@@ -190,6 +201,7 @@ public class ReceiptImpl implements ReceiptDao {
         }
         return receipts;
     }
+
     public List<Receipt> findEntityByStatus(OperationStatus status) {
         List<Receipt> receipts = new ArrayList<>();
         PreparedStatement pstmt = null;
@@ -211,15 +223,16 @@ public class ReceiptImpl implements ReceiptDao {
         }
         return receipts;
     }
+
     public Receipt findReceiptByNumber(String number) {
-        Receipt receipt= new Receipt();
+        Receipt receipt = new Receipt();
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         Connection con = null;
         try {
             con = DBManager.getInstance().getConnection();
             pstmt = con.prepareStatement(SELECT_RECEIPT_BY_NUMBER);
-            pstmt.setString(1,number);
+            pstmt.setString(1, number);
             rs = pstmt.executeQuery();
             if (rs.next()) {
                 receipt = extractReceipt(rs);
@@ -233,6 +246,7 @@ public class ReceiptImpl implements ReceiptDao {
         System.out.println();
         return receipt;
     }
+
     public static String escapeForLike(String param) {
         return param
                 .replace("!", "!!")
@@ -243,15 +257,15 @@ public class ReceiptImpl implements ReceiptDao {
     }
 
 
-    @Override
-    public List<Receipt> findEntityByDate(Date date) {
+
+    public List<Receipt> findReceiptByDate(Date date) {
         List<Receipt> receipts = new ArrayList<>();
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         Connection con = null;
         try {
             con = DBManager.getInstance().getConnection();
-            pstmt = con.prepareStatement(SELECT_RECEIPT_BY_DATE);
+            pstmt = con.prepareStatement(SELECT_RETURN_BY_DATE);
             pstmt.setString(1, String.valueOf(date));
             rs = pstmt.executeQuery();
             while (rs.next()) {
@@ -259,11 +273,45 @@ public class ReceiptImpl implements ReceiptDao {
             }
             rs.close();
             pstmt.close();
+            con.close();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
         return receipts;
     }
 
+    public ArrayList<ReceiptProducts> getListProductsByIdReceipt(Integer idReceipt) {
+        ArrayList<ReceiptProducts> products = new ArrayList<>();
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        Connection con = null;
+        try {
+            con = DBManager.getInstance().getConnection();
+            pstmt = con.prepareStatement(SQL_JOIN);
+            pstmt.setInt(1, idReceipt);
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                products.add(extractProduct(rs));
+            }
+            rs.close();
+            pstmt.close();
+            con.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return products;
+    }
+
+    private ReceiptProducts extractProduct(ResultSet rs) throws SQLException {
+        ReceiptProducts receiptProduct = new ReceiptProducts();
+        receiptProduct.setCode(rs.getString("code"));
+        receiptProduct.setName(rs.getString("name"));
+        receiptProduct.setPrice(rs.getDouble("price"));
+        receiptProduct.setAmount(rs.getDouble("amount"));
+        //  receiptProduct.setAmount(rs.getDouble("total"));
+        receiptProduct.setUom(rs.getString("uom"));
+
+        return receiptProduct;
+    }
 
 }

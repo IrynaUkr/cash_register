@@ -10,7 +10,7 @@
 ${sessionScope.user.role}
 <h4>Change Status Receipt:</h4> <br>
 <br>choose Receipt number<br>
-<form action="/closeReceipt" method="post">
+<form action="/cashier/closeReceipt" method="post">
     <select name="number">
         <c:forEach items="${receipts}" var="receipt">
             <option value="${receipt.number}">${receipt.number}</option>

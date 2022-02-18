@@ -7,7 +7,7 @@
 //import java.io.IOException;
 //
 //@WebFilter("/admin/*")
-//public class UserFilter implements Filter {
+//public class AdminFilter implements Filter {
 //
 //    @Override
 //    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {

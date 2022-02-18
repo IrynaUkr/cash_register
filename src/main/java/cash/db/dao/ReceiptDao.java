@@ -15,6 +15,6 @@ public interface ReceiptDao extends BaseDao<Receipt>  {
 
 
     List<Receipt> findEntityByType(OperationType operationType);
-    List<Receipt>findEntityByDate(Date date);
+
 
 }

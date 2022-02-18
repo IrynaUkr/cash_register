@@ -11,10 +11,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
-import static cash.service.ServiceReceiptProduct.getReceiptProducts;
-
-@WebServlet("/createReceipt")
-public class ServletCreateReceipt extends HttpServlet {
+@WebServlet("/cashier/createReceipt")
+public class ServletSaveReceiptToDB extends HttpServlet {
     ProductDaoImpl productDao = new ProductDaoImpl();
     Transaction transaction = new Transaction();
 
@@ -28,15 +26,9 @@ public class ServletCreateReceipt extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String number = request.getParameter("number");
-        OperationStatus status = OperationStatus.valueOf(request.getParameter("status"));
-        OperationType type = OperationType.valueOf(request.getParameter("type"));
-        Receipt receipt = new Receipt(number,status,type);
-        receipt.setNumber(number);
-
-        ReceiptProducts[] rp = getReceiptProducts(request);
+        Receipt receipt = (Receipt) request.getSession().getAttribute("receipt");
         try {
-            transaction.addNewReceipt(receipt,rp);
+            transaction.saveReceiptToDB(receipt);
         } catch (SQLException e) {
             e.printStackTrace();
         }

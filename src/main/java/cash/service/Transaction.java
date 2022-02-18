@@ -7,21 +7,24 @@ import cash.entity.Receipt;
 import cash.entity.ReceiptProducts;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 public class Transaction {
-    public static final String SET_RECEIPT_AMOUNT = "UPDATE product_has_receipt SET amount=?,  WHERE number = ?";
-    public static final String SET_RECEIPT_TYPE = "UPDATE receipt SET type=?,  WHERE number = ?";
-    public static final String SET_RECEIPT_STATUS = "UPDATE receipt SET status=?,  WHERE number = ?";
-    public static final String SQL = "INSERT INTO receipt ( number,status,type ) values (?,?,?)";
+    public static final String INSERT_INTO_RECEIPT = "INSERT INTO receipt ( number,status,type,id_user ) values (?,?,?,?)";
+    public static final String SET_AMOUNT = "UPDATE product_has_receipt SET amount=? WHERE receipt_id_receipt =? and product_id_product =?";
+    public static final String DELETE_PRODUCT = "DELETE FROM product_has_receipt WHERE product_id_product =? AND receipt_id_receipt =?;";
+    public static final String SELECT_AMOUNT_FROM_PRODUCT = "SELECT MAX(amount) FROM product_has_receipt WHERE receipt_id_receipt = ? and product_id_product =?";
+    public static final String INSERT_PRODUCT_AMOUNT = "INSERT INTO product_has_receipt (product_id_product, receipt_id_receipt,amount, price) VALUES (?,?,?,?)";
 
 
-    public void addNewReceipt(Receipt receipt, ReceiptProducts... products) throws SQLException {
+    public void saveReceiptToDB(Receipt receipt) throws SQLException {
         Connection connection = null;
         PreparedStatement pstmt = null;
+        ArrayList<ReceiptProducts> products =receipt.getReceiptProducts();
         try {
             connection = DBManager.getInstance().getConnection();
             connection.setAutoCommit(false);
-            pstmt = connection.prepareStatement(SQL, Statement.RETURN_GENERATED_KEYS);
+            pstmt = connection.prepareStatement(INSERT_INTO_RECEIPT, Statement.RETURN_GENERATED_KEYS);
             mapReceipt(receipt, pstmt);
             int count = pstmt.executeUpdate();
             if (count > 0) {
@@ -33,12 +36,12 @@ public class Transaction {
             }
             if (receipt.getType().equals(OperationType.SALE)) {
                 for (ReceiptProducts rp : products) {
-                    addProductForReceipt(connection, receipt.getId(), rp.getProductId(), rp.getAmount());
+                    addProductForReceipt(connection, receipt.getId(), rp.getProductId(), rp.getAmount(), rp.getPrice());
                     reduceAmount(connection, rp.getProductId(), rp.getAmount());
                 }
             } else {
                 for (ReceiptProducts rp : products) {
-                    addProductForReceipt(connection, receipt.getId(), rp.getProductId(), rp.getAmount());
+                    addProductForReceipt(connection, receipt.getId(), rp.getProductId(), rp.getAmount(),rp.getPrice());
                     increaseAmount(connection, rp.getProductId(), rp.getAmount());
                 }
             }
@@ -49,28 +52,26 @@ public class Transaction {
             connection.rollback();
             throw e;
         } finally {
-            close(connection);
             close(pstmt);
+            close(connection);
         }
     }
 
-    public void updateAmountReceipt(Receipt receipt, ReceiptProducts... products) {
+    public  void updateAmountReceipt(Receipt receipt, ReceiptProducts addReceiptProduct) {
         Connection connection = null;
         PreparedStatement pstmt = null;
         try {
             connection = DBManager.getInstance().getConnection();
             connection.setAutoCommit(false);
-            for (ReceiptProducts rp : products) {
-                Double oldAmount = getAmountByIdProdByIdReceipt(connection, receipt.getId(), rp.getProductId());
-                Double newAmount = rp.getAmount();
+                Double oldAmount = getAmountByIdProdByIdReceipt(connection, receipt.getId(), addReceiptProduct.getProductId());
+                Double newAmount = addReceiptProduct.getAmount();
                 Double changeAm = oldAmount - newAmount;
-                setUpdateProductAmount(connection, receipt.getId(), rp.getProductId(), newAmount);
+                setUpdateProductAmount(connection, receipt.getId(), addReceiptProduct.getProductId(), newAmount);
                 if (receipt.getType().equals(OperationType.SALE)) {
-                    increaseAmount(connection, rp.getProductId(), changeAm);
+                    increaseAmount(connection, addReceiptProduct.getProductId(), changeAm);
                 } else {
-                    reduceAmount(connection, rp.getProductId(), changeAm);
+                    reduceAmount(connection, addReceiptProduct.getProductId(), changeAm);
                 }
-            }
             connection.commit();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -80,17 +81,18 @@ public class Transaction {
                 ex.printStackTrace();
             }
         } finally {
-            close(connection);
             close(pstmt);
+            close(connection);
         }
     }
-    public void delProductFromReceipt(Receipt receipt, Product... products) {
+
+    public void delProductFromReceipt(Receipt receipt, Product p) {
         Connection connection = null;
         PreparedStatement pstmt = null;
         try {
             connection = DBManager.getInstance().getConnection();
             connection.setAutoCommit(false);
-            for (Product p : products) {
+
                 Double amountInReceipt = getAmountByIdProdByIdReceipt(connection, receipt.getId(), p.getId());
                 delProd(connection, receipt.getId(), p.getId());
                 if (receipt.getType().equals(OperationType.SALE)) {
@@ -98,7 +100,6 @@ public class Transaction {
                 } else {
                     reduceAmount(connection, p.getId(), amountInReceipt);
                 }
-            }
             connection.commit();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -109,21 +110,22 @@ public class Transaction {
             }
         } finally {
             close(connection);
-            close(pstmt);
         }
     }
+
     public void setUpdateProductAmount(Connection con, Integer idReceipt, Integer idProduct, double newAmount) throws SQLException {
         PreparedStatement pstmt = null;
-        pstmt = con.prepareStatement("UPDATE product_has_receipt SET amount=? WHERE receipt_id_receipt =? and product_id_product =?");
+        pstmt = con.prepareStatement(SET_AMOUNT);
         pstmt.setDouble(1, newAmount);
         pstmt.setInt(2, idReceipt);
         pstmt.setInt(3, idProduct);
         pstmt.executeUpdate();
         pstmt.close();
     }
+
     public void delProd(Connection con, Integer idReceipt, Integer idProduct) throws SQLException {
         PreparedStatement pstmt = null;
-        pstmt = con.prepareStatement("DELETE FROM product_has_receipt WHERE product_id_product =? AND receipt_id_receipt =?;");
+        pstmt = con.prepareStatement(DELETE_PRODUCT);
         pstmt.setInt(1, idProduct);
         pstmt.setInt(2, idReceipt);
         pstmt.executeUpdate();
@@ -136,7 +138,7 @@ public class Transaction {
         ResultSet rs = null;
         double result = 0.0;
         try {
-            pstmt = con.prepareStatement("SELECT MAX(amount) FROM product_has_receipt WHERE receipt_id_receipt = ? and product_id_product =?");
+            pstmt = con.prepareStatement(SELECT_AMOUNT_FROM_PRODUCT);
             pstmt.setInt(1, idReceipt);
             pstmt.setInt(2, idProduct);
             rs = pstmt.executeQuery();
@@ -157,15 +159,18 @@ public class Transaction {
         pstmt.setString(1, receipt.getNumber());
         pstmt.setString(2, String.valueOf(receipt.getStatus()));
         pstmt.setString(3, String.valueOf(receipt.getType()));
+        pstmt.setInt(4, receipt.getIdUser());
+
     }
 
-    public void addProductForReceipt(Connection con, Integer idReceipt, Integer idProduct, double amount) throws SQLException {
+    public void addProductForReceipt(Connection con, Integer idReceipt, Integer idProduct, double amount,double price) throws SQLException {
         PreparedStatement pstmt = null;
         try {
-            pstmt = con.prepareStatement("INSERT INTO product_has_receipt (product_id_product, receipt_id_receipt,amount) VALUES (?,?,?)");
+            pstmt = con.prepareStatement(INSERT_PRODUCT_AMOUNT);
             pstmt.setInt(1, idProduct);
             pstmt.setInt(2, idReceipt);
             pstmt.setDouble(3, amount);
+            pstmt.setDouble(4, price);
             pstmt.executeUpdate();
         } finally {
             close(pstmt);

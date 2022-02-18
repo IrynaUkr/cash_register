@@ -10,14 +10,13 @@ import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet("/canselReceipt")
+@WebServlet("/chief/canselReceipt")
 public class ServletCanselReceipt extends HttpServlet {
     ReceiptImpl receiptDao = new ReceiptImpl();
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         List<Receipt> receipts = receiptDao.findEntityByStatus(OperationStatus.CREATED);
         request.getSession().setAttribute("receipts", receipts);
-       // request.getRequestDispatcher("/WEB-INF/jsp/startChief.jsp").forward(request,response);
         request.getRequestDispatcher("/WEB-INF/jsp/receipt/canselReceipt.jsp").forward(request,response);
 
     }
@@ -26,8 +25,6 @@ public class ServletCanselReceipt extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String number = request.getParameter("number");
         Receipt receipt = receiptDao.findReceiptByNumber(number);
-        System.out.println(receipt);
-
         boolean closed = receiptDao.delete(receipt);
         if( closed){
             request.getSession().setAttribute("message", "receipt was cancelled!");

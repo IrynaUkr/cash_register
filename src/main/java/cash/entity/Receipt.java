@@ -1,18 +1,53 @@
 package cash.entity;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
-public class Receipt extends Entity{
+public class Receipt extends Entity {
     private Integer id;
     private String number;
-    private Double total;
+    private Double sum; //cash
+    private Double amount;//quantity of goods
     private Date date;
     private Integer idUser;                     //author
     private OperationStatus status;
-    private OperationType operationType;        //sale or refund of goods
+    private OperationType operationType;      //sale or refund of goods
+
+
+    private ArrayList<ReceiptProducts> receiptProducts;
+
+    public ArrayList<ReceiptProducts> getReceiptProducts() {
+        return receiptProducts;
+    }
+
+    public Double getSum() {
+        return sum;
+    }
+
+    public void setSum(Double sum) {
+        this.sum = sum;
+    }
+
+    public Double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Double amount) {
+        this.amount = amount;
+    }
+
+    public void setReceiptProducts(ArrayList<ReceiptProducts> receiptProducts) {
+        this.receiptProducts = receiptProducts;
+    }
+
     public Integer getId() {
         return id;
+    }
+
+    public OperationType getOperationType() {
+        return operationType;
     }
 
     public void setId(Integer id) {
@@ -47,17 +82,10 @@ public class Receipt extends Entity{
     public Date getDate() {
         return date;
     }
-
     public void setDate(Date date) {
         this.date = date;
     }
-    public Double getTotal() {
-        return total;
-    }
 
-    public void setTotal(Double total) {
-        this.total = total;
-    }
     public Integer getIdUser() {
         return idUser;
     }

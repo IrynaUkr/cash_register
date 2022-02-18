@@ -103,8 +103,11 @@ public class Product extends Entity {
         return "Product{" +
                 "productId=" + productId +
                 ", code='" + code + '\'' +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
                 ", price=" + price +
                 ", amount=" + amount +
+                ", uom='" + uom + '\'' +
                 '}';
     }
 }

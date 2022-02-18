@@ -14,10 +14,10 @@ import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.util.List;
 
-import static cash.service.ServiceReceiptProduct.getProducts;
-import static cash.service.ServiceReceiptProduct.getReceiptProducts;
+import static cash.service.ServiceReceiptProduct.*;
+import static cash.service.ServiceReceiptProduct.createReceiptProduct;
 
-@WebServlet("/delProdFromReceipt")
+@WebServlet("/chief/delProdFromReceipt")
 public class ServletDelProdFromReceipt extends HttpServlet {
     ReceiptImpl receiptDao = new ReceiptImpl();
     ProductDaoImpl productDao = new ProductDaoImpl();
@@ -34,11 +34,15 @@ public class ServletDelProdFromReceipt extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String number = request.getParameter("number");
-        Receipt receipt = receiptDao.findReceiptByNumber(number);
-        Product[] products = getProducts(request);
+        Product product= new Product();
+        if (request.getParameter("productNA") != null ) {
+            product = productDao.findProductByName(request.getParameter("productNA"));
+        } else if (request.getParameter("productCA") != null) {
+           product = productDao.findProductByCode(request.getParameter("productCA"));
+        }
+        Receipt receipt = (Receipt) request.getSession().getAttribute("receipt");
         Transaction t = new Transaction();
-        t.delProductFromReceipt(receipt, products);
+        t.delProductFromReceipt(receipt, product);
         response.sendRedirect("/ServletBack");
     }
 }

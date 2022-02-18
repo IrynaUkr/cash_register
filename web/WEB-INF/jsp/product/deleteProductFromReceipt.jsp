@@ -10,7 +10,7 @@
 ${sessionScope.user.role}<br>
 choose Receipt number<br>
 
-<form action="/delProdFromReceipt" method="post">
+<form action="/chief/delProdFromReceipt" method="post">
     <select name="number">
         <c:forEach items="${receipts}" var="receipt">
             <option value="${receipt.number}">${receipt.number}</option>
@@ -18,42 +18,18 @@ choose Receipt number<br>
     </select>
     <br>
     select product by name: <br>
-    <ul>
-        <li>
-            <select name="products1">
-                <c:forEach items="${products}" var="pName1">
-                    <option value="${pName1.name}">${pName1.name}</option>
-                </c:forEach>
-            </select>
-        </li>
-        <li>
-            <select name="products2">
-                <c:forEach items="${products}" var="pName2">
-                    <option value="${pName2.name}">${pName2.name}</option>
-                </c:forEach>
-            </select>
-        </li>
-        <br>
-    </ul>
-    select product by code: <br>
-    <ul>
-        <li>
-            <select name="products3">
-                <c:forEach items="${products}" var="pCode1">
-                    <option value="${pCode1.code}">${pCode1.code}</option>
-                </c:forEach>
-            </select>
-        </li>
-        <li>
-            <select name="products4">
-                <c:forEach items="${products}" var="pCode2">
-                    <option value="${pCode2.code}">${pCode2.code}</option>
-                </c:forEach>
-            </select>
-            <br>
-        </li>
-    </ul>
+    <select name="productNA">
+        <c:forEach items="${products}" var="pName1">
+            <option value="${pName1.name}">${pName1.name}</option>
+        </c:forEach>
+    </select>
 
+    select product by code: <br>
+    <select name="productCA">
+        <c:forEach items="${products}" var="pCode1">
+            <option value="${pCode1.code}">${pCode1.code}</option>
+        </c:forEach>
+    </select>
     <input type="submit" value="Submit">
 </form>
 

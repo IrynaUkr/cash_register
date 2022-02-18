@@ -9,7 +9,7 @@ import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
 
-@WebServlet("/users")
+@WebServlet("/admin/users")
 public class ServletCreateUsers extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -20,6 +20,7 @@ public class ServletCreateUsers extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String login = request.getParameter("login");
+        System.out.println(login+"from the form");
         String password = request.getParameter("password");
         String surname = request.getParameter("surname");
         Role role = Role.valueOf(request.getParameter("role"));

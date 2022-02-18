@@ -12,7 +12,7 @@ you are logged in as an administrator.<br>
 
 Create new user:
 
-<form action="/users" method="post">
+<form action="/admin/users" method="post">
   <input type="text" name="login"> login<br><br>
   <input type="password" name="password"> password<br> <br>
   <input type="text" name="surname"> surname<br> <br>
@@ -28,7 +28,9 @@ Create new user:
   <input type="email" name="e.mail"> e.mail <br> <br>
   <input type="submit" value="Submit">
 </form>
-
+<form action="/logout" target="_blank" method="post">
+  <button>logout</button>
+</form>
 
 </body>
 </html>
