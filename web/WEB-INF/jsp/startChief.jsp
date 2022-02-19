@@ -1,5 +1,14 @@
-
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ page isELIgnored="false" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page session="true" %>
+
+<fmt:setLocale value="${sessionScope.lang}"/>
+<fmt:setBundle basename="languages"/>
+
+<html lang="${sessionScope.lang}">
+
 <html>
 <head>
     <title>Chief-Cashier  start page</title>
@@ -16,22 +25,22 @@ you are logged in  ${sessionScope.user.role}.<br>
 </ul>
 
 <form action="/chief/canselReceipt" target="_blank">
-    <button>delete Receipt</button>
+    <button><fmt:message key="label.delete_rec" /></button>
 </form>
 <br>
 <form action="/chief/delProdFromReceipt" target="_blank">
-    <button>delete Product from Receipt</button>
+    <button><fmt:message key="label.delete_rec_p" /></button>
 </form>
 <br>
 <form action="/chief/servletPayment" target="_blank" >
-    <button>CREATE SERVICE PAYMENT</button>
+    <button><fmt:message key="label.create_payment" /></button>
 </form>
 X-отчет- это отчет на кассовом аппарате, показывающий сколько наличности было пробито на кассе за текущую смену.<br>
 X-отчет можно делать в любой момент и в любом количестве, показания с X - отчета нигде не фиксируются.<br>
 
 <form action="/chief/servletXReport"   method="post">
     date <input type="date" name="date">
-    <input type="submit" value="create X-report">
+    <input type="submit" value=<fmt:message key="label.create_X" />>
 </form>
 Z-отчет – это итоговый кассовый чек, который обязательно должен быть напечатан в течение 24 часов.<br>
 Он означает завершение кассовой смены, сдачу выручки и обнуление оперативной памяти кассового аппарата.
@@ -50,11 +59,11 @@ Z-отчет – это итоговый кассовый чек, который
 После распечатки Z-отчета второй раз его снять невозможно, пока не будет проведена любая операция по кассе.
 <form action="/chief/servletZReport"  method="post">
     date <input type="date" name="date">
-    <input type="submit" value="create Z-report">
+    <input type="submit" value=<fmt:message key="label.create_Z" />>
 </form>
 <br>
 <form action="/logout" target="_blank" method="post">
-    <button>logout</button>
+    <button><fmt:message key="label.logout" /></button>
 </form>
 </body>
 </html>

@@ -1,13 +1,21 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ page isELIgnored="false" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page session="true" %>
+
+
+<fmt:setLocale value="${sessionScope.lang}"/>
+<fmt:setBundle basename="languages"/>
+
+<html lang="${sessionScope.lang}">
+
 <html>
 <head>
     <title>Print</title>
 </head>
 <body>
-<h3> Hello, ${sessionScope.user.surname} !</h3>
-you are logged in as ${sessionScope.user.role}<br>
+
 <br>
 <h4> the check number is: ${sessionScope.receipt.number} </h4>
 

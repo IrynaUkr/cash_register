@@ -1,13 +1,24 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ page isELIgnored="false" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page session="true" %>
+
+
+<fmt:setLocale value="${sessionScope.lang}"/>
+<fmt:setBundle basename="languages"/>
+
+<html lang="${sessionScope.lang}">
+
 <html>
 <head>
     <title>add Product</title>
 
 </head>
 <body>
-you are logged in as ${sessionScope.user.role}<br>
+<h3>  ${sessionScope.user.surname}  <fmt:message key="label.welcome" /> ${sessionScope.user.role} </h3>
+</h3>
+<h2>${sessionScope.message}</h2><br>
 <h4> the check is open:</h4>
 ${sessionScope.receipt.number} -number<br>
 ${sessionScope.receipt.date} -date<br>

@@ -1,12 +1,22 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ page isELIgnored="false" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page session="true" %>
+
+<fmt:setLocale value="${sessionScope.lang}"/>
+<fmt:setBundle basename="languages"/>
+
+<html lang="${sessionScope.lang}">
+
 <html>
 <head>
     <title>Cashier</title>
 </head>
 <body>
-<h3> Hello, ${sessionScope.user.surname} </h3>
-you are logged in as an  ${sessionScope.user.role}.<br>
-${message}
+<h3>  ${sessionScope.user.surname} , <fmt:message key="label.welcome" /> ${sessionScope.user.role} </h3>
+</h3>
+<h2>${sessionScope.message}</h2><br>
 
 <ul> Касир має можливість:
     <li>- створити замовлення (чек);</li>
@@ -26,12 +36,12 @@ ${message}
 
 <br>
 <form action="/cashier/openReceipt" target="_blank">
-    <button>open receipt</button>
+    <button><fmt:message key="label.open_receipt" /></button>
 </form>
 <br>
 
 <form action="/cashier/printReceipt" target="_blank">
-    <button>print Receipt</button>
+    <button><fmt:message key="label.print_receipt" /></button>
 </form>
 _________________________________________________________________
 <ul> Реализована транзакция:
@@ -41,20 +51,21 @@ _________________________________________________________________
 Изменению подлежат только вновь созданные счета со статусом "CREATED"<br>
 если счет закрыт- оплата прията от покупателя, чек выдан. <br>
 Если удален старшим кассиром-то были на то основания, изменять нельзя.<br>
-you can update receipt only if status is "CREATED"<br>
+<fmt:message key="label.update_receipt_m" /><br>
 <form action="/cashier/updateAmountReceipt" target="_blank">
-    <button>update Receipt</button>
+    <button><fmt:message key="label.update_receipt" /></button>
 </form>
 
 <br>
-Статус "CREATED" можно изменить только на "CLOSED"
+<fmt:message key="label.close_receipt_m" />
 <form action="/cashier/closeReceipt" target="_blank">
-    <button>close Receipt</button>
+    <button><fmt:message key="label.close_receipt" /></button>
 </form>
 
 
 <form action="/logout" target="_blank" method="post">
-    <button>logout</button>
+    <button><fmt:message key="label.logout" /></button>
 </form>
+
 </body>
 </html>

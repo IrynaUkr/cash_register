@@ -1,4 +1,15 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ page isELIgnored="false" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page session="true" %>
+
+
+<fmt:setLocale value="${sessionScope.lang}"/>
+<fmt:setBundle basename="languages"/>
+
+<html lang="${sessionScope.lang}">
+
 <html>
 <head>
   <title>Admin</title>
@@ -29,7 +40,7 @@ Create new user:
   <input type="submit" value="Submit">
 </form>
 <form action="/logout" target="_blank" method="post">
-  <button>logout</button>
+  <button><fmt:message key="label.logout" /></button>
 </form>
 
 </body>

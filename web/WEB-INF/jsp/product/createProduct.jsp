@@ -1,12 +1,21 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ page isELIgnored="false" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page session="true" %>
 
-<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
+<fmt:setLocale value="${sessionScope.lang}"/>
+<fmt:setBundle basename="languages"/>
+
+<html lang="${sessionScope.lang}">
 <html>
 <head>
     <title>createProduct</title>
 </head>
 <body>
-Surname: <h3> ${sessionScope.user.surname} </h3>
-role: ${sessionScope.user.role}<br>
+<h3>  ${sessionScope.user.surname}  <fmt:message key="label.welcome" /> ${sessionScope.user.role} </h3>
+</h3>
+<h2>${sessionScope.message}</h2><br>
 Create new Product:<br>
 
 <form action="/merch/createProduct" method="post">
