@@ -18,18 +18,29 @@
 
 <h3>  ${sessionScope.user.surname} <fmt:message key="label.welcome"/> ${sessionScope.user.role} </h3>
 <h2>${sessionScope.message}</h2><br>
-
-
+<h2>choose kind of sorting</h2>
 <form action="/merch/ServletProductPages">
+    <table>
+        <td><input type="radio" id="1" name="ProductCode" value="ProductCode"><label for="1">Code</label></td>
+        <td><input type="radio" id="2" name="ProductName" value="ProductName"><label for="2">Name</label></td>
+        <td><input type="radio" id="3" name="ProductPrice" value="ProductPrice"><label for="3">Price</label></td></td>
+        <td><input type="radio" id="4" name="ProductAmount" value="ProductAmount"><label for="4">Amount</label></td></td>
+        <td><input type="radio" id="5" name="ProductUOM" value="UOM"><label for="5">Units of measure</label></td></td>
+    </table>
+    <button type="submit">Submit</button>
+</form>
+
+
+<form action="/merch/ServletProductPages" method="post">
     <table>
         <thread>
             <tr>
-                <td> N </td>
-                <td><input type="submit" name="ProductCode" value="ProductCode"></td>
-                <td><input type="submit" name="ProductName" value="ProductName"></td>
-                <td><input type="submit" name="ProductPrice" value="ProductPrice"></td>
-                <td> <input type="submit" name="ProductAmount" value="ProductAmount"></td>
-                <td> <input type="submit" name="ProductUOM" value="Units of measure"></td>
+                <td> N</td>
+                <td>Code</td>
+                <td>Name</td>
+                <td>Price</td>
+                <td>Amount</td>
+                <td>Units of measure></td>
             </tr>
         </thread>
         <c:forEach var="bean" items="${sessionScope.products}">
@@ -44,6 +55,8 @@
             </tr>
         </c:forEach>
     </table>
+    <td><input type="submit" value="Delete"></td>
+
 </form>
 
 <table>
@@ -55,6 +68,7 @@
         </c:forEach>
     </tr>
 </table>
+
 
 </body>
 </html>

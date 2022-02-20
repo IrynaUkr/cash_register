@@ -49,6 +49,14 @@ public class ServletProductPages extends HttpServlet {
         System.out.println(totalAmPages + "totalAmPages");
         request.getRequestDispatcher("/WEB-INF/jsp/product/displayProducts.jsp").forward(request, response);
         System.out.println(products);
+        if (request.getParameterValues("selected")!= null){
+           String[]codes= request.getParameterValues("selected");
+           for(String c :codes){
+               System.out.println(c +"  from do get");
+           }
+           request.getSession().setAttribute("deleteSelectedProducts", codes);
+
+        }
 
     }
 
@@ -56,6 +64,11 @@ public class ServletProductPages extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+        if (request.getParameterValues("selected")!= null){
+            String[]codes= request.getParameterValues("selected");
+            for(String c :codes){
+                System.out.println(c +"  from do post");
+            }
+        }
     }
 }
