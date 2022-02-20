@@ -10,23 +10,51 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProductDaoImpl implements ProductDao {
+    private int totalAmountRecords;
 
     public static final String SELECT_PRODUCT_BY_ID = "SELECT * FROM product  WHERE id_product = ?";
     public static final String SELECT_PRODUCT_BY_CODE = "SELECT * FROM product  WHERE code = ?";
     public static final String SELECT_PRODUCT_BY_NAME = "SELECT * FROM product  WHERE name = ?";
     public static final String SELECT_FROM_PRODUCT = "SELECT * FROM product";
+    public static final String SELECT_FROM_PRODUCT_LIMIT = "SELECT * FROM product LIMIT ?, ?";
     public static final String INSERT_PRODUCT = "INSERT INTO product" +
             " (code, name, description, price, amount, uom) VALUES (?, ?, ?, ?,?,?)";
     public static final String SET_PRODUCT = "UPDATE product SET code = ?, name = ?, " +
             "description = ?, price = ?, amount= ?, uom= ? WHERE id_product = ?";
     public static final String SET_AMOUNT_PRODUCT = "UPDATE product SET  amount= ? WHERE id_product = ?";
-
     public static final String DELETE_PRODUCT_BY_ID = "DELETE FROM product WHERE id_product = ?";
 
     public ProductDaoImpl() {
     }
 
-
+    public List <Product>viewAllWithRestrict(int offset, int noOfRecords) {
+        List<Product> products = new ArrayList<>();
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        Connection con = null;
+        try {
+            con = DBManager.getInstance().getConnection();
+            pstmt = con.prepareStatement(SELECT_FROM_PRODUCT_LIMIT);
+            pstmt.setInt(1, offset);
+            pstmt.setInt(2, noOfRecords);
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                products.add(extractProduct(rs));
+            }
+            rs = pstmt.executeQuery("select count(id_product)  from product");
+            System.out.println(rs +"SELECT count(id_product) FROM product" );
+            if(rs.next())
+                this.totalAmountRecords = rs.getInt(1);
+            rs.close();
+            pstmt.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return products;
+    }
+    public int getTotalAmountRecords() {
+        return totalAmountRecords;
+    }
     @Override
     public List findAll() {
         List<Product> products = new ArrayList<>();

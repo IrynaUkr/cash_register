@@ -15,7 +15,7 @@
 </head>
 <body>
 <h3>  ${sessionScope.user.surname}  <fmt:message key="label.welcome" /> ${sessionScope.user.role} </h3>
-</h3>
+
 <h2>${sessionScope.message}</h2><br>
 
 Товарознавець може створювати товари
@@ -23,7 +23,7 @@
 
 
 
-<form action="/merch/createProduct" target="_blank">
+<form action="${pageContext.request.contextPath}/merch/createProduct" target="_blank">
     <button> <fmt:message key="label.create_product" /> </button>
 </form>
 <br>
@@ -34,8 +34,11 @@
     <button> <fmt:message key="label.add_product" /></button>
 </form>
 <br>
+<form action="/merch/ServletProductPages" target="_blank">
+    <button><fmt:message key="label.productList" /></button>
+</form>
 //to do
-<form action="/merch/delete/Product" target="_blank">
+<form action="/merch/deleteProduct" target="_blank">
     <button> <fmt:message key="label.del_product" /></button>
 </form>
 <br>
