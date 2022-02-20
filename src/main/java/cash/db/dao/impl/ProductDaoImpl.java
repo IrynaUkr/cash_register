@@ -55,6 +55,43 @@ public class ProductDaoImpl implements ProductDao {
     public int getTotalAmountRecords() {
         return totalAmountRecords;
     }
+
+
+    public List <Product>viewAllWithSorting(int offset, int recordsOnPage, String sortingType) {
+        List<Product> products = new ArrayList<>();
+        StringBuilder queryBuilder = new StringBuilder();
+        queryBuilder.append("SELECT * FROM product ORDER by " );
+        queryBuilder.append(sortingType);
+        queryBuilder.append(" LIMIT ?, ?");
+        System.out.println( queryBuilder.toString()+"myquery");
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        Connection con = null;
+        try {
+            con = DBManager.getInstance().getConnection();
+            pstmt = con.prepareStatement(queryBuilder.toString());
+            pstmt.setInt(1, offset);
+            pstmt.setInt(2 , recordsOnPage);
+
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                products.add(extractProduct(rs));
+            }
+            rs = pstmt.executeQuery("select count(id_product)  from product");
+            System.out.println(rs +"SELECT count(id_product) FROM product" );
+            if(rs.next())
+                this.totalAmountRecords = rs.getInt(1);
+            rs.close();
+            pstmt.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return products;
+    }
+
+
+
+
     @Override
     public List findAll() {
         List<Product> products = new ArrayList<>();

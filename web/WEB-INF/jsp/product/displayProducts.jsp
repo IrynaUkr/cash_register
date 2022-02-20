@@ -20,28 +20,41 @@
 <h2>${sessionScope.message}</h2><br>
 
 
-<c:forEach var="bean" items="${sessionScope.products}">
-    ......................................<br>
-    Code.....  ${bean.code};<br>
-    Name..... ${bean.name};<br>
-    Price....  ${bean.price};<br>
-    Amount...  ${bean.amount};${bean.uom};<br>
-    Sum .... ${bean.amount*bean.price};<br>
-    ......................................<br>
-</c:forEach>
-<br>
+<form action="/merch/ServletProductPages">
+    <table>
+        <thread>
+            <tr>
+                <td> N </td>
+                <td><input type="submit" name="ProductCode" value="ProductCode"></td>
+                <td><input type="submit" name="ProductName" value="ProductName"></td>
+                <td><input type="submit" name="ProductPrice" value="ProductPrice"></td>
+                <td> <input type="submit" name="ProductAmount" value="ProductAmount"></td>
+                <td> <input type="submit" name="ProductUOM" value="Units of measure"></td>
+            </tr>
+        </thread>
+        <c:forEach var="bean" items="${sessionScope.products}">
+            <tr>
+                <td><input type="checkbox" name="selected" value="${bean.code}"></td>
+                <td> ${bean.code}</td>
+                <td> ${bean.name}</td>
+                <td>${bean.price}</td>
+                <td> ${bean.amount}</td>
+                <td> ${bean.uom}</td>
 
+            </tr>
+        </c:forEach>
+    </table>
+</form>
 
-<c:forEach var="i" begin="1" end="${sessionScope.totalAmPages}">
-
-    <form action="/merch/ServletProductPages">
-    <input type="submit" name="page" value="${i}"><p>
-    </form>
-
-    </c:forEach>
-
-
-
+<table>
+    <tr>
+        <c:forEach var="i" begin="1" end="${sessionScope.totalAmPages}">
+            <form action="/merch/ServletProductPages">
+                <td><input type="submit" name="page" value="${i}"></td>
+            </form>
+        </c:forEach>
+    </tr>
+</table>
 
 </body>
 </html>

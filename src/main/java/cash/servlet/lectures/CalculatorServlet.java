@@ -11,7 +11,6 @@ public class CalculatorServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String message;
-
         int result = 0;
         try {
             int a = Integer.parseInt(request.getParameter("a"));
