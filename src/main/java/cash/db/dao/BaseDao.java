@@ -38,4 +38,14 @@ public interface BaseDao<T extends Entity> {
         }
     }
 
+    default void close(PreparedStatement preparedStatement) {
+        try {
+            if (preparedStatement != null) {
+                preparedStatement.close();
+            }
+        } catch (SQLException e) {
+            //log
+        }
+    }
+
 }

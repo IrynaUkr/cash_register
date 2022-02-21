@@ -3,6 +3,7 @@ package cash.db.dao.impl;
 import cash.db.dao.ProductDao;
 import cash.db.manager.DBManager;
 import cash.entity.Product;
+import cash.entity.Receipt;
 import cash.exceptions.DBException;
 
 import java.sql.*;
@@ -23,11 +24,12 @@ public class ProductDaoImpl implements ProductDao {
             "description = ?, price = ?, amount= ?, uom= ? WHERE id_product = ?";
     public static final String SET_AMOUNT_PRODUCT = "UPDATE product SET  amount= ? WHERE id_product = ?";
     public static final String DELETE_PRODUCT_BY_ID = "DELETE FROM product WHERE id_product = ?";
+    public static final String DELETE_PRODUCT_BY_CODE = "DELETE FROM product WHERE code = ?";
 
     public ProductDaoImpl() {
     }
 
-    public List <Product>viewAllWithRestrict(int offset, int noOfRecords) {
+    public List<Product> viewAllWithRestrict(int offset, int noOfRecords) {
         List<Product> products = new ArrayList<>();
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -42,28 +44,32 @@ public class ProductDaoImpl implements ProductDao {
                 products.add(extractProduct(rs));
             }
             rs = pstmt.executeQuery("select count(id_product)  from product");
-            System.out.println(rs +"SELECT count(id_product) FROM product" );
-            if(rs.next())
+            System.out.println(rs + "SELECT count(id_product) FROM product");
+            if (rs.next())
                 this.totalAmountRecords = rs.getInt(1);
             rs.close();
-            pstmt.close();
+            return products;
         } catch (SQLException ex) {
             ex.printStackTrace();
+        } finally {
+            close(pstmt);
+            close(con);
         }
         return products;
     }
+
     public int getTotalAmountRecords() {
         return totalAmountRecords;
     }
 
 
-    public List <Product>viewAllWithSorting(int offset, int recordsOnPage, String sortingType) {
+    public List<Product> viewAllWithSorting(int offset, int recordsOnPage, String sortingType) {
         List<Product> products = new ArrayList<>();
         StringBuilder queryBuilder = new StringBuilder();
-        queryBuilder.append("SELECT * FROM product ORDER by " );
+        queryBuilder.append("SELECT * FROM product ORDER by ");
         queryBuilder.append(sortingType);
         queryBuilder.append(" LIMIT ?, ?");
-        System.out.println( queryBuilder.toString()+"myquery");
+        System.out.println(queryBuilder.toString() + "myquery");
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         Connection con = null;
@@ -71,26 +77,25 @@ public class ProductDaoImpl implements ProductDao {
             con = DBManager.getInstance().getConnection();
             pstmt = con.prepareStatement(queryBuilder.toString());
             pstmt.setInt(1, offset);
-            pstmt.setInt(2 , recordsOnPage);
+            pstmt.setInt(2, recordsOnPage);
 
             rs = pstmt.executeQuery();
             while (rs.next()) {
                 products.add(extractProduct(rs));
             }
             rs = pstmt.executeQuery("select count(id_product)  from product");
-            System.out.println(rs +"SELECT count(id_product) FROM product" );
-            if(rs.next())
+            System.out.println(rs + "SELECT count(id_product) FROM product");
+            if (rs.next())
                 this.totalAmountRecords = rs.getInt(1);
             rs.close();
-            pstmt.close();
         } catch (SQLException ex) {
             ex.printStackTrace();
+        } finally {
+            close(pstmt);
+            close(con);
         }
         return products;
     }
-
-
-
 
     @Override
     public List findAll() {
@@ -106,9 +111,11 @@ public class ProductDaoImpl implements ProductDao {
                 products.add(extractProduct(rs));
             }
             rs.close();
-            stmt.close();
         } catch (SQLException ex) {
             ex.printStackTrace();
+        } finally {
+            close(stmt);
+            close(con);
         }
         return products;
     }
@@ -122,13 +129,11 @@ public class ProductDaoImpl implements ProductDao {
         product.setPrice(rs.getDouble("price"));
         product.setAmount(rs.getDouble("amount"));
         product.setUom(rs.getString("uom"));
-
         return product;
     }
 
     @Override
     public Product findEntityById(Integer id) {
-
         Product product = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -142,12 +147,13 @@ public class ProductDaoImpl implements ProductDao {
                 product = extractProduct(rs);
             }
             rs.close();
-            pstmt.close();
         } catch (SQLException ex) {
             ex.printStackTrace();
+        } finally {
+            close(pstmt);
+            close(con);
         }
         return product;
-
     }
 
     @Override
@@ -188,9 +194,33 @@ public class ProductDaoImpl implements ProductDao {
                 pstmt = con.prepareStatement(DELETE_PRODUCT_BY_ID);
                 pstmt.setInt(1, id);
                 executeUpdate = pstmt.executeUpdate();
-                pstmt.close();
             } catch (SQLException ex) {
                 ex.printStackTrace();
+            } finally {
+                close(pstmt);
+                close(con);
+            }
+            return executeUpdate > 0;
+        }
+    }
+
+    public boolean deleteByCode(String code) {
+        int executeUpdate = 0;
+        PreparedStatement pstmt = null;
+        Connection con = null;
+        if (findProductByCode(code) == null) {
+            return false;
+        } else {
+            try {
+                con = DBManager.getInstance().getConnection();
+                pstmt = con.prepareStatement(DELETE_PRODUCT_BY_CODE);
+                pstmt.setString(1, code);
+                executeUpdate = pstmt.executeUpdate();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            } finally {
+                close(pstmt);
+                close(con);
             }
             return executeUpdate > 0;
         }
@@ -219,6 +249,9 @@ public class ProductDaoImpl implements ProductDao {
             }
         } catch (SQLException e) {
             throw new DBException("insert  was failed", e);
+        } finally {
+            close(pstmt);
+            close(con);
         }
         return result > 0;
     }
@@ -242,12 +275,16 @@ public class ProductDaoImpl implements ProductDao {
                 result = pstmt.executeUpdate();
             } catch (SQLException e) {
                 e.printStackTrace();
+            } finally {
+                close(pstmt);
+                close(con);
             }
             return result > 0;
         } else {
             return false;
         }
     }
+
 
     public boolean updateAmount(Product product, Double amount) {
         if (product == null) {
@@ -262,11 +299,14 @@ public class ProductDaoImpl implements ProductDao {
             try {
                 con = DBManager.getInstance().getConnection();
                 pstmt = con.prepareStatement(SET_AMOUNT_PRODUCT);
-                pstmt.setDouble(1, storeAmount+amount);
+                pstmt.setDouble(1, storeAmount + amount);
                 pstmt.setInt(2, product.getId());
                 result = pstmt.executeUpdate();
             } catch (SQLException e) {
                 e.printStackTrace();
+            } finally {
+                close(pstmt);
+                close(con);
             }
             return result > 0;
         } else {
@@ -286,7 +326,6 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public Product findProductByCode(String code) {
-
         Product product = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -300,11 +339,12 @@ public class ProductDaoImpl implements ProductDao {
                 product = extractProduct(rs);
             }
             rs.close();
-            pstmt.close();
         } catch (SQLException ex) {
             ex.printStackTrace();
+        } finally {
+            close(pstmt);
+            close(con);
         }
-
         return product;
     }
 
@@ -326,8 +366,45 @@ public class ProductDaoImpl implements ProductDao {
             pstmt.close();
         } catch (SQLException ex) {
             ex.printStackTrace();
+        } finally {
+            close(pstmt);
+            close(con);
         }
-
         return product;
     }
+
+    public boolean deleteByCode(String... codes) {
+        boolean flag = false;
+        for (String code : codes) {
+            flag = deleteByCode(code);
+        }
+        return flag;
+    }
+
+    public int findIDReceiptByCodeInSales(String code) {
+        int idReceipt = 0;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        Connection con = null;
+        try {
+            con = DBManager.getInstance().getConnection();
+            pstmt = con.prepareStatement("select product_has_receipt.receipt_id_receipt from product_has_receipt join product where product_has_receipt.product_id_product=product.id_product and code=?");
+            pstmt.setString(1, code);
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                idReceipt = rs.getInt("product_has_receipt.receipt_id_receipt");
+                System.out.println(idReceipt +" idReceipt");
+            }
+            rs.close();
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            close(pstmt);
+            close(con);
+        }
+        return idReceipt;
+    }
+
+
 }

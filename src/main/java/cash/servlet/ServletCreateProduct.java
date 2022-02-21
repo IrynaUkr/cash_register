@@ -27,7 +27,6 @@ public class ServletCreateProduct extends HttpServlet {
         ProductDaoImpl productDao = new ProductDaoImpl();
         boolean flag = productDao.create(product);
         if (flag){
-            System.out.println("product was added: " + product);
             request.getSession().setAttribute("message", "product was added!");
             response.sendRedirect("/ServletBack");
         }else{

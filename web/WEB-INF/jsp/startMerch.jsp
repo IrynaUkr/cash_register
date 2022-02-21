@@ -19,8 +19,7 @@
 <h2>${sessionScope.message}</h2><br>
 
 Товарознавець може створювати товари
-та зазначати їх кількість на складі.<br>login
-
+та зазначати їх кількість на складі.<br>
 
 
 <form action="${pageContext.request.contextPath}/merch/createProduct" target="_blank">
@@ -35,12 +34,9 @@
 </form>
 <br>
 <form action="/merch/ServletProductPages" target="_blank">
-    <button><fmt:message key="label.productList" /></button>
+    <button><fmt:message key="label.del_product" /></button>
 </form>
-//to do
-<form action="/merch/deleteProduct" target="_blank">
-    <button> <fmt:message key="label.del_product" /></button>
-</form>
+
 <br>
 <form action="/logout" target="_blank" method="post">
     <button><fmt:message key="label.logout" /></button>

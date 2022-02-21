@@ -18,6 +18,11 @@
 
 <h3>  ${sessionScope.user.surname} <fmt:message key="label.welcome"/> ${sessionScope.user.role} </h3>
 <h2>${sessionScope.message}</h2><br>
+
+<c:forEach var="bean" items="${sessionScope.delCode}">
+    ${bean.number} ${bean.date}
+</c:forEach>
+
 <h2>choose kind of sorting</h2>
 <form action="/merch/ServletProductPages">
     <table>
@@ -36,16 +41,18 @@
         <thread>
             <tr>
                 <td> N</td>
+
                 <td>Code</td>
                 <td>Name</td>
                 <td>Price</td>
                 <td>Amount</td>
-                <td>Units of measure></td>
+                <td>Units of measure</td>
             </tr>
         </thread>
         <c:forEach var="bean" items="${sessionScope.products}">
             <tr>
                 <td><input type="checkbox" name="selected" value="${bean.code}"></td>
+
                 <td> ${bean.code}</td>
                 <td> ${bean.name}</td>
                 <td>${bean.price}</td>
@@ -58,7 +65,13 @@
     <td><input type="submit" value="Delete"></td>
 
 </form>
-
+Удаление строки из главной таблицы, для которой есть связанные строки в подчиненной таблице:<br>
+NO ACTION  – операция выполнена не будет, если для удаляемой строки <br>
+существуют связанные строки в подчиненной таблице. Если связанных строк нет, то удаление будет выполнено..<br>
+????
+SET NULL/ DEFAULT  - при удалении строки из главной таблицы <br>
+значение внешнего ключа становится NULL/ DEFAULT для тех строк из подчиненной таблицы, которые связаны с удаляемой строкой.<br>
+(product references to "receipt" and "receipt has product")<br>
 <table>
     <tr>
         <c:forEach var="i" begin="1" end="${sessionScope.totalAmPages}">

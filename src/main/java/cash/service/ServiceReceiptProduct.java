@@ -1,13 +1,20 @@
 package cash.service;
 
 import cash.db.dao.impl.ProductDaoImpl;
+import cash.db.dao.impl.ReceiptImpl;
+import cash.db.manager.DBManager;
 import cash.entity.Product;
 import cash.entity.Receipt;
 import cash.entity.ReceiptProducts;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class ServiceReceiptProduct {
 
@@ -37,16 +44,17 @@ public class ServiceReceiptProduct {
 
     public static Product[] getProducts(HttpServletRequest request) {
         ProductDaoImpl productDao = new ProductDaoImpl();
-        Product p1 =productDao.findProductByName(request.getParameter("products1"));
+        Product p1 = productDao.findProductByName(request.getParameter("products1"));
         Product p2 = productDao.findProductByName(request.getParameter("products2"));
         Product p3 = productDao.findProductByCode(request.getParameter("products3"));
         Product p4 = productDao.findProductByCode(request.getParameter("products4"));
 
-        Product[] products ={p1,p2,p3,p4};
+        Product[] products = {p1, p2, p3, p4};
 
 
         return products;
     }
+
     public static ReceiptProducts createReceiptProduct(HttpServletRequest request, Product product, Double amount) {
         ReceiptProducts receiptProducts = new ReceiptProducts();
         receiptProducts.setProductId(product.getId());
@@ -56,16 +64,34 @@ public class ServiceReceiptProduct {
         receiptProducts.setName(product.getName());
         return receiptProducts;
     }
+
     public static void updateAmountSumReceipt(Receipt receipt) {
         ArrayList<ReceiptProducts> receiptProducts = receipt.getReceiptProducts();
-        Double sum =0.0;
-        Double amount =0.0;
-        for(ReceiptProducts rp: receiptProducts){
-            sum +=  rp.getPrice()*rp.getAmount();
-            amount +=rp.getAmount();
+        Double sum = 0.0;
+        Double amount = 0.0;
+        for (ReceiptProducts rp : receiptProducts) {
+            sum += rp.getPrice() * rp.getAmount();
+            amount += rp.getAmount();
         }
         receipt.setSum(sum);
         receipt.setAmount(amount);
     }
+
+    public static List<Receipt> getReceiptsbyCodes(String... codes) {
+        List<Receipt> receipts = new ArrayList<>();
+        for(String code : codes){
+           receipts.add( getByCode(code));
+            System.out.println("print from string.. codes");
+        }
+       return receipts;
+
+    }
+    static Receipt getByCode(String code){
+
+        int idReceipt = (new ProductDaoImpl()).findIDReceiptByCodeInSales(code);
+        return (new ReceiptImpl()).findEntityById(idReceipt);
+    }
+
+
 }
 
