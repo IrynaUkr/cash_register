@@ -4,7 +4,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page session="true" %>
 
-
 <fmt:setLocale value="${sessionScope.lang}"/>
 <fmt:setBundle basename="languages"/>
 
@@ -18,7 +17,7 @@
 <h3>  ${sessionScope.user.surname}  <fmt:message key="label.welcome" /> ${sessionScope.user.role} </h3>
 </h3>
 <h2>${sessionScope.message}</h2><br>
-<h4> add product by name: </h4>
+<h4> <fmt:message key="label.add_product_byName"/> </h4>
 <form action="/merch/setAmountProduct" method="post">
     <select name="productNA">
         <c:forEach items="${products}" var="productName">
@@ -28,38 +27,23 @@
         </c:forEach>
     </select>
     <input type="text" name="amountNA" placeholder="amount"> amount
-    <input type="submit" value="add product by name">
+    <input type="submit" value=<fmt:message key="label.add_product"/>>
 </form>
 
-<h4> add product by code: </h4>
+<h4> <fmt:message key="label.add_product_byCode"/> </h4>
 <form action="/merch/setAmountProduct" method="post">
-    <select name="productND">
-        <c:forEach items="${products}" var="productName">
-            <option value="${productName.name}">${productName.name}</option>
-            <option value="${productName.amount}">${productName.amount}</option>
+    <select name="productCA">
+        <c:forEach items="${products}" var="bean">
+            <option value="${bean.code}">${bean.code}</option>
+            <option value="${bean.amount}">${bean.amount}</option>
             <option value="---------">---------------</option>
         </c:forEach>
     </select>
-    <input type="text" name="amountND" placeholder="amount"> amount
-    <input type="submit" value="delete product by name">
+    <input type="text" name="amountCA" >
+    <input type="submit" value=<fmt:message key="label.add_product"/>>
 </form>
 
 
-
-<h4>delete product by code:</h4>
-<br>
-<form action="/cashier/deleteProductFromProductList" method="post">
-    <select name="productCD">
-        <c:forEach items="${products}" var="productCode">
-            <option value="${productCode.code}">${productCode.code}</option>
-            <option value="${productCode.amount}">${productCode.amount}</option>
-            <option value="---------">---------------</option>
-        </c:forEach>
-    </select>
-    <input type="text" name="amountCD" placeholder="amount"> amount
-
-    <input type="submit" value="delete product by code">
-</form>
 
 <form action="/ServletBack" target="_blank">
     <button>back to start ${sessionScope.user.role} page</button>

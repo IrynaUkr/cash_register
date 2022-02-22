@@ -11,6 +11,7 @@
 
 <html>
 <head>
+    <link rel="stylesheet" href="css/sb-admin-2.min.css" >
     <title>Products</title>
 
 </head>
@@ -41,23 +42,23 @@
         <thread>
             <tr>
                 <td> N</td>
-
                 <td>Code</td>
                 <td>Name</td>
                 <td>Price</td>
                 <td>Amount</td>
                 <td>Units of measure</td>
+                <td>Description</td>
             </tr>
         </thread>
         <c:forEach var="bean" items="${sessionScope.products}">
             <tr>
                 <td><input type="checkbox" name="selected" value="${bean.code}"></td>
-
                 <td> ${bean.code}</td>
                 <td> ${bean.name}</td>
                 <td>${bean.price}</td>
                 <td> ${bean.amount}</td>
                 <td> ${bean.uom}</td>
+                <td> ${bean.description}</td>
 
             </tr>
         </c:forEach>
@@ -65,12 +66,9 @@
     <td><input type="submit" value="Delete"></td>
 
 </form>
-Удаление строки из главной таблицы, для которой есть связанные строки в подчиненной таблице:<br>
+Удаление из главной таблицы продукт, для которой есть связанные строки в подчиненной таблице:<br>
 NO ACTION  – операция выполнена не будет, если для удаляемой строки <br>
 существуют связанные строки в подчиненной таблице. Если связанных строк нет, то удаление будет выполнено..<br>
-????
-SET NULL/ DEFAULT  - при удалении строки из главной таблицы <br>
-значение внешнего ключа становится NULL/ DEFAULT для тех строк из подчиненной таблицы, которые связаны с удаляемой строкой.<br>
 (product references to "receipt" and "receipt has product")<br>
 <table>
     <tr>
@@ -81,6 +79,9 @@ SET NULL/ DEFAULT  - при удалении строки из главной т
         </c:forEach>
     </tr>
 </table>
+<form action="/logout" target="_blank" method="post">
+    <button><fmt:message key="label.logout"/></button>
+</form>
 
 
 </body>

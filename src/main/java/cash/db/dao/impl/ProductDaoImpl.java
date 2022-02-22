@@ -3,7 +3,6 @@ package cash.db.dao.impl;
 import cash.db.dao.ProductDao;
 import cash.db.manager.DBManager;
 import cash.entity.Product;
-import cash.entity.Receipt;
 import cash.exceptions.DBException;
 
 import java.sql.*;
@@ -15,9 +14,11 @@ public class ProductDaoImpl implements ProductDao {
 
     public static final String SELECT_PRODUCT_BY_ID = "SELECT * FROM product  WHERE id_product = ?";
     public static final String SELECT_PRODUCT_BY_CODE = "SELECT * FROM product  WHERE code = ?";
+    public static final String SELECT_PRODUCT_BY_NAME_LANG = "SELECT * FROM product JOIN translate WHERE product.id_product = translate.id_prod_tr and id_lang_tr=? and name_tr = ?";
     public static final String SELECT_PRODUCT_BY_NAME = "SELECT * FROM product  WHERE name = ?";
     public static final String SELECT_FROM_PRODUCT = "SELECT * FROM product";
-    public static final String SELECT_FROM_PRODUCT_LIMIT = "SELECT * FROM product LIMIT ?, ?";
+    public static final String SELECT_FROM_PRODUCT_BY_LANG = "SELECT * FROM product JOIN translate WHERE product.id_product = translate.id_prod_tr and id_lang_tr=?";
+    public static final String SELECT_FROM_PRODUCT_LIMIT = "SELECT * FROM product JOIN translate WHERE product.id_product = translate.id_prod_tr and id_lang_tr=? LIMIT ?, ?";
     public static final String INSERT_PRODUCT = "INSERT INTO product" +
             " (code, name, description, price, amount, uom) VALUES (?, ?, ?, ?,?,?)";
     public static final String SET_PRODUCT = "UPDATE product SET code = ?, name = ?, " +
@@ -29,7 +30,7 @@ public class ProductDaoImpl implements ProductDao {
     public ProductDaoImpl() {
     }
 
-    public List<Product> viewAllWithRestrict(int offset, int noOfRecords) {
+    public List<Product> viewAllWithRestrict(int offset, int noOfRecords, int id_lang) {
         List<Product> products = new ArrayList<>();
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -37,14 +38,14 @@ public class ProductDaoImpl implements ProductDao {
         try {
             con = DBManager.getInstance().getConnection();
             pstmt = con.prepareStatement(SELECT_FROM_PRODUCT_LIMIT);
-            pstmt.setInt(1, offset);
-            pstmt.setInt(2, noOfRecords);
+            pstmt.setInt(1,id_lang);
+            pstmt.setInt(2, offset);
+            pstmt.setInt(3, noOfRecords);
             rs = pstmt.executeQuery();
             while (rs.next()) {
-                products.add(extractProduct(rs));
+                products.add(extractProductLang(rs));
             }
             rs = pstmt.executeQuery("select count(id_product)  from product");
-            System.out.println(rs + "SELECT count(id_product) FROM product");
             if (rs.next())
                 this.totalAmountRecords = rs.getInt(1);
             rs.close();
@@ -63,10 +64,11 @@ public class ProductDaoImpl implements ProductDao {
     }
 
 
-    public List<Product> viewAllWithSorting(int offset, int recordsOnPage, String sortingType) {
+
+    public List<Product> viewAllWithSorting(int offset, int recordsOnPage, String sortingType, int id_lang) {
         List<Product> products = new ArrayList<>();
         StringBuilder queryBuilder = new StringBuilder();
-        queryBuilder.append("SELECT * FROM product ORDER by ");
+        queryBuilder.append("SELECT * FROM product JOIN translate WHERE product.id_product = translate.id_prod_tr and id_lang_tr=? ORDER by ");
         queryBuilder.append(sortingType);
         queryBuilder.append(" LIMIT ?, ?");
         System.out.println(queryBuilder.toString() + "myquery");
@@ -76,12 +78,13 @@ public class ProductDaoImpl implements ProductDao {
         try {
             con = DBManager.getInstance().getConnection();
             pstmt = con.prepareStatement(queryBuilder.toString());
-            pstmt.setInt(1, offset);
-            pstmt.setInt(2, recordsOnPage);
+            pstmt.setInt(1, id_lang);
+            pstmt.setInt(2, offset);
+            pstmt.setInt(3, recordsOnPage);
 
             rs = pstmt.executeQuery();
             while (rs.next()) {
-                products.add(extractProduct(rs));
+                products.add(extractProductLang(rs));
             }
             rs = pstmt.executeQuery("select count(id_product)  from product");
             System.out.println(rs + "SELECT count(id_product) FROM product");
@@ -120,12 +123,47 @@ public class ProductDaoImpl implements ProductDao {
         return products;
     }
 
+    public List findAllByLang(int id_lang) {
+        List<Product> products = new ArrayList<>();
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        Connection con = null;
+        try {
+            con = DBManager.getInstance().getConnection();
+            pstmt = con.prepareStatement(SELECT_FROM_PRODUCT_BY_LANG);
+            pstmt.setInt(1, id_lang);
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                products.add(extractProductLang(rs));
+            }
+            rs.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            close(pstmt);
+            close(con);
+        }
+        return products;
+    }
+
+
     private Product extractProduct(ResultSet rs) throws SQLException {
         Product product = new Product();
         product.setProductId(rs.getInt("id_product"));
         product.setCode(rs.getString("code"));
         product.setName(rs.getString("name"));
         product.setDescription(rs.getString("description"));
+        product.setPrice(rs.getDouble("price"));
+        product.setAmount(rs.getDouble("amount"));
+        product.setUom(rs.getString("uom"));
+        return product;
+    }
+    private Product extractProductLang(ResultSet rs) throws SQLException {
+        Product product = new Product();
+        product.setProductId(rs.getInt("id_product"));
+        product.setCode(rs.getString("code"));
+        product.setName(rs.getString("name_tr"));
+        product.setDescription(rs.getString("description_tr"));
         product.setPrice(rs.getDouble("price"));
         product.setAmount(rs.getDouble("amount"));
         product.setUom(rs.getString("uom"));
@@ -361,6 +399,31 @@ public class ProductDaoImpl implements ProductDao {
             rs = pstmt.executeQuery();
             if (rs.next()) {
                 product = extractProduct(rs);
+            }
+            rs.close();
+            pstmt.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            close(pstmt);
+            close(con);
+        }
+        return product;
+    }
+
+    public Product findProductByNameLang(String name, int id_lang) {
+        Product product = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        Connection con = null;
+        try {
+            con = DBManager.getInstance().getConnection();
+            pstmt = con.prepareStatement(SELECT_PRODUCT_BY_NAME_LANG);
+            pstmt.setInt(1, id_lang);
+            pstmt.setString(2, name);
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                product = extractProductLang(rs);
             }
             rs.close();
             pstmt.close();

@@ -8,18 +8,39 @@ import cash.entity.Receipt;
 import cash.entity.ReceiptProducts;
 
 import javax.servlet.http.HttpServletRequest;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class ServiceReceiptProduct {
-
-
     private ReceiptProducts receiptProducts;
+
+    public int getId_lang(String lang){
+        int id_lang=0;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        Connection con = null;
+        try {
+            con = DBManager.getInstance().getConnection();
+            pstmt = con.prepareStatement("select * from language where short_name= ? ");
+            pstmt.setString(1, lang);
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                id_lang = rs.getInt(1);
+                System.out.println(id_lang +" idlang in get lang");
+            }
+            rs.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            close(pstmt);
+            close(con);
+        }
+
+
+        return id_lang;
+    }
 
     public static ReceiptProducts[] getReceiptProducts(HttpServletRequest request) {
         ProductDaoImpl productDao = new ProductDaoImpl();
@@ -90,6 +111,36 @@ public class ServiceReceiptProduct {
 
         int idReceipt = (new ProductDaoImpl()).findIDReceiptByCodeInSales(code);
         return (new ReceiptImpl()).findEntityById(idReceipt);
+    }
+ void close(Statement statement) {
+        try {
+            if (statement != null) {
+                statement.close();
+            }
+        } catch (SQLException e) {
+            //log
+        }
+    }
+
+   void close(Connection connection) {
+        try {
+            if (connection != null) {
+                //return connection to pull
+                connection.close();
+            }
+        } catch (SQLException e) {
+            //log
+        }
+    }
+
+    void close(PreparedStatement preparedStatement) {
+        try {
+            if (preparedStatement != null) {
+                preparedStatement.close();
+            }
+        } catch (SQLException e) {
+            //log
+        }
     }
 
 

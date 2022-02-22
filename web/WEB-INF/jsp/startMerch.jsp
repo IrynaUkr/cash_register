@@ -13,8 +13,11 @@
 <head>
     <title>merch</title>
 </head>
+<style>
+
+</style>
 <body>
-<h3>  ${sessionScope.user.surname}  <fmt:message key="label.welcome" /> ${sessionScope.user.role} </h3>
+<h3>  ${sessionScope.user.surname} <fmt:message key="label.welcome"/> ${sessionScope.user.role} </h3>
 
 <h2>${sessionScope.message}</h2><br>
 
@@ -23,23 +26,22 @@
 
 
 <form action="${pageContext.request.contextPath}/merch/createProduct" target="_blank">
-    <button> <fmt:message key="label.create_product" /> </button>
+    <button><fmt:message key="label.create_product"/></button>
 </form>
 <br>
 
-<br>
 
 <form action="/merch/setAmountProduct" target="_blank">
-    <button> <fmt:message key="label.add_product" /></button>
+    <button><fmt:message key="label.add_product"/></button>
 </form>
 <br>
 <form action="/merch/ServletProductPages" target="_blank">
-    <button><fmt:message key="label.del_product" /></button>
+    <button><fmt:message key="label.del_product"/></button>
 </form>
 
 <br>
 <form action="/logout" target="_blank" method="post">
-    <button><fmt:message key="label.logout" /></button>
+    <button><fmt:message key="label.logout"/></button>
 </form>
 
 </body>

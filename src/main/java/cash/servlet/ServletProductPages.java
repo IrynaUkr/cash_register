@@ -2,18 +2,14 @@ package cash.servlet;
 
 import cash.db.dao.impl.ProductDaoImpl;
 import cash.entity.Product;
-import cash.entity.Receipt;
 import cash.service.ServiceReceiptProduct;
-import jdk.jfr.Frequency;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
-import static cash.service.ServiceReceiptProduct.*;
 
 @WebServlet("/merch/ServletProductPages")
 public class ServletProductPages extends HttpServlet {
@@ -21,6 +17,11 @@ public class ServletProductPages extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String language= "en";
+        if(request.getSession().getAttribute("lang")!=null){
+           language= (String) request.getSession().getAttribute("lang");
+        }
+        int id_lang = (new ServiceReceiptProduct()).getId_lang(language);
         int page = 1;
         int recordsPerPage = 5;
         int totalAmountRecords = 0;
@@ -42,9 +43,9 @@ public class ServletProductPages extends HttpServlet {
         }
         if (request.getSession().getAttribute("sorting") != null) {
             String sorting = String.valueOf(request.getSession().getAttribute("sorting"));
-            products = productDao.viewAllWithSorting((page - 1) * recordsPerPage, recordsPerPage, sorting);
+            products = productDao.viewAllWithSorting((page - 1) * recordsPerPage, recordsPerPage, sorting,id_lang );
         } else {
-            products = productDao.viewAllWithRestrict((page - 1) * recordsPerPage, recordsPerPage);
+            products = productDao.viewAllWithRestrict((page - 1) * recordsPerPage, recordsPerPage, id_lang);
         }
         totalAmountRecords = productDao.getTotalAmountRecords();
         totalAmPages = (int) Math.ceil(totalAmountRecords * 1.0 / recordsPerPage);

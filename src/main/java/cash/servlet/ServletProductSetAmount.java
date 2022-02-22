@@ -1,21 +1,14 @@
 package cash.servlet;
 
-import cash.db.dao.ProductDao;
-import cash.db.dao.impl.PaymentDaoImpl;
 import cash.db.dao.impl.ProductDaoImpl;
 import cash.entity.Product;
-import cash.entity.Receipt;
-import cash.entity.ReceiptProducts;
+import cash.service.ServiceReceiptProduct;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-
-import static cash.service.ServiceReceiptProduct.createReceiptProduct;
-import static cash.service.ServiceReceiptProduct.updateAmountSumReceipt;
 
 @WebServlet("/merch/setAmountProduct")
 public class ServletProductSetAmount extends HttpServlet {
@@ -23,11 +16,15 @@ public class ServletProductSetAmount extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-        List<Product> products = productDao.findAll();
+        String language= "en";
+        if(request.getSession().getAttribute("lang")!=null){
+            language= (String) request.getSession().getAttribute("lang");
+        }
+        int id_lang = (new ServiceReceiptProduct()).getId_lang(language);
+        List<Product> products = productDao.findAllByLang(id_lang);
         request.getSession()
                 .setAttribute("products", products);
-        request.getRequestDispatcher("/WEB-INF/jsp/product/updateDeleteProduct.jsp")
+        request.getRequestDispatcher("/WEB-INF/jsp/product/updateAmount.jsp")
                 .forward(request, response);
     }
 
@@ -35,8 +32,13 @@ public class ServletProductSetAmount extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Product product= null;
         Double amount =0.0;
+        String language= "en";
+        if(request.getSession().getAttribute("lang")!=null){
+            language= (String) request.getSession().getAttribute("lang");
+        }
+        int id_lang = (new ServiceReceiptProduct()).getId_lang(language);
         if (request.getParameter("productNA") != null && (request.getParameter("amountNA") != null)) {
-            product = productDao.findProductByName(request.getParameter("productNA"));
+            product = productDao.findProductByNameLang(request.getParameter("productNA"), id_lang);
             System.out.println(product +"found");
             amount = Double.valueOf(request.getParameter("amountNA"));
         } else if (request.getParameter("productCA") != null && request.getParameter("amountCA") != null) {
