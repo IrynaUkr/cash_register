@@ -19,26 +19,26 @@
 <h3>  ${sessionScope.user.surname}  <fmt:message key="label.welcome" /> ${sessionScope.user.role} </h3>
 </h3>
 <h2>${sessionScope.message}</h2><br>
-<h4> the check is open:</h4>
-${sessionScope.receipt.number} -number<br>
-${sessionScope.receipt.date} -date<br>
-${sessionScope.receipt.status}- status<br>
-${sessionScope.receipt.operationType} -operationType<br>
+<h4> <fmt:message key="label.open_receipt" />:</h4>
+${sessionScope.receipt.number} -N<br>
+${sessionScope.receipt.date} -<br>
+${sessionScope.receipt.status}- <fmt:message key="label.status" /><br>
+${sessionScope.receipt.operationType} <fmt:message key="label.type" /><br>
 
 <c:forEach var="bean" items="${sessionScope.receipt.receiptProducts}">
-    code- ${bean.code};
-    name- ${bean.name};
-    price- ${bean.price};
-    amount- ${bean.amount};
-    total - ${bean.amount*bean.price};
+    <fmt:message key="label.code" />- ${bean.code};
+    <fmt:message key="label.name" />- ${bean.name};
+    <fmt:message key="label.price" />- ${bean.price};
+    <fmt:message key="label.amount" />- ${bean.amount};
+    <fmt:message key="label.sum" /> - ${bean.amount*bean.price};
     <br>
 </c:forEach>
 
-<h5>${sessionScope.receipt.amount} -total amount
-    ${sessionScope.receipt.sum} -total sum <br>
-    ${sessionScope.user.surname} -surname</h5>
+<h5>${sessionScope.receipt.amount} -<fmt:message key="label.total_amount" />
+    ${sessionScope.receipt.sum} - <fmt:message key="label.sum" /> <br>
+    ${sessionScope.user.surname} </h5>
 <h3> ${sessionScope.message} </h3>
-<h4> add product by name: </h4>
+<h4>  <fmt:message key="label.add_product_byName" />: </h4>
 
 <form action="/cashier/addProductToReceiptList" method="post">
     <select name="productNA">
@@ -52,7 +52,7 @@ ${sessionScope.receipt.operationType} -operationType<br>
     <input type="submit" value="add product by name">
 </form>
 
-<h4> add product by code: </h4>
+<h4>  <fmt:message key="label.add_product_byCode" /> </h4>
 <form action="/cashier/addProductToReceiptList" method="post">
     <select name="productCA">
         <c:forEach items="${products}" var="productCode">
@@ -66,7 +66,7 @@ ${sessionScope.receipt.operationType} -operationType<br>
     <input type="submit" value="add product by code">
 </form>
 
-<h4>delete product by name:</h4>
+<h4> <fmt:message key="label.del_product" />:</h4>
 enter amount of product, that had been added in check before<br>
 <form action="/cashier/deleteProductFromProductList" method="post">
     <select name="productND">
@@ -76,7 +76,7 @@ enter amount of product, that had been added in check before<br>
             <option value="---------">---------------</option>
         </c:forEach>
     </select>
-    <input type="text" name="amountND" placeholder="amount"> amount
+    <input type="text" name="amountND" placeholder="0"><fmt:message key="label.amount" />
     <input type="submit" value="delete product by name">
 </form>
 
@@ -90,7 +90,7 @@ enter amount of product, that had been added in check before<br>
             <option value="---------">---------------</option>
         </c:forEach>
     </select>
-    <input type="text" name="amountCD" placeholder="amount"> amount
+    <input type="text" name="amountCD" placeholder="0">  <fmt:message key="label.amount" />
 
     <input type="submit" value="delete product by code">
 </form>
@@ -102,7 +102,7 @@ enter amount of product, that had been added in check before<br>
 
 <br>
 <form action="/ServletBack" target="_blank">
-    <button>back to start ${sessionScope.user.role} page</button>
+    <button><fmt:message key="label.back_to_start" />  ${sessionScope.user.role} </button>
 </form>
 
 

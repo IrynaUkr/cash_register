@@ -14,6 +14,7 @@ public class ProductDaoImpl implements ProductDao {
 
     public static final String SELECT_PRODUCT_BY_ID = "SELECT * FROM product  WHERE id_product = ?";
     public static final String SELECT_PRODUCT_BY_CODE = "SELECT * FROM product  WHERE code = ?";
+    public static final String SELECT_PRODUCT_BY_CODE_LANG = "SELECT * FROM product JOIN translate WHERE product.id_product = translate.id_prod_tr and id_lang_tr=? and code=?";
     public static final String SELECT_PRODUCT_BY_NAME_LANG = "SELECT * FROM product JOIN translate WHERE product.id_product = translate.id_prod_tr and id_lang_tr=? and name_tr = ?";
     public static final String SELECT_PRODUCT_BY_NAME = "SELECT * FROM product  WHERE name = ?";
     public static final String SELECT_FROM_PRODUCT = "SELECT * FROM product";
@@ -38,7 +39,7 @@ public class ProductDaoImpl implements ProductDao {
         try {
             con = DBManager.getInstance().getConnection();
             pstmt = con.prepareStatement(SELECT_FROM_PRODUCT_LIMIT);
-            pstmt.setInt(1,id_lang);
+            pstmt.setInt(1, id_lang);
             pstmt.setInt(2, offset);
             pstmt.setInt(3, noOfRecords);
             rs = pstmt.executeQuery();
@@ -62,7 +63,6 @@ public class ProductDaoImpl implements ProductDao {
     public int getTotalAmountRecords() {
         return totalAmountRecords;
     }
-
 
 
     public List<Product> viewAllWithSorting(int offset, int recordsOnPage, String sortingType, int id_lang) {
@@ -123,7 +123,7 @@ public class ProductDaoImpl implements ProductDao {
         return products;
     }
 
-    public List findAllByLang(int id_lang) {
+    public List <Product> findAllByLang(int id_lang) {
         List<Product> products = new ArrayList<>();
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -158,6 +158,7 @@ public class ProductDaoImpl implements ProductDao {
         product.setUom(rs.getString("uom"));
         return product;
     }
+
     private Product extractProductLang(ResultSet rs) throws SQLException {
         Product product = new Product();
         product.setProductId(rs.getInt("id_product"));
@@ -294,6 +295,25 @@ public class ProductDaoImpl implements ProductDao {
         return result > 0;
     }
 
+    public void setNameDescription(int id_product, int id_lang, String name, String description) {
+        PreparedStatement pstmt = null;
+        Connection con = null;
+        try {
+            con = DBManager.getInstance().getConnection();
+            pstmt = con.prepareStatement("INSERT INTO translate (id_prod_tr,id_lang_tr,name_tr,description_tr) VALUES(?, ?,?,?)");
+            pstmt.setInt(1, id_product);
+            pstmt.setInt(2, id_lang);
+            pstmt.setString(3, name);
+            pstmt.setString(4, description);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            close(pstmt);
+            close(con);
+        }
+    }
+
 
     @Override
     public boolean update(Product product) {
@@ -386,6 +406,30 @@ public class ProductDaoImpl implements ProductDao {
         return product;
     }
 
+    public Product findProductByCodeLang(String code, int id_lang) {
+        Product product = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        Connection con = null;
+        try {
+            con = DBManager.getInstance().getConnection();
+            pstmt = con.prepareStatement(SELECT_PRODUCT_BY_CODE_LANG);
+            pstmt.setInt(1,id_lang);
+            pstmt.setString(2, code);
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                product = extractProductLang(rs);
+            }
+            rs.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            close(pstmt);
+            close(con);
+        }
+        return product;
+    }
+
     @Override
     public Product findProductByName(String name) {
         Product product = null;
@@ -442,31 +486,6 @@ public class ProductDaoImpl implements ProductDao {
             flag = deleteByCode(code);
         }
         return flag;
-    }
-
-    public int findIDReceiptByCodeInSales(String code) {
-        int idReceipt = 0;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        Connection con = null;
-        try {
-            con = DBManager.getInstance().getConnection();
-            pstmt = con.prepareStatement("select product_has_receipt.receipt_id_receipt from product_has_receipt join product where product_has_receipt.product_id_product=product.id_product and code=?");
-            pstmt.setString(1, code);
-            rs = pstmt.executeQuery();
-            if (rs.next()) {
-                idReceipt = rs.getInt("product_has_receipt.receipt_id_receipt");
-                System.out.println(idReceipt +" idReceipt");
-            }
-            rs.close();
-
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } finally {
-            close(pstmt);
-            close(con);
-        }
-        return idReceipt;
     }
 
 

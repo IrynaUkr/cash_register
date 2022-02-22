@@ -29,12 +29,12 @@ choose Receipt number<br>
             <option value="${receipt.number}">${receipt.number}</option>
         </c:forEach>
     </select>
-    <input type="submit" value="Submit">
+    <input type="submit" value="<fmt:message key="label.send" />">
 </form>
 
 
 <form action="/ServletBack" target="_blank">
-    <button>back to start ${sessionScope.user.role} page</button>
+    <button><fmt:message key="label.back_to_start" /> ${sessionScope.user.role} </button>
 </form>
 
 

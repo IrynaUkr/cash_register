@@ -25,7 +25,7 @@
 та зазначати їх кількість на складі.<br>
 
 
-<form action="${pageContext.request.contextPath}/merch/createProduct" target="_blank">
+<form action="/merch/createProduct" target="_blank">
     <button><fmt:message key="label.create_product"/></button>
 </form>
 <br>

@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
+import static cash.service.ServiceForServ.getId_lang;
+
 @WebServlet("/cashier/createReceipt")
 public class ServletSaveReceiptToDB extends HttpServlet {
     ProductDaoImpl productDao = new ProductDaoImpl();
@@ -18,7 +20,8 @@ public class ServletSaveReceiptToDB extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        List<Product> products = productDao.findAll();
+        int id_lang = getId_lang(request);
+        List<Product> products = productDao.findAllByLang(id_lang);
         System.out.println(products);
         request.getSession().setAttribute("products", products);
         request.getRequestDispatcher("/WEB-INF/jsp/receipt/createReceipt.jsp").forward(request,response);

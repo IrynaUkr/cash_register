@@ -42,12 +42,12 @@
         <thread>
             <tr>
                 <td> N</td>
-                <td>Code</td>
-                <td>Name</td>
-                <td>Price</td>
-                <td>Amount</td>
-                <td>Units of measure</td>
-                <td>Description</td>
+                <td><fmt:message key="label.code"/></td>
+                <td><fmt:message key="label.code"/></td>
+                <td><fmt:message key="label.price"/></td>
+                <td><fmt:message key="label.amount"/></td>
+                <td><fmt:message key="label.UOM"/></td>
+                <td><fmt:message key="label.des"/></td>
             </tr>
         </thread>
         <c:forEach var="bean" items="${sessionScope.products}">

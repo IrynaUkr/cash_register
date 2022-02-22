@@ -10,6 +10,8 @@ import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.util.List;
 
+import static cash.service.ServiceForServ.getId_lang;
+
 @WebServlet("/merch/setAmountProduct")
 public class ServletProductSetAmount extends HttpServlet {
     ProductDaoImpl productDao = new ProductDaoImpl();
@@ -31,19 +33,15 @@ public class ServletProductSetAmount extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Product product= null;
-        Double amount =0.0;
-        String language= "en";
-        if(request.getSession().getAttribute("lang")!=null){
-            language= (String) request.getSession().getAttribute("lang");
-        }
-        int id_lang = (new ServiceReceiptProduct()).getId_lang(language);
+        double amount =0.0;
+        int id_lang = getId_lang(request);
         if (request.getParameter("productNA") != null && (request.getParameter("amountNA") != null)) {
             product = productDao.findProductByNameLang(request.getParameter("productNA"), id_lang);
             System.out.println(product +"found");
-            amount = Double.valueOf(request.getParameter("amountNA"));
+            amount = Double.parseDouble(request.getParameter("amountNA"));
         } else if (request.getParameter("productCA") != null && request.getParameter("amountCA") != null) {
-            product = productDao.findProductByCode(request.getParameter("productCA"));
-             amount = Double.valueOf(request.getParameter("amountCA"));
+            product = productDao.findProductByCodeLang(request.getParameter("productCA"),id_lang);
+             amount = Double.parseDouble(request.getParameter("amountCA"));
         }
         boolean isUpdate = productDao.updateAmount(product, amount);
         if(isUpdate){

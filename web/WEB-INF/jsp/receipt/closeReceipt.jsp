@@ -18,17 +18,17 @@
 </h3>
 <h2>${sessionScope.message}</h2><br>
 <h4>Change Status Receipt:</h4> <br>
-<br>choose Receipt number<br>
+<br><br>
 <form action="/cashier/closeReceipt" method="post">
     <select name="number">
         <c:forEach items="${receipts}" var="receipt">
             <option value="${receipt.number}">${receipt.number}</option>
         </c:forEach>
     </select>
-    <input type="submit" value="CLOSE receipt">
-
+    <input type="submit" value="<fmt:message key="label.close_receipt" />">
+<br> <br>
     <form action="/ServletBack" target="_blank">
-        <button>back to start ${sessionScope.user.role} page</button>
+        <button><fmt:message key="label.back_to_start" /> ${sessionScope.user.role} </button>
     </form>
 
 </form>

@@ -26,6 +26,14 @@ public class ReceiptImpl implements ReceiptDao {
             " product_has_receipt.price , product_has_receipt.product_id_product , product.name, product.code, product.uom" +
             "            FROM product_has_receipt JOIN product ON product_has_receipt.product_id_product = product.id_product" +
             "            WHERE receipt_id_receipt=?";
+    public static final String SQL_JOIN_LANG = "SELECT product_has_receipt.amount, product_has_receipt.price," +
+            " product.code, product.uom, translate.name_tr" +
+            " FROM product_has_receipt" +
+            " JOIN product" +
+            " ON product_has_receipt.product_id_product = product.id_product" +
+            " JOIN translate" +
+            " ON translate.id_prod_tr=product.id_product" +
+            " WHERE product_has_receipt.receipt_id_receipt=? and translate.id_lang_tr=?";
 
 
     @Override
@@ -171,7 +179,6 @@ public class ReceiptImpl implements ReceiptDao {
         }
     }
 
-
     private void mapReceipt(Receipt receipt, PreparedStatement pstmt) throws SQLException {
         int k = 0;
         pstmt.setString(1, receipt.getNumber());
@@ -256,8 +263,6 @@ public class ReceiptImpl implements ReceiptDao {
                 .replace("]", "!]");
     }
 
-
-
     public List<Receipt> findReceiptByDate(Date date) {
         List<Receipt> receipts = new ArrayList<>();
         PreparedStatement pstmt = null;
@@ -280,18 +285,20 @@ public class ReceiptImpl implements ReceiptDao {
         return receipts;
     }
 
-    public ArrayList<ReceiptProducts> getListProductsByIdReceipt(Integer idReceipt) {
+
+    public ArrayList<ReceiptProducts> getListProductsByIdReceiptLANG(Integer idReceipt, int id_lang) {
         ArrayList<ReceiptProducts> products = new ArrayList<>();
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         Connection con = null;
         try {
             con = DBManager.getInstance().getConnection();
-            pstmt = con.prepareStatement(SQL_JOIN);
+            pstmt = con.prepareStatement(SQL_JOIN_LANG);
             pstmt.setInt(1, idReceipt);
+            pstmt.setInt(2, id_lang);
             rs = pstmt.executeQuery();
             while (rs.next()) {
-                products.add(extractProduct(rs));
+                products.add(extractProductLang(rs));
             }
             rs.close();
             pstmt.close();
@@ -302,16 +309,16 @@ public class ReceiptImpl implements ReceiptDao {
         return products;
     }
 
-    private ReceiptProducts extractProduct(ResultSet rs) throws SQLException {
+
+    private ReceiptProducts extractProductLang(ResultSet rs) throws SQLException {
         ReceiptProducts receiptProduct = new ReceiptProducts();
         receiptProduct.setCode(rs.getString("code"));
-        receiptProduct.setName(rs.getString("name"));
+        receiptProduct.setName(rs.getString("name_tr"));
         receiptProduct.setPrice(rs.getDouble("price"));
         receiptProduct.setAmount(rs.getDouble("amount"));
-        //  receiptProduct.setAmount(rs.getDouble("total"));
         receiptProduct.setUom(rs.getString("uom"));
-
         return receiptProduct;
     }
+
 
 }

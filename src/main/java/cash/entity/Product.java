@@ -24,6 +24,13 @@ public class Product extends Entity {
         this.uom = uom;
     }
 
+    public Product(String code,  Double price, Double amount, String uom) {
+        this.code = code;
+        this.price = price;
+        this.amount = amount;
+        this.uom = uom;
+    }
+
     public Product(String code) {
         this.code = code;
     }

@@ -16,18 +16,22 @@
 <h3>  ${sessionScope.user.surname}  <fmt:message key="label.welcome" /> ${sessionScope.user.role} </h3>
 </h3>
 <h2>${sessionScope.message}</h2><br>
-Create new Product:<br>
+<h3><fmt:message key="label.create_product"/></h3><br>
 
 <form action="/merch/createProduct" method="post">
-    <input type="text" name="code"> code<br><br>
-    <input type="text" name="name"> name<br> <br>
-    <input type="text" name="description"> description<br> <br>
-    <input type="text" name="price"> price <br> <br>
-    <input type="text" name="amount"> amount <br> <br>
-    <select name="uom">
-        <option value="unit">unit</option>
-        <option value="kg">kg</option>
-    </select> units of measure  <br> <br>
+    <input type="text" name="code">  <fmt:message key="label.code"/><br><br>
+    <input type="text" name="price">  <fmt:message key="label.price"/> <br> <br>
+    <input type="text" name="amount">  <fmt:message key="label.amount"/> <br> <br>
+    <select name="uom"> <fmt:message key="label.UOM"/>
+        <option value="unit"><fmt:message key="label.kg"/></option>
+        <option value="kg"><fmt:message key="label.unit"/></option>
+    </select>  <fmt:message key="label.amount"/>  <br> <br>
+    <input type="text" name="nameEn"> <fmt:message key="label.nameEn"/><br> <br>
+    <input type="text" name="descriptionEn"> <fmt:message key="label.desEn"/><br> <br>
+    <input type="text" name="nameUa"> <fmt:message key="label.nameUa"/><br> <br>
+    <input type="text" name="descriptionUa"> <fmt:message key="label.desUa"/><br> <br>
+    <input type="text" name="nameRu"><fmt:message key="label.nameRu"/><br> <br>
+    <input type="text" name="descriptionRu"> <fmt:message key="label.desRu"/><br> <br>
     <input type="submit" value="Submit">
 </form>
 

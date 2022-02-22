@@ -98,20 +98,6 @@ public class ServiceReceiptProduct {
         receipt.setAmount(amount);
     }
 
-    public static List<Receipt> getReceiptsbyCodes(String... codes) {
-        List<Receipt> receipts = new ArrayList<>();
-        for(String code : codes){
-           receipts.add( getByCode(code));
-            System.out.println("print from string.. codes");
-        }
-       return receipts;
-
-    }
-    static Receipt getByCode(String code){
-
-        int idReceipt = (new ProductDaoImpl()).findIDReceiptByCodeInSales(code);
-        return (new ReceiptImpl()).findEntityById(idReceipt);
-    }
  void close(Statement statement) {
         try {
             if (statement != null) {

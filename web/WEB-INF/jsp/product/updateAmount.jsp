@@ -46,7 +46,7 @@
 
 
 <form action="/ServletBack" target="_blank">
-    <button>back to start ${sessionScope.user.role} page</button>
+    <button><fmt:message key="label.back_to_start" /> ${sessionScope.user.role} </button>
 </form>
 
 

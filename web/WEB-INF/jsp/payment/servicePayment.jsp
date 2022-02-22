@@ -25,7 +25,7 @@ SERVICE_CASH_OUTFLOW-выдано из кассы на служебные нуж
         <option value="SERVICE_CASH_OUTFLOW">CASH_OUTFLOW</option>
     </select><br><br>
     <input type="text" name="value" > payment
-    <input type="text" name="description" > description
+    <input type="text" name="description" > <fmt:message key="label.des" />
     <input type="submit" value="Submit">
 </form>
 

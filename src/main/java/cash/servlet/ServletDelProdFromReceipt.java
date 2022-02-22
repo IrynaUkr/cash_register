@@ -14,6 +14,7 @@ import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.util.List;
 
+import static cash.service.ServiceForServ.getId_lang;
 import static cash.service.ServiceReceiptProduct.*;
 import static cash.service.ServiceReceiptProduct.createReceiptProduct;
 
@@ -26,7 +27,8 @@ public class ServletDelProdFromReceipt extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         List<Receipt> receipts = receiptDao.findAll();
         request.getSession().setAttribute("receipts", receipts);
-        List<Product> products = productDao.findAll();
+        int id_lang = getId_lang(request);
+        List<Product> products = productDao.findAllByLang(id_lang);
         request.getSession().setAttribute("products", products);
         request.getRequestDispatcher("/WEB-INF/jsp/product/deleteProductFromReceipt.jsp")
                 .forward(request, response);
@@ -34,11 +36,12 @@ public class ServletDelProdFromReceipt extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        int id_lang = getId_lang(request);
         Product product= new Product();
         if (request.getParameter("productNA") != null ) {
-            product = productDao.findProductByName(request.getParameter("productNA"));
+            product = productDao.findProductByNameLang(request.getParameter("productNA"),id_lang);
         } else if (request.getParameter("productCA") != null) {
-           product = productDao.findProductByCode(request.getParameter("productCA"));
+           product = productDao.findProductByCodeLang(request.getParameter("productCA"), id_lang);
         }
         Receipt receipt = (Receipt) request.getSession().getAttribute("receipt");
         Transaction t = new Transaction();

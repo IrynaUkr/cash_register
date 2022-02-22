@@ -20,23 +20,23 @@
 </head>
 <body>
 <form action="/cashier/openReceipt" method="post">
-    enter number of check: <input type="text" name="number"><br>
-    select status of check:
+    N: <input type="text" name="number"><br>
+    <fmt:message key="label.status" />:
     <select name="status">
         <option value="CREATED" selected>CREATED</option>
         <option value="CLOSED"> CLOSED</option>
     </select> <br><br>
-    select type of check:
+    <fmt:message key="label.type" />
     <select name="type">
         <option value="SALE" selected>SALE</option>
         <option value="RETURN"> RETURN</option>
     </select> <br> <br>
-    <input type="submit" value="Submit">
+    <input type="submit" value="<fmt:message key="label.send" />">
 
 </form>
 
 <form action="/ServletBack" target="_blank">
-    <button>back to start ${sessionScope.user.role} page</button>
+    <button><fmt:message key="label.back_to_start" /> ${sessionScope.user.role} </button>
 </form>
 </body>
 </html>

@@ -21,7 +21,7 @@
 </h3>
 <h2>${sessionScope.message}</h2><br>
 
-<br>choose Receipt number<br>
+<br>N <br>
 <form action="/chief/canselReceipt" method="post">
     <select name="number">
         <c:forEach items="${receipts}" var="receipt">
@@ -32,12 +32,12 @@
 </form>
 
 <form action="/ServletBack" target="_blank">
-    <button>back to start ${sessionScope.user.role} page</button>
+    <button><fmt:message key="label.back_to_start" /> ${sessionScope.user.role} </button>
 </form>
 
 
 <form action="/logout" target="_blank" method="post">
-    <button>logout</button>
+    <button><fmt:message key="label.logout" /></button>
 </form>
 </body>
 </html>

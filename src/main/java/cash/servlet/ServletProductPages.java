@@ -10,6 +10,8 @@ import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.util.List;
 
+import static cash.service.ServiceForServ.getId_lang;
+
 
 @WebServlet("/merch/ServletProductPages")
 public class ServletProductPages extends HttpServlet {
@@ -17,11 +19,7 @@ public class ServletProductPages extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String language= "en";
-        if(request.getSession().getAttribute("lang")!=null){
-           language= (String) request.getSession().getAttribute("lang");
-        }
-        int id_lang = (new ServiceReceiptProduct()).getId_lang(language);
+        int id_lang = getId_lang(request);
         int page = 1;
         int recordsPerPage = 5;
         int totalAmountRecords = 0;

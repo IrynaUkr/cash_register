@@ -13,7 +13,6 @@ import java.util.Date;
 public class ServletOpenCheck extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("doGet in /cashier/openReceipt");
         request.getRequestDispatcher("/WEB-INF/jsp/receipt/openReceipt.jsp")
                 .forward(request,response);
 

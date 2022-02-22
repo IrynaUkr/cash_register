@@ -18,7 +18,7 @@
 <h3>  ${sessionScope.user.surname}  <fmt:message key="label.welcome" /> ${sessionScope.user.role} </h3>
 </h3>
 <h2>${sessionScope.message}</h2><br>
-choose Receipt number<br>
+<br>
 
 <form action="/chief/delProdFromReceipt" method="post">
     <select name="number">
@@ -27,13 +27,13 @@ choose Receipt number<br>
         </c:forEach>
     </select>
     <br>
-    select product by name: <br>
+    <fmt:message key="label.name" />: <br>
             <select name="products1">
                 <c:forEach items="${products}" var="pName1">
                     <option value="${pName1.name}">${pName1.name}</option>
                 </c:forEach>
             </select>
-    select product by code: <br>
+    <fmt:message key="label.code" />: <br>
             <select name="products3">
                 <c:forEach items="${products}" var="pCode1">
                     <option value="${pCode1.code}">${pCode1.code}</option>
@@ -43,7 +43,7 @@ choose Receipt number<br>
 </form>
 
 <form action="/ServletBack" target="_blank">
-    <button>back to start ${sessionScope.user.role} page</button>
+    <button><fmt:message key="label.back_to_start" /> ${sessionScope.user.role} </button>
 </form>
 
 

@@ -15,18 +15,18 @@
     <title>print Receipt</title>
 </head>
 <body>
-$<br>choose Receipt number<br>
+<br> <br>
 <form action="/cashier/printReceipt" method="post">
     <select name="number">
         <c:forEach items="${receipts}" var="receipt">
             <option value="${receipt.number}">${receipt.number}</option>
         </c:forEach>
     </select>
-    <input type="submit" value="Print Receipt">
+    <input type="submit" value="<fmt:message key="label.print_receipt" />">
 </form>
 
 <form action="/ServletBack" target="_blank">
-    <button>back to start ${sessionScope.user.role} page</button>
+    <button><fmt:message key="label.back_to_start" /> ${sessionScope.user.role} </button>>
 </form>
 
 </body>

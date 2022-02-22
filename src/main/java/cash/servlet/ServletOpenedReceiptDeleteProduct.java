@@ -4,12 +4,14 @@ import cash.db.dao.impl.ProductDaoImpl;
 import cash.entity.Product;
 import cash.entity.Receipt;
 import cash.entity.ReceiptProducts;
+import cash.service.ServiceReceiptProduct;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
 
+import static cash.service.ServiceForServ.getId_lang;
 import static cash.service.ServiceReceiptProduct.createReceiptProduct;
 import static cash.service.ServiceReceiptProduct.updateAmountSumReceipt;
 
@@ -23,13 +25,14 @@ public class ServletOpenedReceiptDeleteProduct extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        int id_lang = getId_lang(request);
         ReceiptProducts receiptProducts = new ReceiptProducts();
         if (request.getParameter("productND") != null && (request.getParameter("amountND") != null)) {
-            Product product = productDao.findProductByName(request.getParameter("productND"));
+            Product product = productDao.findProductByNameLang(request.getParameter("productND"),id_lang);
             Double amount = Double.valueOf(request.getParameter("amountND"));
             receiptProducts = createReceiptProduct(request, product, amount);
         } else if (request.getParameter("productCD") != null && request.getParameter("amountCD") != null) {
-            Product product = productDao.findProductByCode(request.getParameter("productCD"));
+            Product product = productDao.findProductByCodeLang(request.getParameter("productCD"),id_lang);
             Double amount = Double.valueOf(request.getParameter("amountCD"));
             receiptProducts = createReceiptProduct(request, product, amount);
         }

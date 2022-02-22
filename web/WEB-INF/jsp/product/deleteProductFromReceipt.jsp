@@ -27,14 +27,14 @@ choose Receipt number<br>
         </c:forEach>
     </select>
     <br>
-    select product by name: <br>
+    <fmt:message key="label.name" />: <br>
     <select name="productNA">
         <c:forEach items="${products}" var="pName1">
             <option value="${pName1.name}">${pName1.name}</option>
         </c:forEach>
     </select>
 
-    select product by code: <br>
+    <fmt:message key="label.code" /> <br>
     <select name="productCA">
         <c:forEach items="${products}" var="pCode1">
             <option value="${pCode1.code}">${pCode1.code}</option>
