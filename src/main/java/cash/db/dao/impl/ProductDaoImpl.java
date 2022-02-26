@@ -7,6 +7,7 @@ import cash.exceptions.DBException;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ProductDaoImpl implements ProductDao {
@@ -71,7 +72,6 @@ public class ProductDaoImpl implements ProductDao {
         queryBuilder.append("SELECT * FROM product JOIN translate WHERE product.id_product = translate.id_prod_tr and id_lang_tr=? ORDER by ");
         queryBuilder.append(sortingType);
         queryBuilder.append(" LIMIT ?, ?");
-        System.out.println(queryBuilder.toString() + "myquery");
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         Connection con = null;
@@ -81,13 +81,11 @@ public class ProductDaoImpl implements ProductDao {
             pstmt.setInt(1, id_lang);
             pstmt.setInt(2, offset);
             pstmt.setInt(3, recordsOnPage);
-
             rs = pstmt.executeQuery();
             while (rs.next()) {
                 products.add(extractProductLang(rs));
             }
-            rs = pstmt.executeQuery("select count(id_product)  from product");
-            System.out.println(rs + "SELECT count(id_product) FROM product");
+            rs = pstmt.executeQuery("SELECT COUNT (DISTINCT id_product)  FROM product ");
             if (rs.next())
                 this.totalAmountRecords = rs.getInt(1);
             rs.close();
@@ -123,7 +121,7 @@ public class ProductDaoImpl implements ProductDao {
         return products;
     }
 
-    public List <Product> findAllByLang(int id_lang) {
+    public List<Product> findAllByLang(int id_lang) {
         List<Product> products = new ArrayList<>();
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -267,8 +265,6 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public boolean create(Product product) {
-        if (product == null)
-            throw new IllegalArgumentException();
         int result;
         PreparedStatement pstmt = null;
         Connection con = null;
@@ -295,23 +291,34 @@ public class ProductDaoImpl implements ProductDao {
         return result > 0;
     }
 
-    public void setNameDescription(int id_product, int id_lang, String name, String description) {
+    public boolean addToDataBase(Product product, Connection con) throws SQLException {
+        int result;
         PreparedStatement pstmt = null;
-        Connection con = null;
-        try {
-            con = DBManager.getInstance().getConnection();
-            pstmt = con.prepareStatement("INSERT INTO translate (id_prod_tr,id_lang_tr,name_tr,description_tr) VALUES(?, ?,?,?)");
-            pstmt.setInt(1, id_product);
-            pstmt.setInt(2, id_lang);
-            pstmt.setString(3, name);
-            pstmt.setString(4, description);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            close(pstmt);
-            close(con);
+        pstmt = con.prepareStatement(INSERT_PRODUCT, Statement.RETURN_GENERATED_KEYS);
+        mapProduct(product, pstmt);
+        result = pstmt.executeUpdate();
+        if (result > 0) {
+            try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    product.setProductId(generatedKeys.getInt(1));
+                }
+            }
         }
+
+        return result > 0;
+    }
+
+    public boolean setNameDescription(int id_product, int id_lang, String name, String description, Connection con) throws SQLException {
+        int setNameDescription = 0;
+        PreparedStatement pstmt = null;
+        pstmt = con.prepareStatement("INSERT INTO translate (id_prod_tr,id_lang_tr,name_tr,description_tr) VALUES(?, ?,?,?)");
+        pstmt.setInt(1, id_product);
+        pstmt.setInt(2, id_lang);
+        pstmt.setString(3, name);
+        pstmt.setString(4, description);
+        setNameDescription = pstmt.executeUpdate();
+
+        return setNameDescription > 0;
     }
 
 
@@ -348,9 +355,7 @@ public class ProductDaoImpl implements ProductDao {
         if (product == null) {
             return false;
         }
-        product.getId();
         Double storeAmount = product.getAmount();
-        if (findEntityById(product.getId()) != null) {
             PreparedStatement pstmt = null;
             Connection con = null;
             int result = 0;
@@ -367,9 +372,6 @@ public class ProductDaoImpl implements ProductDao {
                 close(con);
             }
             return result > 0;
-        } else {
-            return false;
-        }
     }
 
 
@@ -414,7 +416,7 @@ public class ProductDaoImpl implements ProductDao {
         try {
             con = DBManager.getInstance().getConnection();
             pstmt = con.prepareStatement(SELECT_PRODUCT_BY_CODE_LANG);
-            pstmt.setInt(1,id_lang);
+            pstmt.setInt(1, id_lang);
             pstmt.setString(2, code);
             rs = pstmt.executeQuery();
             if (rs.next()) {
@@ -468,7 +470,7 @@ public class ProductDaoImpl implements ProductDao {
             rs = pstmt.executeQuery();
             if (rs.next()) {
                 product = extractProductLang(rs);
-            }
+             }
             rs.close();
             pstmt.close();
         } catch (SQLException ex) {
@@ -488,5 +490,32 @@ public class ProductDaoImpl implements ProductDao {
         return flag;
     }
 
+    public boolean createProductWithTranslate(Product product,
+                                              HashMap<Integer, String> names,
+                                              HashMap<Integer, String> descriptions) {
+        boolean isCreateProduct = false;
+        Connection connection = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            connection = DBManager.getInstance().getConnection();
+            connection.setAutoCommit(false);
+            isCreateProduct = addToDataBase(product, connection);
+            for (int i = 1; i <= 3; i++) {
+                System.out.println(product.getId() + i + names.get(i) + descriptions.get(i));
+                isCreateProduct = setNameDescription(product.getId(), i, names.get(i), descriptions.get(i), connection);
+            }
+            connection.commit();
+        } catch (SQLException e) {
+            //log
+            e.printStackTrace();
+            connection.rollback();
+            throw e;
+        } finally {
+            close(pstmt);
+            close(connection);
+            return isCreateProduct;
+        }
+    }
 
 }

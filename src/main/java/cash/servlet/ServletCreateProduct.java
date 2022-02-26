@@ -2,14 +2,18 @@ package cash.servlet;
 
 import cash.db.dao.impl.ProductDaoImpl;
 import cash.entity.Product;
+import cash.exceptions.AppException;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
+import java.util.HashMap;
 
 @WebServlet("/merch/createProduct")
 public class ServletCreateProduct extends HttpServlet {
+    private final ProductDaoImpl productDao = new ProductDaoImpl();
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.getRequestDispatcher("/WEB-INF/jsp/product/createProduct.jsp").forward(request, response);
@@ -17,32 +21,59 @@ public class ServletCreateProduct extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (request.getParameter("code") != null
-                && request.getParameter("price") != null
-                && request.getParameter("amount") != null) {
-            String code = request.getParameter("code");
-            Double price = Double.valueOf((request.getParameter("price")));
-            Double amount = Double.valueOf(request.getParameter("amount"));
-            String uom = request.getParameter("uom");
-            Product product = new Product(code, price, amount, uom);
-            ProductDaoImpl productDao = new ProductDaoImpl();
-            boolean flag = productDao.create(product);
-            String nameEn = request.getParameter("nameEn");
-            String nameRu = request.getParameter("nameRu");
-            String nameUa = request.getParameter("nameUa");
-            String descriptionEn = request.getParameter("descriptionEn");
-            String descriptionRu = request.getParameter("descriptionRu");
-            String descriptionUa = request.getParameter("descriptionUa");
-            productDao.setNameDescription(product.getId(), 1, nameEn, descriptionEn);
-            productDao.setNameDescription(product.getId(), 2, nameUa, descriptionUa);
-            productDao.setNameDescription(product.getId(), 3, nameRu, descriptionRu);
-            if (flag) {
+        if (isCreateFormValid(request)) {
+            System.out.println("product valid");
+            Product product = getProduct(request);
+            if (productDao.createProductWithTranslate(product, getNames(request), getDescriptions(request))) {
                 request.getSession().setAttribute("message", "product was added!");
                 response.sendRedirect("/ServletBack");
             } else {
-                request.getSession().setAttribute("message", "product was not added!");
-                response.sendRedirect("/ServletBack");
+                request.getSession().setAttribute("message", "product could not be added");
+                request.getRequestDispatcher("/WEB-INF/jsp/product/createProduct.jsp").forward(request, response);
             }
+        } else {
+            request.getSession().setAttribute("message", "not all fields are filled");
+            request.getRequestDispatcher("/WEB-INF/jsp/product/createProduct.jsp").forward(request, response);
         }
+    }
+
+
+    private boolean isCreateFormValid(HttpServletRequest request) {
+        System.out.println(request.getParameter("code"));
+        return (request.getParameter("code") != ""
+                && request.getParameter("price") != ""
+                && request.getParameter("amount") != ""
+                && request.getParameter("uom") != ""
+                && request.getParameter("nameEn") != ""
+                && request.getParameter("nameRu") != ""
+                && request.getParameter("nameUa") != ""
+                && request.getParameter("descriptionEn") != ""
+                && request.getParameter("descriptionRu") != "");
+        }
+
+    private Product getProduct(HttpServletRequest request) {
+        String code = request.getParameter("code");
+        Double price = Double.valueOf((request.getParameter("price")));
+        Double amount = Double.valueOf(request.getParameter("amount"));
+        String uom = request.getParameter("uom");
+        return new Product(code, price, amount, uom);
+    }
+
+    private HashMap<Integer, String> getDescriptions(HttpServletRequest request) {
+        HashMap<Integer, String> descriptions = new HashMap<>();
+        descriptions.put(1, request.getParameter("descriptionEn"));
+        descriptions.put(2, request.getParameter("descriptionUa"));
+        descriptions.put(3, request.getParameter("descriptionRu"));
+        System.out.println("desc" + descriptions);
+        return descriptions;
+    }
+
+    private HashMap<Integer, String> getNames(HttpServletRequest request) {
+        HashMap<Integer, String> names = new HashMap<>();
+        names.put(1, request.getParameter("nameEn"));
+        names.put(2, request.getParameter("nameUa"));
+        names.put(3, request.getParameter("nameRu"));
+        System.out.println("names" + names);
+        return names;
     }
 }

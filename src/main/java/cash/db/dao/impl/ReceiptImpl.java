@@ -319,6 +319,4 @@ public class ReceiptImpl implements ReceiptDao {
         receiptProduct.setUom(rs.getString("uom"));
         return receiptProduct;
     }
-
-
 }

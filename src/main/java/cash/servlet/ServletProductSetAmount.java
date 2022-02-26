@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static cash.service.ServiceForServ.getId_lang;
+import static cash.service.ServiceForServ.isValidate;
 
 @WebServlet("/merch/setAmountProduct")
 public class ServletProductSetAmount extends HttpServlet {
@@ -18,12 +19,7 @@ public class ServletProductSetAmount extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String language= "en";
-        if(request.getSession().getAttribute("lang")!=null){
-            language= (String) request.getSession().getAttribute("lang");
-        }
-        int id_lang = (new ServiceReceiptProduct()).getId_lang(language);
-        List<Product> products = productDao.findAllByLang(id_lang);
+        List<Product> products = productDao.findAllByLang(getId_lang(request));
         request.getSession()
                 .setAttribute("products", products);
         request.getRequestDispatcher("/WEB-INF/jsp/product/updateAmount.jsp")
@@ -32,23 +28,30 @@ public class ServletProductSetAmount extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Product product= null;
-        double amount =0.0;
-        int id_lang = getId_lang(request);
-        if (request.getParameter("productNA") != null && (request.getParameter("amountNA") != null)) {
-            product = productDao.findProductByNameLang(request.getParameter("productNA"), id_lang);
-            System.out.println(product +"found");
-            amount = Double.parseDouble(request.getParameter("amountNA"));
-        } else if (request.getParameter("productCA") != null && request.getParameter("amountCA") != null) {
-            product = productDao.findProductByCodeLang(request.getParameter("productCA"),id_lang);
-             amount = Double.parseDouble(request.getParameter("amountCA"));
+        if (isValidate(request)) {
+            Product product = null;
+            double amount = 0;
+            if (request.getParameter("productNA") != null && (request.getParameter("amountNA") != null)) {
+                product = productDao.findProductByNameLang(request.getParameter("productNA"), getId_lang(request));
+                amount = Double.parseDouble(request.getParameter("amountNA"));
+            } else if (request.getParameter("productCA") != null && request.getParameter("amountCA") != null) {
+                product = productDao.findProductByCodeLang(request.getParameter("productCA"), getId_lang(request));
+
+                amount = Double.parseDouble(request.getParameter("amountCA"));
+                System.out.println(amount);
+            }
+            if (productDao.updateAmount(product, amount)) {
+                request.getSession().setAttribute("message", "set new amount");
+            } else {
+                request.getSession().setAttribute("message", "did not set new amount");
+            }
+            response.sendRedirect("/ServletBack");
+        } else {
+            request.getSession().setAttribute("message", "not all fields are filled");
+            request.getRequestDispatcher("/WEB-INF/jsp/product/updateAmount.jsp")
+                    .forward(request, response);
         }
-        boolean isUpdate = productDao.updateAmount(product, amount);
-        if(isUpdate){
-            request.getSession().setAttribute("message", "set new amount");
-        }else{
-            request.getSession().setAttribute("message", "did not set new amount");
-        }
-        response.sendRedirect("/ServletBack");
     }
+
+
 }

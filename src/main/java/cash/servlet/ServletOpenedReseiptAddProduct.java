@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static cash.service.ServiceForServ.getId_lang;
+import static cash.service.ServiceForServ.isValidate;
 import static cash.service.ServiceReceiptProduct.createReceiptProduct;
 import static cash.service.ServiceReceiptProduct.updateAmountSumReceipt;
 
@@ -31,28 +32,30 @@ public class ServletOpenedReseiptAddProduct extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        int id_lang = getId_lang(request);
-        ReceiptProducts receiptProducts = new ReceiptProducts();
-        if (request.getParameter("productNA") != null && (request.getParameter("amountNA") != null)) {
-            Product product = productDao.findProductByNameLang(request.getParameter("productNA"), id_lang);
-            Double amount = Double.valueOf(request.getParameter("amountNA"));
-            receiptProducts = createReceiptProduct(request, product, amount);
-        } else if (request.getParameter("productCA") != null && request.getParameter("amountCA") != null) {
-            Product product = productDao.findProductByCodeLang(request.getParameter("productCA"), id_lang);
-            Double amount = Double.valueOf(request.getParameter("amountCA"));
-            receiptProducts = createReceiptProduct(request, product, amount);
-        }
-        Receipt receipt = (Receipt) request.getSession().getAttribute("receipt");
-        boolean add = receipt.getReceiptProducts().add(receiptProducts);
-        if (add) {
-            updateAmountSumReceipt(receipt);
-            request.setAttribute("message", "product was added");
+        if (isValidate(request)) {
+            Product product = null;
+            Double amount = 0.0;
+            if (request.getParameter("productNA") != null && (request.getParameter("amountNA") != null)) {
+                product = productDao.findProductByNameLang(request.getParameter("productNA"), getId_lang(request));
+                amount = Double.valueOf(request.getParameter("amountNA"));
+            } else if (request.getParameter("productCA") != null && request.getParameter("amountCA") != null) {
+                product = productDao.findProductByCodeLang(request.getParameter("productCA"), getId_lang(request));
+                amount = Double.valueOf(request.getParameter("amountCA"));
+            }
+            ReceiptProducts receiptProducts = createReceiptProduct(request, product, amount);
+            Receipt receipt = (Receipt) request.getSession().getAttribute("receipt");
+            boolean add = receipt.getReceiptProducts().add(receiptProducts);
+            if (add) {
+                updateAmountSumReceipt(receipt);
+                request.setAttribute("message", "product was added");
+            } else {
+                request.setAttribute("message", " product was not added");
+            }
+            request.getSession().setAttribute("receipt", receipt);
+            response.sendRedirect("/cashier/addProductToReceiptList");
         } else {
-            request.setAttribute("message", " product was not added");
+            request.getRequestDispatcher("/WEB-INF/jsp/receipt/createReceipt.jsp")
+                    .forward(request, response);
         }
-        request.getSession().setAttribute("receipt", receipt);
-        response.sendRedirect("/cashier/addProductToReceiptList");
     }
-
-
 }

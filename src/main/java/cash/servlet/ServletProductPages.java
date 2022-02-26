@@ -21,7 +21,7 @@ public class ServletProductPages extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int id_lang = getId_lang(request);
         int page = 1;
-        int recordsPerPage = 5;
+        int recordsPerPage = 4;
         int totalAmountRecords = 0;
         int totalAmPages = 0;
         List<Product> products = null;
@@ -31,7 +31,7 @@ public class ServletProductPages extends HttpServlet {
         if (request.getParameter("ProductCode") != null) {
             request.getSession().setAttribute("sorting", "code");
         } else if (request.getParameter("ProductName") != null) {
-            request.getSession().setAttribute("sorting", "name");
+            request.getSession().setAttribute("sorting", "name_tr");
         } else if (request.getParameter("ProductPrice") != null) {
             request.getSession().setAttribute("sorting", "price");
         } else if (request.getParameter("ProductAmount") != null) {
