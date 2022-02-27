@@ -28,11 +28,13 @@ public class ServletXReport extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-        getXreport(request);
-        response.sendRedirect("/chief/servletXReport");
-
+        if (request.getParameter("date") !="") {
+            Date date = Date.valueOf(request.getParameter("date"));
+            getXreport(request, date);
+            response.sendRedirect("/chief/servletXReport");
+        }else{
+            request.getSession().setAttribute("message", "choose date");
+            request.getRequestDispatcher("/WEB-INF/jsp/startChief.jsp").forward(request, response);
+        }
     }
-
-
 }

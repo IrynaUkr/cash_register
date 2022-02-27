@@ -88,8 +88,8 @@ public class ServiceReceiptProduct {
 
     public static void updateAmountSumReceipt(Receipt receipt) {
         ArrayList<ReceiptProducts> receiptProducts = receipt.getReceiptProducts();
-        Double sum = 0.0;
-        Double amount = 0.0;
+        double sum = 0.0;
+        double amount = 0.0;
         for (ReceiptProducts rp : receiptProducts) {
             sum += rp.getPrice() * rp.getAmount();
             amount += rp.getAmount();

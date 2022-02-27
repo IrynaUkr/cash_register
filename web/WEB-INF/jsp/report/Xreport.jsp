@@ -1,53 +1,121 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ page isELIgnored="false" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.1/css/bootstrap.min.css"
+      integrity="sha512-T584yQ/tdRR5QwOpfvDfVQUidzfgc2339Lc8uBDtcp/wYu80d7jwBgAxbyMh0a9YM9F8N3tdErpFI8iaGx6x5g=="
+      crossorigin="anonymous" referrerpolicy="no-referrer">
+<fmt:setLocale value="${sessionScope.lang}"/>
+<fmt:setBundle basename="languages"/>
 <html>
 <head>
     <title>X-report</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/style.css">
 </head>
 <body>
-
-<h3> Hello, ${sessionScope.user.surname} !</h3>
-you are logged in as ${sessionScope.user.role}<br>
-<h1>X-REPORT</h1>
-
-<h4> Returns list </h4>
-<c:forEach var="bean" items="${sessionScope.returnList}">
-    id.......${bean.id}; number...${bean.number} ; date..... ${bean.date} ;
-    status...${bean.status} ; type.....${bean.operationType}  ; sum......${bean.sum}  <br>
-</c:forEach><br>
-
-<h4> return total ${sessionScope.returnSum} </h4>
-
-<h4> Sales list </h4>
-<c:forEach var="bean" items="${sessionScope.saleList}">
-    id.......${bean.id}; number...${bean.number} ; date..... ${bean.date} ;
-    status...${bean.status} ; type.....${bean.operationType} ; sum......${bean.sum} <br>
-</c:forEach><br>
-<h4> sales total  ${sessionScope.saleSum} </h4>
-
-
-<h4> CASH_OUTFLOW list </h4>
-<c:forEach var="bean" items="${sessionScope.payOut}">
-    id.......${bean.id}; date..... ${bean.date} ;
- type.....${bean.type} ; sum......${bean.value} <br>
-</c:forEach><br>
-<h4> CASH_OUTFLOW- total  ${sessionScope.payOutSum} </h4>
-
-
-<h4> CASH_INFLOW list </h4>
-<c:forEach var="bean" items="${sessionScope.payIn}">
-    id.......${bean.id}; date..... ${bean.date} ;
-    type.....${bean.type} ; sum......${bean.value} <br>
-</c:forEach><br>
-<h4> CASH_INFLOW total  ${sessionScope.payInSum} </h4>
-
-<h2> CASH TOTAL  ${sessionScope.result} </h2>
-
-<form action="/ServletBack" target="_blank">
-
-    <button>back to start ${sessionScope.user.role} page</button>
-</form>
-
+<header>
+    <h3>  ${sessionScope.user.surname} , <fmt:message key="label.welcome"/> ${sessionScope.user.role} </h3>
+    <h3>X-REPORT</h3>
+</header>
+<div class="container">
+    <div class="container">
+        <table class="table table-striped table-bordered table-hover">
+            <thread>
+                <tr class="active">
+                    <td><fmt:message key="label.number"/> </td>
+                    <td><fmt:message key="label.date"/></td>
+                    <td><fmt:message key="label.status"/></td>
+                    <td><fmt:message key="label.type"/></td>
+                    <td><fmt:message key="label.sum"/></td>
+                </tr>
+            </thread>
+            <c:forEach var="bean" items="${sessionScope.returnList}">
+                <tr>
+                    <td>${bean.number}</td>
+                    <td>${bean.date} </td>
+                    <td>${bean.status}</td>
+                    <td>${bean.operationType}</td>
+                    <td>${bean.sum}</td>
+                </tr>
+            </c:forEach><br>
+            return total ${sessionScope.returnSum}
+        </table>
+    </div>
+    <div class="container">
+        <table class="table table-striped table-bordered table-hover">
+            <thread>
+                <tr class="active">
+                    <td><fmt:message key="label.number"/> </td>
+                    <td><fmt:message key="label.date"/></td>
+                    <td><fmt:message key="label.status"/></td>
+                    <td><fmt:message key="label.type"/></td>
+                    <td><fmt:message key="label.sum"/></td>
+                </tr>
+            </thread>
+            <c:forEach var="bean" items="${sessionScope.saleList}">
+                <tr>
+                    <td>${bean.number}</td>
+                    <td>${bean.date} </td>
+                    <td>${bean.status}</td>
+                    <td>${bean.operationType}</td>
+                    <td>${bean.sum}</td>
+                </tr>
+            </c:forEach><br>
+           sales total ${sessionScope.saleSum}
+        </table>
+    </div>
+    <div class="container">
+        <table class="table table-striped table-bordered table-hover">
+            <thread>
+                <tr class="active">
+                    <td><fmt:message key="label.number"/> </td>
+                    <td><fmt:message key="label.date"/></td>
+                    <td><fmt:message key="label.type"/></td>
+                    <td><fmt:message key="label.sum"/></td>
+                </tr>
+            </thread>
+            <c:forEach var="bean" items="${sessionScope.payOut}">
+                <tr>
+                    <td>${bean.id}</td>
+                    <td>${bean.date} </td>
+                    <td>${bean.type}</td>
+                    <td>${bean.value}</td>
+                </tr>
+            </c:forEach><br>
+            CASH_OUTFLOW- total ${sessionScope.payOutSum}
+        </table>
+    </div>
+    <div class="container">
+        <table class="table table-striped table-bordered table-hover">
+            <thread>
+                <tr class="active">
+                    <td><fmt:message key="label.number"/> </td>
+                    <td><fmt:message key="label.date"/></td>
+                    <td><fmt:message key="label.type"/></td>
+                    <td><fmt:message key="label.sum"/></td>
+                </tr>
+            </thread>
+            <c:forEach var="bean" items="${sessionScope.payIn}">
+                <tr>
+                    <td>${bean.id}</td>
+                    <td>${bean.date} </td>
+                    <td>${bean.type}</td>
+                    <td>${bean.value}</td>
+                </tr>
+            </c:forEach><br>
+            CASH_INFLOW total ${sessionScope.payInSum}
+        </table>
+    </div>
+    <hr>
+    <div class="container">
+        <h5> CASH TOTAL ${sessionScope.result} </h5>
+    </div>
+    <div class="container">
+        <form action="${pageContext.request.contextPath}/ServletBack" target="_blank">
+            <button><fmt:message key="label.back_to_start"/> ${sessionScope.user.role} </button>
+        </form>
+    </div>
+</div>
 </body>
 </html>

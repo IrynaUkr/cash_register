@@ -14,10 +14,22 @@ public class Receipt extends Entity {
     private Integer idUser;                     //author
     private OperationStatus status;
     private OperationType operationType;      //sale or refund of goods
-
-
     private ArrayList<ReceiptProducts> receiptProducts;
 
+    public Receipt(String number, Integer idUser, OperationStatus status, OperationType operationType) {
+        this.number = number;
+        this.idUser = idUser;
+        this.status = status;
+        this.operationType = operationType;
+    }
+
+    public Receipt(String number, Date date, Integer idUser, OperationStatus status, OperationType operationType) {
+        this.number = number;
+        this.date = date;
+        this.idUser = idUser;
+        this.status = status;
+        this.operationType = operationType;
+    }
     public ArrayList<ReceiptProducts> getReceiptProducts() {
         return receiptProducts;
     }
@@ -57,19 +69,9 @@ public class Receipt extends Entity {
     public Receipt() {
     }
 
-    public Receipt(String number, OperationStatus status, OperationType operationType) {
+//
 
-        this.status = status;
-        this.operationType = operationType;
-    }
 
-    public Receipt(String number, Date date, Integer idUser, OperationStatus status, OperationType operationType) {
-        this.number = number;
-        this.date = date;
-        this.idUser = idUser;
-        this.status = status;
-        this.operationType = operationType;
-    }
 
     public String getNumber() {
         return number;

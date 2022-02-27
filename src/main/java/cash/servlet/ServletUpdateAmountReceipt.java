@@ -26,10 +26,9 @@ public class ServletUpdateAmountReceipt extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        int id_lang = getId_lang(request);
         List<Receipt> receipts = receiptDao.findEntityByStatus(OperationStatus.CREATED);
         request.getSession().setAttribute("receipts", receipts);
-        List<Product> products = new ProductDaoImpl().findAllByLang(id_lang);
+        List<Product> products = new ProductDaoImpl().findAllByLang(getId_lang(request));
         request.getSession().setAttribute("products", products);
         request.getRequestDispatcher("/WEB-INF/jsp/receipt/chooseNumberReceipt.jsp")
                 .forward(request, response);
@@ -38,15 +37,15 @@ public class ServletUpdateAmountReceipt extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        int id_lang = getId_lang(request);
-        String number = request.getParameter("number");
-        Receipt receipt = receiptDao.findReceiptByNumber(number);
-        ArrayList<ReceiptProducts> products = receiptDao.getListProductsByIdReceiptLANG(receipt.getId(),id_lang);
-        receipt.setReceiptProducts(products);
-        updateAmountSumReceipt(receipt);
-        request.getSession().setAttribute("receipt", receipt);
-        request.getRequestDispatcher("/WEB-INF/jsp/receipt/updateReceipt.jsp")
-                .forward(request, response);
-
+        if (request.getParameter("number") != null) {
+            String number = request.getParameter("number");
+            Receipt receipt = receiptDao.findReceiptByNumber(number);
+            ArrayList<ReceiptProducts> products = receiptDao.getListProductsByIdReceiptLANG(receipt.getId(), getId_lang(request));
+            receipt.setReceiptProducts(products);
+            updateAmountSumReceipt(receipt);
+            request.getSession().setAttribute("receipt", receipt);
+            request.getRequestDispatcher("/WEB-INF/jsp/receipt/updateReceipt.jsp")
+                    .forward(request, response);
+        }
     }
 }

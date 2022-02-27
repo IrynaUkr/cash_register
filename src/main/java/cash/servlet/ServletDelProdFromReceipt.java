@@ -14,7 +14,7 @@ import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.util.List;
 
-import static cash.service.ServiceForServ.getId_lang;
+import static cash.service.ServiceForServ.*;
 import static cash.service.ServiceReceiptProduct.*;
 import static cash.service.ServiceReceiptProduct.createReceiptProduct;
 
@@ -25,10 +25,9 @@ public class ServletDelProdFromReceipt extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        List<Receipt> receipts = receiptDao.findAll();
+        List<Receipt> receipts = receiptDao.findEntityByStatus(OperationStatus.CREATED);
         request.getSession().setAttribute("receipts", receipts);
-        int id_lang = getId_lang(request);
-        List<Product> products = productDao.findAllByLang(id_lang);
+        List<Product> products = productDao.findAllByLang(getId_lang(request));
         request.getSession().setAttribute("products", products);
         request.getRequestDispatcher("/WEB-INF/jsp/product/deleteProductFromReceipt.jsp")
                 .forward(request, response);
@@ -36,16 +35,19 @@ public class ServletDelProdFromReceipt extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        int id_lang = getId_lang(request);
-        Product product= new Product();
-        if (request.getParameter("productNA") != null ) {
-            product = productDao.findProductByNameLang(request.getParameter("productNA"),id_lang);
-        } else if (request.getParameter("productCA") != null) {
-           product = productDao.findProductByCodeLang(request.getParameter("productCA"), id_lang);
+        if (isValidateName(request)) {
+            Product product = new Product();
+            if (request.getParameter("productNA") != null) {
+                product = productDao.findProductByNameLang(request.getParameter("productNA"), getId_lang(request));
+            } else if (request.getParameter("productCA") != null) {
+                product = productDao.findProductByCodeLang(request.getParameter("productCA"), getId_lang(request));
+            }
+            String number =  request.getParameter("number");
+            Receipt receipt = receiptDao.findReceiptByNumber(number);
+            System.out.println(receipt);
+            Transaction t = new Transaction();
+            t.delProductFromReceipt(receipt, product);
+            response.sendRedirect("/ServletBack");
         }
-        Receipt receipt = (Receipt) request.getSession().getAttribute("receipt");
-        Transaction t = new Transaction();
-        t.delProductFromReceipt(receipt, product);
-        response.sendRedirect("/ServletBack");
     }
 }

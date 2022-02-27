@@ -232,6 +232,7 @@ public class ReceiptImpl implements ReceiptDao {
     }
 
     public Receipt findReceiptByNumber(String number) {
+        System.out.println("number in findReceiptByNumber " + number);
         Receipt receipt = new Receipt();
         PreparedStatement pstmt = null;
         ResultSet rs = null;

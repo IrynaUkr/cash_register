@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Transaction {
+
     ProductDaoImpl productDao = new ProductDaoImpl();
 
     public static final String INSERT_INTO_RECEIPT = "INSERT INTO receipt ( number,status,type,id_user ) values (?,?,?,?)";

@@ -17,14 +17,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ReportService {
-    public static void getXreport(HttpServletRequest request) {
-        Date date = Date.valueOf(request.getParameter("date"));
+    public static void getXreport(HttpServletRequest request, Date date) {
         System.out.println(date);
-
         List<Receipt> receiptList = new ReceiptImpl().findReceiptByDate(date);
         List<Receipt> returnList = receiptList.stream().filter(r -> r.getType() == OperationType.RETURN).collect(Collectors.toList());
         List<Receipt> saleList = receiptList.stream().filter(r -> r.getType() == OperationType.SALE).collect(Collectors.toList());
-
         List<Payment> payments = new PaymentDaoImpl().findPaymentByDate(date);
         System.out.println(payments);
         List<Payment> payIn = payments.stream().filter(p -> p.getType() == OperationType.SERVICE_CASH_INFLOW).toList();
@@ -54,6 +51,7 @@ public class ReportService {
             con = DBManager.getInstance().getConnection();
             pstmt = con.prepareStatement("UPDATE receipt SET status ='FISCALISED' WHERE receipt.status= 'CLOSED'");
             result = pstmt.executeUpdate();
+            System.out.println(result+" amount fisc receipts");
         } catch (SQLException e) {
             e.printStackTrace();
         }

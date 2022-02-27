@@ -4,6 +4,7 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
+import java.sql.Date;
 
 import static cash.service.ReportService.*;
 
@@ -16,18 +17,26 @@ public class ServletZReport extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        getXreport(request);
-        if (setFiscalStatusReceipt()) {
-            request.getSession().setAttribute("message1", "recepts were fiscalized");
-        } else {
-            request.getSession().setAttribute("message1", "recepts were not fiscalized");
-        }
-        if (setFiscalStatusPayment()) {
-            request.getSession().setAttribute("message2", "payments were fiscalized");
-        } else {
-            request.getSession().setAttribute("message2", "payments were not fiscalized");
-        }
-        response.sendRedirect("/chief/servletZReport");
+        if (request.getParameter("date") != "") {
+            Date date = Date.valueOf(request.getParameter("date"));
+            getXreport(request, date);
+            if (setFiscalStatusReceipt()) {
+                request.getSession().setAttribute("message1", "receipts were fiscalized");
+                System.out.println("receipts were fiscalized");
+            } else {
+                request.getSession().setAttribute("message1", "receipts were not fiscalized");
+                System.out.println("receipts were not fiscalized");
+            }
+            if (setFiscalStatusPayment()) {
+                request.getSession().setAttribute("message2", "payments were fiscalized");
+            } else {
+                request.getSession().setAttribute("message2", "payments were not fiscalized");
+            }
+            response.sendRedirect("/chief/servletZReport");
 
+        } else {
+            request.getSession().setAttribute("message", "choose date");
+            request.getRequestDispatcher("/WEB-INF/jsp/startChief.jsp").forward(request, response);
+        }
     }
 }

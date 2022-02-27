@@ -20,7 +20,7 @@
 <body>
 <div class="container">
     <h3>  ${sessionScope.user.surname} <fmt:message key="label.welcome"/> ${sessionScope.user.role} </h3>
-    </h3>
+
     <h2>${sessionScope.message}</h2><br>
     <br>
 
