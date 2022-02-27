@@ -1,0 +1,60 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+
+
+h3 {
+    color: brown;
+}
+
+
+
+:focus {
+    background-color:lightgoldenrodyellow;
+}
+
+header {
+    height: 100px;
+    width: 100%;
+    background-color: gold;
+    float: left;
+    margin-right: 20px;
+    margin-top: 20px;
+    padding: 20px;
+    color: chocolate;
+    border: 3px solid sandybrown;
+    font-size: 20px;
+    text-align: center;
+}
+
+button {
+    color:brown;
+    background-color: gold;
+    font-size: 15px;
+    font-weight: bold;
+    border-radius: 20px;
+    border: outset;
+    height: 50px;
+    width: 250px;
+    text-align: center;
+    margin: 20px;
+    padding: 1px;
+}
+body{
+    background-color: lightgoldenrodyellow;
+    color: brown;
+}
+
+
+article{
+    background-color: white;
+    border: beige;
+    margin: 20px;
+    padding: 5px;
+    width: 40%;
+}
+input{
+    border-radius: 7px;
+
+}

@@ -23,6 +23,7 @@
     <h2>${sessionScope.message}</h2><br>
 </header>
 choose Receipt number<br>
+
 <div class="container">
     <form action="${pageContext.request.contextPath}/chief/delProdFromReceipt" method="post">
         <select name="number">
@@ -44,7 +45,7 @@ choose Receipt number<br>
                 <option value="${pCode1.code}">${pCode1.code}</option>
             </c:forEach>
         </select>
-        <input type="submit" value="Submit">
+        <input type="submit" class="btn btn-warning" value="Submit">
     </form>
 </div>
 
