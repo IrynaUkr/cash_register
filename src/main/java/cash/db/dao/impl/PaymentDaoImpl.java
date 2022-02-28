@@ -12,32 +12,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PaymentDaoImpl implements PaymentDao {
+    public PaymentDaoImpl() {
+    }
 
     public static final String SELECT_PAYMENT_BY_ID = "SELECT * FROM payment  WHERE id_payment = ?";
     public static final String SELECT_PAYMENT_BY_DATE = "SELECT * FROM payment  WHERE payment.status = 'CLOSED' and payment.date = ?";
     public static final String SELECT_FROM_PAYMENT = "SELECT * FROM payment";
     public static final String INSERT_PAYMENT = "INSERT INTO payment (value, id_user, type,description) VALUES (?, ?, ?, ?)";
     public static final String DELETE_PAYMENT_BY_ID = "DELETE FROM payment WHERE id_payment = ?";
-
-    public PaymentDaoImpl() {
-    }
+    public static final String PAYMENT_SET_FISCALISED = "UPDATE payment SET status ='FISCALISED' WHERE status= 'CLOSED'";
 
 
     @Override
-    public List findAll() {
+    public List<Payment> findAll() {
         List<Payment> payments = new ArrayList<>();
-        Statement stmt = null;
-        ResultSet rs = null;
-        Connection con = null;
-        try {
-            con = DBManager.getInstance().getConnection();
-            stmt = con.createStatement();
-            rs = stmt.executeQuery(SELECT_FROM_PAYMENT);
+        try (Connection con = DBManager.getInstance().getConnection();
+             Statement stmt = con.createStatement();
+             ResultSet rs = stmt.executeQuery(SELECT_FROM_PAYMENT)) {
             while (rs.next()) {
                 payments.add(extractPayment(rs));
             }
-            rs.close();
-            stmt.close();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -53,26 +47,20 @@ public class PaymentDaoImpl implements PaymentDao {
         payment.setDescription(rs.getString("description"));
         payment.setIdUser(rs.getInt("id_user"));
         payment.setStatus(OperationStatus.valueOf(rs.getString("status")));
-
         return payment;
     }
 
     @Override
     public Payment findEntityById(Integer id) {
         Payment payment = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        Connection con = null;
-        try {
-            con = DBManager.getInstance().getConnection();
-            pstmt = con.prepareStatement(SELECT_PAYMENT_BY_ID);
+        try (Connection con = DBManager.getInstance().getConnection();
+             PreparedStatement pstmt = con.prepareStatement(SELECT_PAYMENT_BY_ID)) {
             pstmt.setInt(1, id);
-            rs = pstmt.executeQuery();
+            ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                 payment = extractPayment(rs);
             }
             rs.close();
-            pstmt.close();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -81,42 +69,32 @@ public class PaymentDaoImpl implements PaymentDao {
 
     public List<Payment> findPaymentByDate(Date date) {
         List<Payment> payments = new ArrayList<>();
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        Connection con = null;
-        try {
-            con = DBManager.getInstance().getConnection();
-            pstmt = con.prepareStatement( SELECT_PAYMENT_BY_DATE);
+        try (
+                Connection con = DBManager.getInstance().getConnection();
+                PreparedStatement pstmt = con.prepareStatement(SELECT_PAYMENT_BY_DATE)) {
             pstmt.setString(1, String.valueOf(date));
-            rs = pstmt.executeQuery();
-           while (rs.next()) {
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
                 payments.add(extractPayment(rs));
             }
             rs.close();
-            pstmt.close();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
         return payments;
     }
+
     @Override
     public boolean delete(Payment payment) {
         if (payment == null) {
             return false;
-        }
-        int id = payment.getId();
-        if (findEntityById(id) == null) {
-            return false;
         } else {
+            int id = payment.getId();
             int executeUpdate = 0;
-            PreparedStatement pstmt = null;
-            Connection con = null;
-            try {
-                con = DBManager.getInstance().getConnection();
-                pstmt = con.prepareStatement(DELETE_PAYMENT_BY_ID);
+            try (Connection con = DBManager.getInstance().getConnection();
+                 PreparedStatement pstmt = con.prepareStatement(DELETE_PAYMENT_BY_ID)) {
                 pstmt.setInt(1, id);
                 executeUpdate = pstmt.executeUpdate();
-                pstmt.close();
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
@@ -124,22 +102,13 @@ public class PaymentDaoImpl implements PaymentDao {
         }
     }
 
-
-    public boolean delete(Integer id) {
-        return false;
-    }
-
-
     @Override
     public boolean create(Payment payment) {
         if (payment == null)
             throw new IllegalArgumentException();
         int result;
-        PreparedStatement pstmt = null;
-        Connection con = null;
-        try {
-            con = DBManager.getInstance().getConnection();
-            pstmt = con.prepareStatement(INSERT_PAYMENT, Statement.RETURN_GENERATED_KEYS);
+        try (Connection con = DBManager.getInstance().getConnection();
+             PreparedStatement pstmt = con.prepareStatement(INSERT_PAYMENT, Statement.RETURN_GENERATED_KEYS)) {
             mapPayment(payment, pstmt);
             result = pstmt.executeUpdate();
             if (result > 0) {
@@ -156,16 +125,23 @@ public class PaymentDaoImpl implements PaymentDao {
         }
         return result > 0;
     }
+
+    public boolean setFiscalStatusPayment() {
+        int result = 0;
+        try (Connection con = DBManager.getInstance().getConnection();
+             PreparedStatement pstmt = con.prepareStatement(PAYMENT_SET_FISCALISED)) {
+            result = pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result > 0;
+    }
+
     private void mapPayment(Payment payment, PreparedStatement pstmt) throws SQLException {
         pstmt.setDouble(1, payment.getValue());
         pstmt.setInt(2, (payment.getIdUser()));
         pstmt.setString(3, String.valueOf(payment.getType()));
         pstmt.setString(4, payment.getDescription());
-    }
-
-    @Override
-    public boolean update(Payment payment) {
-        return false;
     }
 }
 

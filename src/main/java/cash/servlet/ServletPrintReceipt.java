@@ -1,7 +1,6 @@
 package cash.servlet;
 
 import cash.db.dao.impl.ReceiptImpl;
-import cash.entity.OperationStatus;
 import cash.entity.Receipt;
 import cash.entity.ReceiptProducts;
 
@@ -21,7 +20,6 @@ public class ServletPrintReceipt extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        int id_lang = getId_lang(request);
         List<Receipt> receipts = receiptDao.findAll();
         request.getSession()
                 .setAttribute("receipts", receipts);

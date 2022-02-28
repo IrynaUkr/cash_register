@@ -5,8 +5,7 @@ import cash.db.dao.impl.ReceiptImpl;
 import cash.entity.OperationStatus;
 import cash.entity.Product;
 import cash.entity.Receipt;
-import cash.entity.ReceiptProducts;
-import cash.service.Transaction;
+import cash.db.dao.impl.TransactionDAO;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -15,8 +14,6 @@ import java.io.IOException;
 import java.util.List;
 
 import static cash.service.ServiceForServ.*;
-import static cash.service.ServiceReceiptProduct.*;
-import static cash.service.ServiceReceiptProduct.createReceiptProduct;
 
 @WebServlet("/chief/delProdFromReceipt")
 public class ServletDelProdFromReceipt extends HttpServlet {
@@ -45,7 +42,7 @@ public class ServletDelProdFromReceipt extends HttpServlet {
             String number =  request.getParameter("number");
             Receipt receipt = receiptDao.findReceiptByNumber(number);
             System.out.println(receipt);
-            Transaction t = new Transaction();
+            TransactionDAO t = new TransactionDAO();
             t.delProductFromReceipt(receipt, product);
             response.sendRedirect("/ServletBack");
         }

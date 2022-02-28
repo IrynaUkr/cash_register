@@ -1,7 +1,7 @@
 package cash.servlet;
 
 import cash.db.dao.impl.ProductDaoImpl;
-import cash.service.Transaction;
+import cash.db.dao.impl.TransactionDAO;
 import cash.entity.*;
 
 import javax.servlet.*;
@@ -16,7 +16,7 @@ import static cash.service.ServiceForServ.getId_lang;
 @WebServlet("/cashier/createReceipt")
 public class ServletSaveReceiptToDB extends HttpServlet {
     ProductDaoImpl productDao = new ProductDaoImpl();
-    Transaction transaction = new Transaction();
+    TransactionDAO transactionDAO = new TransactionDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -31,7 +31,7 @@ public class ServletSaveReceiptToDB extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Receipt receipt = (Receipt) request.getSession().getAttribute("receipt");
         try {
-            transaction.saveReceiptToDB(receipt);
+            transactionDAO.saveReceiptToDB(receipt);
         } catch (SQLException e) {
             e.printStackTrace();
         }

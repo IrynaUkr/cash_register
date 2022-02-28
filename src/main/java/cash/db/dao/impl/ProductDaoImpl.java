@@ -7,56 +7,46 @@ import cash.exceptions.DBException;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class ProductDaoImpl implements ProductDao {
-    private int totalAmountRecords;
-
+    public static final String COUNT_PRODUCT = "SELECT COUNT(DISTINCT id_product)  FROM product ";
     public static final String SELECT_PRODUCT_BY_ID = "SELECT * FROM product  WHERE id_product = ?";
     public static final String SELECT_PRODUCT_BY_CODE = "SELECT * FROM product  WHERE code = ?";
     public static final String SELECT_PRODUCT_BY_CODE_LANG = "SELECT * FROM product JOIN translate WHERE product.id_product = translate.id_prod_tr and id_lang_tr=? and code=?";
     public static final String SELECT_PRODUCT_BY_NAME_LANG = "SELECT * FROM product JOIN translate WHERE product.id_product = translate.id_prod_tr and id_lang_tr=? and name_tr = ?";
-    public static final String SELECT_PRODUCT_BY_NAME = "SELECT * FROM product  WHERE name = ?";
     public static final String SELECT_FROM_PRODUCT = "SELECT * FROM product";
     public static final String SELECT_FROM_PRODUCT_BY_LANG = "SELECT * FROM product JOIN translate WHERE product.id_product = translate.id_prod_tr and id_lang_tr=?";
     public static final String SELECT_FROM_PRODUCT_LIMIT = "SELECT * FROM product JOIN translate WHERE product.id_product = translate.id_prod_tr and id_lang_tr=? LIMIT ?, ?";
     public static final String INSERT_PRODUCT = "INSERT INTO product" +
-            " (code, name, description, price, amount, uom) VALUES (?, ?, ?, ?,?,?)";
-    public static final String SET_PRODUCT = "UPDATE product SET code = ?, name = ?, " +
-            "description = ?, price = ?, amount= ?, uom= ? WHERE id_product = ?";
+            " (code, price, amount, uom) VALUES (?, ?, ?, ?)";
     public static final String SET_AMOUNT_PRODUCT = "UPDATE product SET  amount= ? WHERE id_product = ?";
     public static final String DELETE_PRODUCT_BY_ID = "DELETE FROM product WHERE id_product = ?";
     public static final String DELETE_PRODUCT_BY_CODE = "DELETE FROM product WHERE code = ?";
 
+
     public ProductDaoImpl() {
     }
 
+    private int totalAmountRecords;
+
     public List<Product> viewAllWithRestrict(int offset, int noOfRecords, int id_lang) {
         List<Product> products = new ArrayList<>();
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        Connection con = null;
-        try {
-            con = DBManager.getInstance().getConnection();
-            pstmt = con.prepareStatement(SELECT_FROM_PRODUCT_LIMIT);
+        try (Connection con = DBManager.getInstance().getConnection();
+             PreparedStatement pstmt = con.prepareStatement(SELECT_FROM_PRODUCT_LIMIT)) {
             pstmt.setInt(1, id_lang);
             pstmt.setInt(2, offset);
             pstmt.setInt(3, noOfRecords);
-            rs = pstmt.executeQuery();
+            ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
                 products.add(extractProductLang(rs));
             }
-            rs = pstmt.executeQuery("select count(id_product)  from product");
+            rs = pstmt.executeQuery(COUNT_PRODUCT);
             if (rs.next())
                 this.totalAmountRecords = rs.getInt(1);
             rs.close();
-            return products;
         } catch (SQLException ex) {
             ex.printStackTrace();
-        } finally {
-            close(pstmt);
-            close(con);
         }
         return products;
     }
@@ -72,74 +62,53 @@ public class ProductDaoImpl implements ProductDao {
         queryBuilder.append("SELECT * FROM product JOIN translate WHERE product.id_product = translate.id_prod_tr and id_lang_tr=? ORDER by ");
         queryBuilder.append(sortingType);
         queryBuilder.append(" LIMIT ?, ?");
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        Connection con = null;
-        try {
-            con = DBManager.getInstance().getConnection();
-            pstmt = con.prepareStatement(queryBuilder.toString());
+        try (Connection con = DBManager.getInstance().getConnection();
+             PreparedStatement pstmt = con.prepareStatement(queryBuilder.toString())) {
             pstmt.setInt(1, id_lang);
             pstmt.setInt(2, offset);
             pstmt.setInt(3, recordsOnPage);
-            rs = pstmt.executeQuery();
+            ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
                 products.add(extractProductLang(rs));
             }
-            rs = pstmt.executeQuery("SELECT COUNT (DISTINCT id_product)  FROM product ");
+            rs = pstmt.executeQuery(COUNT_PRODUCT);
             if (rs.next())
                 this.totalAmountRecords = rs.getInt(1);
             rs.close();
         } catch (SQLException ex) {
             ex.printStackTrace();
-        } finally {
-            close(pstmt);
-            close(con);
         }
         return products;
     }
 
     @Override
-    public List findAll() {
+    public List<Product> findAll() {
         List<Product> products = new ArrayList<>();
-        Statement stmt = null;
-        ResultSet rs = null;
-        Connection con = null;
-        try {
-            con = DBManager.getInstance().getConnection();
-            stmt = con.createStatement();
-            rs = stmt.executeQuery(SELECT_FROM_PRODUCT);
+        try (Connection con = DBManager.getInstance().getConnection();
+             Statement stmt = con.createStatement()) {
+            ResultSet rs = stmt.executeQuery(SELECT_FROM_PRODUCT);
             while (rs.next()) {
                 products.add(extractProduct(rs));
             }
             rs.close();
         } catch (SQLException ex) {
             ex.printStackTrace();
-        } finally {
-            close(stmt);
-            close(con);
         }
         return products;
     }
 
     public List<Product> findAllByLang(int id_lang) {
         List<Product> products = new ArrayList<>();
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        Connection con = null;
-        try {
-            con = DBManager.getInstance().getConnection();
-            pstmt = con.prepareStatement(SELECT_FROM_PRODUCT_BY_LANG);
+        try (Connection con = DBManager.getInstance().getConnection();
+             PreparedStatement pstmt = con.prepareStatement(SELECT_FROM_PRODUCT_BY_LANG)) {
             pstmt.setInt(1, id_lang);
-            rs = pstmt.executeQuery();
+            ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
                 products.add(extractProductLang(rs));
             }
             rs.close();
         } catch (SQLException ex) {
             ex.printStackTrace();
-        } finally {
-            close(pstmt);
-            close(con);
         }
         return products;
     }
@@ -172,23 +141,16 @@ public class ProductDaoImpl implements ProductDao {
     @Override
     public Product findEntityById(Integer id) {
         Product product = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        Connection con = null;
-        try {
-            con = DBManager.getInstance().getConnection();
-            pstmt = con.prepareStatement(SELECT_PRODUCT_BY_ID);
+        try (Connection con = DBManager.getInstance().getConnection();
+             PreparedStatement pstmt = con.prepareStatement(SELECT_PRODUCT_BY_ID)) {
             pstmt.setInt(1, id);
-            rs = pstmt.executeQuery();
+            ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                 product = extractProduct(rs);
             }
             rs.close();
         } catch (SQLException ex) {
             ex.printStackTrace();
-        } finally {
-            close(pstmt);
-            close(con);
         }
         return product;
     }
@@ -203,14 +165,10 @@ public class ProductDaoImpl implements ProductDao {
             return false;
         } else {
             int executeUpdate = 0;
-            PreparedStatement pstmt = null;
-            Connection con = null;
-            try {
-                con = DBManager.getInstance().getConnection();
-                pstmt = con.prepareStatement(DELETE_PRODUCT_BY_ID);
+            try (Connection con = DBManager.getInstance().getConnection();
+                 PreparedStatement pstmt = con.prepareStatement(DELETE_PRODUCT_BY_ID)) {
                 pstmt.setInt(1, id);
                 executeUpdate = pstmt.executeUpdate();
-                pstmt.close();
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
@@ -219,45 +177,17 @@ public class ProductDaoImpl implements ProductDao {
     }
 
 
-    public boolean delete(Integer id) {
+    public boolean deleteProductByCode(String code) {
         int executeUpdate = 0;
-        PreparedStatement pstmt = null;
-        Connection con = null;
-        if (findEntityById(id) == null) {
-            return false;
-        } else {
-            try {
-                con = DBManager.getInstance().getConnection();
-                pstmt = con.prepareStatement(DELETE_PRODUCT_BY_ID);
-                pstmt.setInt(1, id);
-                executeUpdate = pstmt.executeUpdate();
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            } finally {
-                close(pstmt);
-                close(con);
-            }
-            return executeUpdate > 0;
-        }
-    }
-
-    public boolean deleteByCode(String code) {
-        int executeUpdate = 0;
-        PreparedStatement pstmt = null;
-        Connection con = null;
         if (findProductByCode(code) == null) {
             return false;
         } else {
-            try {
-                con = DBManager.getInstance().getConnection();
-                pstmt = con.prepareStatement(DELETE_PRODUCT_BY_CODE);
+            try (Connection con = DBManager.getInstance().getConnection();
+                 PreparedStatement pstmt = con.prepareStatement(DELETE_PRODUCT_BY_CODE)) {
                 pstmt.setString(1, code);
                 executeUpdate = pstmt.executeUpdate();
             } catch (SQLException ex) {
                 ex.printStackTrace();
-            } finally {
-                close(pstmt);
-                close(con);
             }
             return executeUpdate > 0;
         }
@@ -266,15 +196,12 @@ public class ProductDaoImpl implements ProductDao {
     @Override
     public boolean create(Product product) {
         int result;
-        PreparedStatement pstmt = null;
-        Connection con = null;
-        try {
-            con = DBManager.getInstance().getConnection();
-            pstmt = con.prepareStatement(INSERT_PRODUCT, Statement.RETURN_GENERATED_KEYS);
-            mapProduct(product, pstmt);
-            result = pstmt.executeUpdate();
+        try (Connection con = DBManager.getInstance().getConnection();
+             PreparedStatement pst = con.prepareStatement(INSERT_PRODUCT, Statement.RETURN_GENERATED_KEYS)) {
+            mapProduct(product, pst);
+            result = pst.executeUpdate();
             if (result > 0) {
-                try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+                try (ResultSet generatedKeys = pst.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
                         product.setProductId(generatedKeys.getInt(1));
                     } else {
@@ -284,70 +211,8 @@ public class ProductDaoImpl implements ProductDao {
             }
         } catch (SQLException e) {
             throw new DBException("insert  was failed", e);
-        } finally {
-            close(pstmt);
-            close(con);
         }
         return result > 0;
-    }
-
-    public boolean addToDataBase(Product product, Connection con) throws SQLException {
-        int result;
-        PreparedStatement pstmt = null;
-        pstmt = con.prepareStatement(INSERT_PRODUCT, Statement.RETURN_GENERATED_KEYS);
-        mapProduct(product, pstmt);
-        result = pstmt.executeUpdate();
-        if (result > 0) {
-            try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    product.setProductId(generatedKeys.getInt(1));
-                }
-            }
-        }
-
-        return result > 0;
-    }
-
-    public boolean setNameDescription(int id_product, int id_lang, String name, String description, Connection con) throws SQLException {
-        int setNameDescription = 0;
-        PreparedStatement pstmt = null;
-        pstmt = con.prepareStatement("INSERT INTO translate (id_prod_tr,id_lang_tr,name_tr,description_tr) VALUES(?, ?,?,?)");
-        pstmt.setInt(1, id_product);
-        pstmt.setInt(2, id_lang);
-        pstmt.setString(3, name);
-        pstmt.setString(4, description);
-        setNameDescription = pstmt.executeUpdate();
-
-        return setNameDescription > 0;
-    }
-
-
-    @Override
-    public boolean update(Product product) {
-        if (product == null) {
-            return false;
-        }
-        product.getId();
-        if (findEntityById(product.getId()) != null) {
-            PreparedStatement pstmt = null;
-            Connection con = null;
-            int result = 0;
-            try {
-                con = DBManager.getInstance().getConnection();
-                pstmt = con.prepareStatement(SET_PRODUCT);
-                mapProduct(product, pstmt);
-                pstmt.setInt(7, product.getId());
-                result = pstmt.executeUpdate();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            } finally {
-                close(pstmt);
-                close(con);
-            }
-            return result > 0;
-        } else {
-            return false;
-        }
     }
 
 
@@ -356,166 +221,101 @@ public class ProductDaoImpl implements ProductDao {
             return false;
         }
         Double storeAmount = product.getAmount();
-            PreparedStatement pstmt = null;
-            Connection con = null;
-            int result = 0;
-            try {
-                con = DBManager.getInstance().getConnection();
-                pstmt = con.prepareStatement(SET_AMOUNT_PRODUCT);
-                pstmt.setDouble(1, storeAmount + amount);
-                pstmt.setInt(2, product.getId());
-                result = pstmt.executeUpdate();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            } finally {
-                close(pstmt);
-                close(con);
-            }
-            return result > 0;
+        int result = 0;
+        try (Connection con = DBManager.getInstance().getConnection();
+             PreparedStatement pstmt = con.prepareStatement(SET_AMOUNT_PRODUCT)) {
+            pstmt.setDouble(1, storeAmount + amount);
+            pstmt.setInt(2, product.getId());
+            result = pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result > 0;
     }
 
 
-    private void mapProduct(Product product, PreparedStatement pstmt) throws SQLException {
+    public void mapProduct(Product product, PreparedStatement pstmt) throws SQLException {
         pstmt.setString(1, product.getCode());
-        pstmt.setString(2, product.getName());
-        pstmt.setString(3, product.getDescription());
-        pstmt.setDouble(4, product.getPrice());
-        pstmt.setDouble(5, product.getAmount());
-        pstmt.setString(6, product.getUom());
+        pstmt.setDouble(2, product.getPrice());
+        pstmt.setDouble(3, product.getAmount());
+        pstmt.setString(4, product.getUom());
     }
 
-    @Override
+
     public Product findProductByCode(String code) {
         Product product = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        Connection con = null;
-        try {
-            con = DBManager.getInstance().getConnection();
-            pstmt = con.prepareStatement(SELECT_PRODUCT_BY_CODE);
+        try (Connection con = DBManager.getInstance().getConnection();
+             PreparedStatement pstmt = con.prepareStatement(SELECT_PRODUCT_BY_CODE)) {
             pstmt.setString(1, code);
-            rs = pstmt.executeQuery();
+            ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                 product = extractProduct(rs);
             }
             rs.close();
         } catch (SQLException ex) {
             ex.printStackTrace();
-        } finally {
-            close(pstmt);
-            close(con);
         }
         return product;
     }
 
     public Product findProductByCodeLang(String code, int id_lang) {
         Product product = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        Connection con = null;
-        try {
-            con = DBManager.getInstance().getConnection();
-            pstmt = con.prepareStatement(SELECT_PRODUCT_BY_CODE_LANG);
-            pstmt.setInt(1, id_lang);
-            pstmt.setString(2, code);
-            rs = pstmt.executeQuery();
+        try (Connection con = DBManager.getInstance().getConnection();
+             PreparedStatement pst = con.prepareStatement(SELECT_PRODUCT_BY_CODE_LANG)) {
+            pst.setInt(1, id_lang);
+            pst.setString(2, code);
+            ResultSet rs = pst.executeQuery();
             if (rs.next()) {
                 product = extractProductLang(rs);
             }
             rs.close();
         } catch (SQLException ex) {
             ex.printStackTrace();
-        } finally {
-            close(pstmt);
-            close(con);
         }
         return product;
     }
 
-    @Override
-    public Product findProductByName(String name) {
-        Product product = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        Connection con = null;
-        try {
-            con = DBManager.getInstance().getConnection();
-            pstmt = con.prepareStatement(SELECT_PRODUCT_BY_NAME);
-            pstmt.setString(1, name);
-            rs = pstmt.executeQuery();
-            if (rs.next()) {
-                product = extractProduct(rs);
-            }
-            rs.close();
-            pstmt.close();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } finally {
-            close(pstmt);
-            close(con);
-        }
-        return product;
-    }
 
     public Product findProductByNameLang(String name, int id_lang) {
         Product product = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        Connection con = null;
-        try {
-            con = DBManager.getInstance().getConnection();
-            pstmt = con.prepareStatement(SELECT_PRODUCT_BY_NAME_LANG);
+        try (Connection con = DBManager.getInstance().getConnection();
+             PreparedStatement pstmt = con.prepareStatement(SELECT_PRODUCT_BY_NAME_LANG)) {
             pstmt.setInt(1, id_lang);
             pstmt.setString(2, name);
-            rs = pstmt.executeQuery();
+            ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                 product = extractProductLang(rs);
-             }
+            }
             rs.close();
-            pstmt.close();
         } catch (SQLException ex) {
             ex.printStackTrace();
-        } finally {
-            close(pstmt);
-            close(con);
         }
         return product;
     }
 
-    public boolean deleteByCode(String... codes) {
+    public boolean deleteProductsByCode(String... codes) {
         boolean flag = false;
         for (String code : codes) {
-            flag = deleteByCode(code);
+            flag = deleteProductByCode(code);
         }
         return flag;
     }
 
-    public boolean createProductWithTranslate(Product product,
-                                              HashMap<Integer, String> names,
-                                              HashMap<Integer, String> descriptions) {
-        boolean isCreateProduct = false;
-        Connection connection = null;
-        PreparedStatement pstmt = null;
 
-        try {
-            connection = DBManager.getInstance().getConnection();
-            connection.setAutoCommit(false);
-            isCreateProduct = addToDataBase(product, connection);
-            for (int i = 1; i <= 3; i++) {
-                System.out.println(product.getId() + i + names.get(i) + descriptions.get(i));
-                isCreateProduct = setNameDescription(product.getId(), i, names.get(i), descriptions.get(i), connection);
+    public int getId_lang(String lang) {
+        int id_lang = 0;
+        try (Connection con = DBManager.getInstance().getConnection();
+             PreparedStatement pstmt = con.prepareStatement("select * from language where short_name= ? ")) {
+            pstmt.setString(1, lang);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                id_lang = rs.getInt(1);
+                System.out.println(id_lang + " idlang in get lang");
             }
-            connection.commit();
-        } catch (SQLException e) {
-            //log
-            e.printStackTrace();
-            connection.rollback();
-            throw e;
-        } finally {
-            close(pstmt);
-            close(connection);
-            return isCreateProduct;
+            rs.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
         }
+        return id_lang;
     }
-
 }

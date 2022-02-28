@@ -11,10 +11,4 @@ import java.util.List;
 
 public interface ReceiptDao extends BaseDao<Receipt>  {
 
-
-
-
-    List<Receipt> findEntityByType(OperationType operationType);
-
-
 }

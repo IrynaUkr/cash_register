@@ -1,8 +1,7 @@
 package cash.servlet;
 
-import cash.db.dao.impl.ProductDaoImpl;
+import cash.db.dao.impl.TransactionDAO;
 import cash.entity.Product;
-import cash.exceptions.AppException;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -12,7 +11,6 @@ import java.util.HashMap;
 
 @WebServlet("/merch/createProduct")
 public class ServletCreateProduct extends HttpServlet {
-    private final ProductDaoImpl productDao = new ProductDaoImpl();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -24,7 +22,7 @@ public class ServletCreateProduct extends HttpServlet {
         if (isCreateFormValid(request)) {
             System.out.println("product valid");
             Product product = getProduct(request);
-            if (productDao.createProductWithTranslate(product, getNames(request), getDescriptions(request))) {
+            if (new TransactionDAO().createProductWithTranslate(product, getNames(request), getDescriptions(request))) {
                 request.getSession().setAttribute("message", "product was added!");
                 response.sendRedirect("/ServletBack");
             } else {

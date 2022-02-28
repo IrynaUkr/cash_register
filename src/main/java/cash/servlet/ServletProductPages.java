@@ -2,7 +2,6 @@ package cash.servlet;
 
 import cash.db.dao.impl.ProductDaoImpl;
 import cash.entity.Product;
-import cash.service.ServiceReceiptProduct;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -59,7 +58,7 @@ public class ServletProductPages extends HttpServlet {
         boolean flag = false;
         if (request.getParameterValues("selected") != null) {
             String[] codes = request.getParameterValues("selected");
-            flag = productDao.deleteByCode(codes);
+            flag = productDao.deleteProductsByCode(codes);
         }
         if (flag) {
             request.getSession().setAttribute("message", "products was deleted!");

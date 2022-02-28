@@ -12,7 +12,6 @@ import java.util.List;
 public class ReceiptImpl implements ReceiptDao {
 
     public static final String SELECT_RECEIPT_BY_ID = "SELECT * FROM receipt  WHERE id_receipt = ?";
-    public static final String SELECT_RECEIPT_BY_TYPE = "SELECT * FROM receipt  WHERE type = ?";
     public static final String SELECT_RECEIPT_BY_STATUS = "SELECT * FROM receipt  WHERE status = ?";
     public static final String SELECT_RECEIPT_BY_NUMBER = "SELECT * FROM receipt  WHERE number = ?";
     public static final String SELECT_RETURN_BY_DATE = "SELECT receipt.id_receipt, receipt.type, receipt.status, receipt.number," +
@@ -22,10 +21,6 @@ public class ReceiptImpl implements ReceiptDao {
     public static final String SELECT_ALL_RECEIPT = "SELECT * FROM receipt";
     public static final String SET_RECEIPT = "UPDATE receipt SET status=?  WHERE number = ?";
     public static final String DELETE_RECEIPT_BY_ID = "DELETE FROM receipt WHERE id_receipt = ?";
-    public static final String SQL_JOIN = "select   product_has_receipt.amount," +
-            " product_has_receipt.price , product_has_receipt.product_id_product , product.name, product.code, product.uom" +
-            "            FROM product_has_receipt JOIN product ON product_has_receipt.product_id_product = product.id_product" +
-            "            WHERE receipt_id_receipt=?";
     public static final String SQL_JOIN_LANG = "SELECT product_has_receipt.amount, product_has_receipt.price," +
             " product.code, product.uom, translate.name_tr" +
             " FROM product_has_receipt" +
@@ -34,23 +29,19 @@ public class ReceiptImpl implements ReceiptDao {
             " JOIN translate" +
             " ON translate.id_prod_tr=product.id_product" +
             " WHERE product_has_receipt.receipt_id_receipt=? and translate.id_lang_tr=?";
+    public static final String RECEIPT_SET_FISCALISED = "UPDATE receipt SET status ='FISCALISED' WHERE receipt.status= 'CLOSED'";
 
 
     @Override
     public List<Receipt> findAll() {
         List<Receipt> receipts = new ArrayList<>();
-        Statement stmt = null;
-        ResultSet rs = null;
-        Connection con = null;
-        try {
-            con = DBManager.getInstance().getConnection();
-            stmt = con.createStatement();
-            rs = stmt.executeQuery(SELECT_ALL_RECEIPT);
+        try (Connection con = DBManager.getInstance().getConnection();
+             Statement stmt = con.createStatement()) {
+            ResultSet rs = stmt.executeQuery(SELECT_ALL_RECEIPT);
             while (rs.next()) {
                 receipts.add(extractReceipt(rs));
             }
             rs.close();
-            stmt.close();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -71,25 +62,19 @@ public class ReceiptImpl implements ReceiptDao {
     @Override
     public Receipt findEntityById(Integer id) {
         Receipt receipt = new Receipt();
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        Connection con = null;
-        try {
-            con = DBManager.getInstance().getConnection();
-            pstmt = con.prepareStatement(SELECT_RECEIPT_BY_ID);
+        try (Connection con = DBManager.getInstance().getConnection();
+             PreparedStatement pstmt = con.prepareStatement(SELECT_RECEIPT_BY_ID)) {
             pstmt.setInt(1, id);
-            rs = pstmt.executeQuery();
+            ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                 receipt = extractReceipt(rs);
             }
-            rs.close();
-            pstmt.close();
-            con.close();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
+            close(rs);
+            close(pstmt);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return receipt;
-
     }
 
 
@@ -103,42 +88,14 @@ public class ReceiptImpl implements ReceiptDao {
             return false;
         } else {
             int executeUpdate = 0;
-            PreparedStatement pstmt = null;
-            Connection con = null;
-            try {
-                con = DBManager.getInstance().getConnection();
-                pstmt = con.prepareStatement(DELETE_RECEIPT_BY_ID);
+            try (Connection con = DBManager.getInstance().getConnection();
+                 PreparedStatement pstmt = con.prepareStatement(DELETE_RECEIPT_BY_ID)) {
                 pstmt.setInt(1, id);
                 executeUpdate = pstmt.executeUpdate();
-                pstmt.close();
-                con.close();
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
             return executeUpdate > 0;
-        }
-    }
-
-
-    public boolean delete(Integer id) {
-        int executeUpdate = 0;
-        PreparedStatement pstmt = null;
-        Connection con = null;
-        if (findEntityById(id) == null) {
-            return false;
-        } else {
-            try {
-                con = DBManager.getInstance().getConnection();
-                pstmt = con.prepareStatement(DELETE_RECEIPT_BY_ID);
-                pstmt.setInt(1, id);
-                executeUpdate = pstmt.executeUpdate();
-                pstmt.close();
-                con.close();
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
-            return executeUpdate > 0;
-
         }
     }
 
@@ -147,29 +104,20 @@ public class ReceiptImpl implements ReceiptDao {
         return false;
     }
 
-    @Override
-    public boolean update(Receipt receipt) {
-        return false;
-    }
+
 //update  Status by Number
 
     public boolean updateStatus(OperationStatus status, Receipt receipt) {
         if (receipt == null) {
-            throw new IllegalArgumentException();
+            return false;
         }
-        receipt.getId();
         if (findEntityById(receipt.getId()) != null) {
-            PreparedStatement pstmt = null;
-            Connection con = null;
             int result = 0;
-            try {
-                con = DBManager.getInstance().getConnection();
-                pstmt = con.prepareStatement(SET_RECEIPT);
+            try (Connection con = DBManager.getInstance().getConnection();
+                 PreparedStatement pstmt = con.prepareStatement(SET_RECEIPT)) {
                 pstmt.setString(1, String.valueOf(status));
                 pstmt.setString(2, receipt.getNumber());
                 result = pstmt.executeUpdate();
-                pstmt.close();
-                con.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -179,52 +127,17 @@ public class ReceiptImpl implements ReceiptDao {
         }
     }
 
-    private void mapReceipt(Receipt receipt, PreparedStatement pstmt) throws SQLException {
-        int k = 0;
-        pstmt.setString(1, receipt.getNumber());
-        pstmt.setString(2, String.valueOf(receipt.getStatus()));
-        pstmt.setString(3, String.valueOf(receipt.getType()));
-    }
-
-    @Override
-    public List<Receipt> findEntityByType(OperationType type) {
-        List<Receipt> receipts = new ArrayList<>();
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        Connection con = null;
-        try {
-            con = DBManager.getInstance().getConnection();
-            pstmt = con.prepareStatement(SELECT_RECEIPT_BY_TYPE);
-            pstmt.setString(1, String.valueOf(type));
-            rs = pstmt.executeQuery();
-            while (rs.next()) {
-                receipts.add(extractReceipt(rs));
-            }
-            rs.close();
-            pstmt.close();
-            con.close();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return receipts;
-    }
 
     public List<Receipt> findEntityByStatus(OperationStatus status) {
         List<Receipt> receipts = new ArrayList<>();
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        Connection con = null;
-        try {
-            con = DBManager.getInstance().getConnection();
-            pstmt = con.prepareStatement(SELECT_RECEIPT_BY_STATUS);
+        try (Connection con = DBManager.getInstance().getConnection();
+             PreparedStatement pstmt = con.prepareStatement(SELECT_RECEIPT_BY_STATUS)) {
             pstmt.setString(1, String.valueOf(status));
-            rs = pstmt.executeQuery();
+            ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
                 receipts.add(extractReceipt(rs));
             }
             rs.close();
-            pstmt.close();
-            con.close();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -232,54 +145,32 @@ public class ReceiptImpl implements ReceiptDao {
     }
 
     public Receipt findReceiptByNumber(String number) {
-        System.out.println("number in findReceiptByNumber " + number);
         Receipt receipt = new Receipt();
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        Connection con = null;
-        try {
-            con = DBManager.getInstance().getConnection();
-            pstmt = con.prepareStatement(SELECT_RECEIPT_BY_NUMBER);
+        try (Connection con = DBManager.getInstance().getConnection();
+             PreparedStatement pstmt = con.prepareStatement(SELECT_RECEIPT_BY_NUMBER)) {
             pstmt.setString(1, number);
-            rs = pstmt.executeQuery();
+            ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                 receipt = extractReceipt(rs);
             }
             rs.close();
-            pstmt.close();
-            con.close();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-        System.out.println();
         return receipt;
     }
 
-    public static String escapeForLike(String param) {
-        return param
-                .replace("!", "!!")
-                .replace("%", "%!")
-                .replace("_", "!_")
-                .replace("[", "![")
-                .replace("]", "!]");
-    }
 
     public List<Receipt> findReceiptByDate(Date date) {
         List<Receipt> receipts = new ArrayList<>();
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        Connection con = null;
-        try {
-            con = DBManager.getInstance().getConnection();
-            pstmt = con.prepareStatement(SELECT_RETURN_BY_DATE);
+        try (Connection con = DBManager.getInstance().getConnection();
+             PreparedStatement pstmt = con.prepareStatement(SELECT_RETURN_BY_DATE)) {
             pstmt.setString(1, String.valueOf(date));
-            rs = pstmt.executeQuery();
+            ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
                 receipts.add(extractReceipt(rs));
             }
             rs.close();
-            pstmt.close();
-            con.close();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -289,27 +180,31 @@ public class ReceiptImpl implements ReceiptDao {
 
     public ArrayList<ReceiptProducts> getListProductsByIdReceiptLANG(Integer idReceipt, int id_lang) {
         ArrayList<ReceiptProducts> products = new ArrayList<>();
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        Connection con = null;
-        try {
-            con = DBManager.getInstance().getConnection();
-            pstmt = con.prepareStatement(SQL_JOIN_LANG);
+        try (Connection con = DBManager.getInstance().getConnection();
+             PreparedStatement pstmt = con.prepareStatement(SQL_JOIN_LANG)) {
             pstmt.setInt(1, idReceipt);
             pstmt.setInt(2, id_lang);
-            rs = pstmt.executeQuery();
+            ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
                 products.add(extractProductLang(rs));
             }
             rs.close();
-            pstmt.close();
-            con.close();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
         return products;
     }
 
+    public boolean setFiscalStatusReceipt() {
+        int result = 0;
+        try (Connection con = DBManager.getInstance().getConnection();
+             PreparedStatement pstmt = con.prepareStatement(RECEIPT_SET_FISCALISED)) {
+            result = pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result > 0;
+    }
 
     private ReceiptProducts extractProductLang(ResultSet rs) throws SQLException {
         ReceiptProducts receiptProduct = new ReceiptProducts();

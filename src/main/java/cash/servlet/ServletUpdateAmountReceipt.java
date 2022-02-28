@@ -6,7 +6,6 @@ import cash.entity.OperationStatus;
 import cash.entity.Product;
 import cash.entity.Receipt;
 import cash.entity.ReceiptProducts;
-import cash.service.Transaction;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -16,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static cash.service.ServiceForServ.getId_lang;
-import static cash.service.ServiceReceiptProduct.getReceiptProducts;
 import static cash.service.ServiceReceiptProduct.updateAmountSumReceipt;
 
 @WebServlet("/cashier/updateAmountReceipt")

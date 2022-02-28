@@ -1,5 +1,8 @@
 package cash.servlet;
 
+import cash.db.dao.impl.PaymentDaoImpl;
+import cash.db.dao.impl.ReceiptImpl;
+
 import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
@@ -19,15 +22,15 @@ public class ServletZReport extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (request.getParameter("date") != "") {
             Date date = Date.valueOf(request.getParameter("date"));
-            getXreport(request, date);
-            if (setFiscalStatusReceipt()) {
+            getXReport(request, date);
+            if (new ReceiptImpl().setFiscalStatusReceipt()) {
                 request.getSession().setAttribute("message1", "receipts were fiscalized");
                 System.out.println("receipts were fiscalized");
             } else {
                 request.getSession().setAttribute("message1", "receipts were not fiscalized");
                 System.out.println("receipts were not fiscalized");
             }
-            if (setFiscalStatusPayment()) {
+            if (new PaymentDaoImpl().setFiscalStatusPayment()) {
                 request.getSession().setAttribute("message2", "payments were fiscalized");
             } else {
                 request.getSession().setAttribute("message2", "payments were not fiscalized");

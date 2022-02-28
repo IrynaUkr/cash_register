@@ -14,7 +14,7 @@ public interface BaseDao<T extends Entity> {
 
     boolean create(T t);
 
-    boolean update(T t);
+
 
 
     default void close(Statement statement) {
@@ -37,7 +37,16 @@ public interface BaseDao<T extends Entity> {
             //log
         }
     }
-
+    default void close(ResultSet resultSet) {
+        try {
+            if (resultSet != null) {
+                //return connection to pull
+                resultSet.close();
+            }
+        } catch (SQLException e) {
+            //log
+        }
+    }
     default void close(PreparedStatement preparedStatement) {
         try {
             if (preparedStatement != null) {

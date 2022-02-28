@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserDaoImpl implements UserDao {
+    public UserDaoImpl() {
+    }
+
     public static final String SELECT_USER_BY_ID = "SELECT * FROM user  WHERE id_user = ?";
     public static final String SELECT_USER_BY_LOGIN = "SELECT * FROM user  WHERE login = ?";
     public static final String SELECT_USER_BY_ROLE = "SELECT * FROM user  WHERE role = ?";
@@ -20,25 +23,16 @@ public class UserDaoImpl implements UserDao {
     public static final String SET_USER = "UPDATE user SET login = ?, password = ?, role = ?, surname =? WHERE id_user =?";
     public static final String DELETE_USER_BY_ID = "DELETE FROM user WHERE id_user = ?";
 
-    public UserDaoImpl() {
-    }
-
 
     @Override
     public List<User> findAll() {
         List<User> users = new ArrayList<>();
-        Statement stmt = null;
-        ResultSet rs = null;
-        Connection con = null;
-        try {
-            con = DBManager.getInstance().getConnection();
-            stmt = con.createStatement();
-            rs = stmt.executeQuery(SELECT_FROM_USER);
+        try (Connection con = DBManager.getInstance().getConnection();
+             Statement stmt = con.createStatement();
+             ResultSet rs = stmt.executeQuery(SELECT_FROM_USER)) {
             while (rs.next()) {
                 users.add(extractUser(rs));
             }
-            rs.close();
-            stmt.close();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -48,20 +42,14 @@ public class UserDaoImpl implements UserDao {
     @Override
     public User findEntityById(Integer id) {
         User user = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        Connection con = null;
-        try {
-            con = DBManager.getInstance().getConnection();
-            pstmt = con.prepareStatement(SELECT_USER_BY_ID);
+        try (Connection con = DBManager.getInstance().getConnection();
+             PreparedStatement pstmt = con.prepareStatement(SELECT_USER_BY_ID)) {
             pstmt.setInt(1, id);
-            rs = pstmt.executeQuery();
-
+            ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                 user = extractUser(rs);
             }
             rs.close();
-            pstmt.close();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -70,20 +58,14 @@ public class UserDaoImpl implements UserDao {
 
     public User findEntityByLogin(String login) {
         User user = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        Connection con = null;
-        try {
-            con = DBManager.getInstance().getConnection();
-            pstmt = con.prepareStatement(SELECT_USER_BY_LOGIN);
+        try (Connection con = DBManager.getInstance().getConnection();
+             PreparedStatement pstmt = con.prepareStatement(SELECT_USER_BY_LOGIN)) {
             pstmt.setString(1, login);
-            rs = pstmt.executeQuery();
-
+            ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                 user = extractUser(rs);
             }
             rs.close();
-            pstmt.close();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -93,7 +75,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public boolean delete(User user) {
-        if(user==null){
+        if (user == null) {
             return false;
         }
         int id = user.getId();
@@ -101,42 +83,16 @@ public class UserDaoImpl implements UserDao {
             return false;
         } else {
             int executeUpdate = 0;
-            PreparedStatement pstmt = null;
-            Connection con = null;
-            try {
-                con = DBManager.getInstance().getConnection();
-                pstmt = con.prepareStatement(DELETE_USER_BY_ID);
+            try (Connection con = DBManager.getInstance().getConnection();
+                 PreparedStatement pstmt = con.prepareStatement(DELETE_USER_BY_ID)) {
                 pstmt.setInt(1, id);
                 executeUpdate = pstmt.executeUpdate();
-                pstmt.close();
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
             return executeUpdate > 0;
         }
     }
-
-
-    public boolean delete(Integer id) {
-        int executeUpdate = 0;
-        PreparedStatement pstmt = null;
-        Connection con = null;
-        if (findEntityById(id) == null) {
-            return false;
-        } else {
-            try {
-                con = DBManager.getInstance().getConnection();
-                pstmt = con.prepareStatement(DELETE_USER_BY_ID);
-                pstmt.setInt(1, id);
-                executeUpdate = pstmt.executeUpdate();
-                pstmt.close();
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
-            return executeUpdate > 0;
-        }
-    }
-
 
     private User extractUser(ResultSet rs) throws SQLException {
         User user = new User();
@@ -156,15 +112,10 @@ public class UserDaoImpl implements UserDao {
         }
         int result;
         if (findEntityByLogin(user.getLogin()) != null) {
-            System.out.println("this user have been found");
-            System.out.println(findEntityByLogin(user.getLogin()));
             return false;
         } else {
-            PreparedStatement pstmt = null;
-            Connection con = null;
-            try {
-                con = DBManager.getInstance().getConnection();
-                pstmt = con.prepareStatement(INSERT_USER, Statement.RETURN_GENERATED_KEYS);
+            try (Connection con = DBManager.getInstance().getConnection();
+                 PreparedStatement pstmt = con.prepareStatement(INSERT_USER, Statement.RETURN_GENERATED_KEYS)) {
                 mapUser(user, pstmt);
                 result = pstmt.executeUpdate();
                 if (result > 0) {
@@ -190,20 +141,16 @@ public class UserDaoImpl implements UserDao {
         pstmt.setString(4, user.getSurname());
     }
 
-    @Override
     public boolean update(User user) {
         if (user == null) {
             throw new IllegalArgumentException();
         }
         user.getId();
-        if (findEntityById(user.getId())!=null) {
-            System.out.println("this user has been found");
-            PreparedStatement pstmt = null;
-            Connection con = null;
+        if (findEntityById(user.getId()) != null) {
             int result = 0;
-            try {
-                con = DBManager.getInstance().getConnection();
-                pstmt = con.prepareStatement(SET_USER);
+            try (
+                    Connection con = DBManager.getInstance().getConnection();
+                    PreparedStatement pstmt = con.prepareStatement(SET_USER)) {
                 mapUser(user, pstmt);
                 result = pstmt.executeUpdate();
             } catch (SQLException e) {
@@ -219,19 +166,15 @@ public class UserDaoImpl implements UserDao {
     @Override
     public List<User> findUserByRole(String role) {
         List<User> users = new ArrayList<>();
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        Connection con = null;
-        try {
-            con = DBManager.getInstance().getConnection();
-            pstmt = con.prepareStatement(SELECT_USER_BY_ROLE);
+        try (
+                Connection con = DBManager.getInstance().getConnection();
+                PreparedStatement pstmt = con.prepareStatement(SELECT_USER_BY_ROLE)) {
             pstmt.setString(1, role);
-            rs= pstmt.executeQuery();
+            ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
                 users.add(extractUser(rs));
             }
             rs.close();
-            pstmt.close();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }

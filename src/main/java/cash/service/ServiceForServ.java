@@ -1,5 +1,7 @@
 package cash.service;
 
+import cash.db.dao.impl.ProductDaoImpl;
+
 import javax.servlet.http.HttpServletRequest;
 
 public class ServiceForServ {
@@ -9,7 +11,7 @@ public class ServiceForServ {
         if (request.getSession().getAttribute("lang") != null) {
             language = (String) request.getSession().getAttribute("lang");
         }
-        return (new ServiceReceiptProduct()).getId_lang(language);
+        return (new ProductDaoImpl()).getId_lang(language);
     }
 
     public static boolean isValidate(HttpServletRequest request) {
