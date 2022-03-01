@@ -41,7 +41,7 @@ public class ServletOpenedReceiptAddProduct extends HttpServlet {
                 amount = Double.parseDouble(request.getParameter("amountCA"));
             }
             if (product != null) {
-                ReceiptProducts receiptProducts = createReceiptProduct(request, product, amount);
+                ReceiptProducts receiptProducts = createReceiptProduct(product, amount);
                 Receipt receipt = (Receipt) request.getSession().getAttribute("receipt");
                 boolean add = receipt.getReceiptProducts().add(receiptProducts);
                 if (add) {

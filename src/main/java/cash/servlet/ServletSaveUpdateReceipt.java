@@ -4,7 +4,7 @@ import cash.db.dao.impl.ProductDaoImpl;
 import cash.entity.Product;
 import cash.entity.Receipt;
 import cash.entity.ReceiptProducts;
-import cash.db.dao.impl.TransactionDAO;
+import cash.db.dao.impl.TransactionDAOImpl;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -37,9 +37,9 @@ public class ServletSaveUpdateReceipt extends HttpServlet {
                 amount = Double.parseDouble(request.getParameter("amountCA"));
             }
             if (product != null) {
-                ReceiptProducts addReceiptProduct = createReceiptProduct(request, product, amount);
+                ReceiptProducts addReceiptProduct = createReceiptProduct(product, amount);
                 Receipt receipt = (Receipt) request.getSession().getAttribute("receipt");
-                TransactionDAO t = new TransactionDAO();
+                TransactionDAOImpl t = new TransactionDAOImpl();
                 t.updateAmountReceipt(receipt, addReceiptProduct);
                 response.sendRedirect("/ServletBack");
             }

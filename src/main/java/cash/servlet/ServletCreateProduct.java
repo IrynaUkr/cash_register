@@ -1,6 +1,6 @@
 package cash.servlet;
 
-import cash.db.dao.impl.TransactionDAO;
+import cash.db.dao.impl.TransactionDAOImpl;
 import cash.entity.Product;
 
 import javax.servlet.*;
@@ -22,7 +22,7 @@ public class ServletCreateProduct extends HttpServlet {
         if (isCreateFormValid(request)) {
             System.out.println("product valid");
             Product product = getProduct(request);
-            if (new TransactionDAO().createProductWithTranslate(product, getNames(request), getDescriptions(request))) {
+            if (new TransactionDAOImpl().createProductWithTranslate(product, getNames(request), getDescriptions(request))) {
                 request.getSession().setAttribute("message", "product was added!");
                 response.sendRedirect("/ServletBack");
             } else {

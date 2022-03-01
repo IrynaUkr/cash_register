@@ -3,37 +3,24 @@ package cash.db.dao.impl;
 import cash.db.dao.ReceiptDao;
 import cash.db.manager.DBManager;
 import cash.entity.*;
+import cash.exceptions.DBException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static cash.db.ConstantQueryDB.*;
+
 
 public class ReceiptImpl implements ReceiptDao {
-
-    public static final String SELECT_RECEIPT_BY_ID = "SELECT * FROM receipt  WHERE id_receipt = ?";
-    public static final String SELECT_RECEIPT_BY_STATUS = "SELECT * FROM receipt  WHERE status = ?";
-    public static final String SELECT_RECEIPT_BY_NUMBER = "SELECT * FROM receipt  WHERE number = ?";
-    public static final String SELECT_RETURN_BY_DATE = "SELECT receipt.id_receipt, receipt.type, receipt.status, receipt.number," +
-            "sum(product_has_receipt.amount * product_has_receipt.price) as total, receipt.date FROM receipt JOIN product_has_receipt" +
-            "   ON receipt.id_receipt=product_has_receipt.receipt_id_receipt WHERE  receipt.status ='closed' and date = ?" +
-            "GROUP BY receipt.id_receipt";
-    public static final String SELECT_ALL_RECEIPT = "SELECT * FROM receipt";
-    public static final String SET_RECEIPT = "UPDATE receipt SET status=?  WHERE number = ?";
-    public static final String DELETE_RECEIPT_BY_ID = "DELETE FROM receipt WHERE id_receipt = ?";
-    public static final String SQL_JOIN_LANG = "SELECT product_has_receipt.amount, product_has_receipt.price," +
-            " product.code, product.uom, translate.name_tr" +
-            " FROM product_has_receipt" +
-            " JOIN product" +
-            " ON product_has_receipt.product_id_product = product.id_product" +
-            " JOIN translate" +
-            " ON translate.id_prod_tr=product.id_product" +
-            " WHERE product_has_receipt.receipt_id_receipt=? and translate.id_lang_tr=?";
-    public static final String RECEIPT_SET_FISCALISED = "UPDATE receipt SET status ='FISCALISED' WHERE receipt.status= 'CLOSED'";
+    private static final Logger logger = LogManager.getLogger(ReceiptImpl.class);
 
 
     @Override
     public List<Receipt> findAll() {
+        logger.info("query: find receipts");
         List<Receipt> receipts = new ArrayList<>();
         try (Connection con = DBManager.getInstance().getConnection();
              Statement stmt = con.createStatement()) {
@@ -43,7 +30,8 @@ public class ReceiptImpl implements ReceiptDao {
             }
             rs.close();
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            logger.error("receipts were  not found", ex);
+            throw new DBException("receipts were  not found", ex);
         }
         return receipts;
     }
@@ -61,6 +49,7 @@ public class ReceiptImpl implements ReceiptDao {
 
     @Override
     public Receipt findEntityById(Integer id) {
+        logger.info("query: find receipt by id");
         Receipt receipt = new Receipt();
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement pstmt = con.prepareStatement(SELECT_RECEIPT_BY_ID)) {
@@ -71,8 +60,9 @@ public class ReceiptImpl implements ReceiptDao {
             }
             close(rs);
             close(pstmt);
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ex) {
+            logger.error("receipt by id was not found", ex);
+            throw new DBException("receipt by id was not found", ex);
         }
         return receipt;
     }
@@ -80,6 +70,7 @@ public class ReceiptImpl implements ReceiptDao {
 
     @Override
     public boolean delete(Receipt receipt) {
+        logger.info("query: delete receipt");
         if (receipt == null) {
             return false;
         }
@@ -93,7 +84,8 @@ public class ReceiptImpl implements ReceiptDao {
                 pstmt.setInt(1, id);
                 executeUpdate = pstmt.executeUpdate();
             } catch (SQLException ex) {
-                ex.printStackTrace();
+                logger.error("receipt  were not deleted", ex);
+                throw new DBException("receipt were not deleted", ex);
             }
             return executeUpdate > 0;
         }
@@ -105,9 +97,10 @@ public class ReceiptImpl implements ReceiptDao {
     }
 
 
-//update  Status by Number
-
+    //update  Status by Number
+    @Override
     public boolean updateStatus(OperationStatus status, Receipt receipt) {
+        logger.info("query: update status receipt");
         if (receipt == null) {
             return false;
         }
@@ -118,8 +111,9 @@ public class ReceiptImpl implements ReceiptDao {
                 pstmt.setString(1, String.valueOf(status));
                 pstmt.setString(2, receipt.getNumber());
                 result = pstmt.executeUpdate();
-            } catch (SQLException e) {
-                e.printStackTrace();
+            } catch (SQLException ex) {
+                logger.error(" receipt's status was not update", ex);
+                throw new DBException(" receipt's status was not update", ex);
             }
             return result > 0;
         } else {
@@ -127,8 +121,9 @@ public class ReceiptImpl implements ReceiptDao {
         }
     }
 
-
+    @Override
     public List<Receipt> findEntityByStatus(OperationStatus status) {
+        logger.info("query: find receipts by status");
         List<Receipt> receipts = new ArrayList<>();
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement pstmt = con.prepareStatement(SELECT_RECEIPT_BY_STATUS)) {
@@ -139,12 +134,15 @@ public class ReceiptImpl implements ReceiptDao {
             }
             rs.close();
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            logger.error("receipts by status were  not found", ex);
+            throw new DBException("receipts by status were not found", ex);
         }
         return receipts;
     }
 
+    @Override
     public Receipt findReceiptByNumber(String number) {
+        logger.info("query: find receipt by number");
         Receipt receipt = new Receipt();
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement pstmt = con.prepareStatement(SELECT_RECEIPT_BY_NUMBER)) {
@@ -155,13 +153,15 @@ public class ReceiptImpl implements ReceiptDao {
             }
             rs.close();
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            logger.error(" receipt by number was not found", ex);
+            throw new DBException("receipt by number was not found", ex);
         }
         return receipt;
     }
 
-
+    @Override
     public List<Receipt> findReceiptByDate(Date date) {
+        logger.info("query: find receipt by date");
         List<Receipt> receipts = new ArrayList<>();
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement pstmt = con.prepareStatement(SELECT_RETURN_BY_DATE)) {
@@ -172,13 +172,15 @@ public class ReceiptImpl implements ReceiptDao {
             }
             rs.close();
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            logger.error(" receipt by date was not found", ex);
+            throw new DBException("receipt by date was not found", ex);
         }
         return receipts;
     }
 
-
+    @Override
     public ArrayList<ReceiptProducts> getListProductsByIdReceiptLANG(Integer idReceipt, int id_lang) {
+        logger.info("query: find product's list by id receipt with chosen language ");
         ArrayList<ReceiptProducts> products = new ArrayList<>();
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement pstmt = con.prepareStatement(SQL_JOIN_LANG)) {
@@ -190,18 +192,22 @@ public class ReceiptImpl implements ReceiptDao {
             }
             rs.close();
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            logger.error(" product's list by id receipt with chosen language was not found", ex);
+            throw new DBException(" product's list by id receipt with chosen language was not found", ex);
         }
         return products;
     }
 
+    @Override
     public boolean setFiscalStatusReceipt() {
+        logger.info("query: set fiscal status to receipt ");
         int result = 0;
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement pstmt = con.prepareStatement(RECEIPT_SET_FISCALISED)) {
             result = pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ex) {
+            logger.error(" fiscal status to receipt was not set", ex);
+            throw new DBException("fiscal status to receipt was not set", ex);
         }
         return result > 0;
     }

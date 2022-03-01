@@ -42,7 +42,7 @@ public class ServletProductPages extends HttpServlet {
             String sorting = String.valueOf(request.getSession().getAttribute("sorting"));
             products = productDao.viewAllWithSorting((page - 1) * recordsPerPage, recordsPerPage, sorting,id_lang );
         } else {
-            products = productDao.viewAllWithRestrict((page - 1) * recordsPerPage, recordsPerPage, id_lang);
+            products = productDao.findAllWithRestrict((page - 1) * recordsPerPage, recordsPerPage, id_lang);
         }
         totalAmountRecords = productDao.getTotalAmountRecords();
         totalAmPages = (int) Math.ceil(totalAmountRecords * 1.0 / recordsPerPage);

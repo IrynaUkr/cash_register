@@ -35,7 +35,7 @@ public class ServletOpenedReceiptDeleteProduct extends HttpServlet {
                 product = productDao.findProductByCodeLang(request.getParameter("productCD"), getId_lang(request));
                 amount = Double.valueOf(request.getParameter("amountCD"));
             }
-            ReceiptProducts receiptProducts = createReceiptProduct(request, product, amount);
+            ReceiptProducts receiptProducts = createReceiptProduct( product, amount);
             Receipt receipt = (Receipt) request.getSession().getAttribute("receipt");
             boolean remove = receipt.getReceiptProducts().remove(receiptProducts);
             if (remove) {

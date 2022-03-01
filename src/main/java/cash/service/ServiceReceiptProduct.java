@@ -1,26 +1,14 @@
 package cash.service;
 
-import cash.db.dao.impl.ProductDaoImpl;
-import cash.db.dao.impl.ReceiptImpl;
-import cash.db.manager.DBManager;
 import cash.entity.Product;
 import cash.entity.Receipt;
 import cash.entity.ReceiptProducts;
 
-import javax.servlet.http.HttpServletRequest;
-import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 public class ServiceReceiptProduct {
-    private ReceiptProducts receiptProducts;
 
-
-    private Product products;
-
-
-    public static ReceiptProducts createReceiptProduct(HttpServletRequest request, Product product, Double amount) {
+    public static ReceiptProducts createReceiptProduct( Product product, Double amount) {
         ReceiptProducts receiptProducts = new ReceiptProducts();
         receiptProducts.setProductId(product.getId());
         receiptProducts.setAmount(amount);
