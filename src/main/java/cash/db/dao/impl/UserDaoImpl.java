@@ -6,6 +6,7 @@ import cash.db.manager.DBManager;
 import cash.entity.Role;
 import cash.entity.User;
 import cash.exceptions.DBException;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -16,7 +17,7 @@ import java.util.List;
 import static cash.db.ConstantQueryDB.*;
 
 public class UserDaoImpl implements UserDao {
-    private static final Logger logger = LogManager.getLogger(ReceiptImpl.class);
+    private static final Logger logger = LogManager.getLogger(UserDaoImpl.class);
 
     public UserDaoImpl() {
     }
@@ -57,7 +58,8 @@ public class UserDaoImpl implements UserDao {
         }
         return user;
     }
-@Override
+
+    @Override
     public User findEntityByLogin(String login) {
         logger.info("query: find user by login");
         User user = null;
@@ -93,7 +95,7 @@ public class UserDaoImpl implements UserDao {
                 pstmt.setInt(1, id);
                 executeUpdate = pstmt.executeUpdate();
             } catch (SQLException ex) {
-                logger.error("user was not deleted", ex);
+                //             logger.error("user was not deleted", ex);
                 throw new DBException("user was not deleted", ex);
             }
             return executeUpdate > 0;
@@ -148,7 +150,8 @@ public class UserDaoImpl implements UserDao {
         pstmt.setString(3, String.valueOf(user.getRole()));
         pstmt.setString(4, user.getSurname());
     }
-@Override
+
+    @Override
     public boolean update(User user) {
         logger.info("query: update user");
         if (user == null) {
@@ -178,7 +181,7 @@ public class UserDaoImpl implements UserDao {
         logger.info("query: find users");
         List<User> users = new ArrayList<>();
         try (Connection con = DBManager.getInstance().getConnection();
-             PreparedStatement pstmt = con.prepareStatement(SELECT_USER_BY_ROLE)) {
+             PreparedStatement pstmt = con.prepareStatement("SELECT * FROM user  WHERE role = ?")) {
             pstmt.setString(1, role);
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {

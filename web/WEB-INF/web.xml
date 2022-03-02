@@ -17,7 +17,6 @@
         <param-name>FILE_DIR</param-name>
         <param-value>files</param-value>
     </context-param>
-
     <!--Encoding filter UTF-8-->
     <filter>
         <filter-name>EncodingFilter</filter-name>

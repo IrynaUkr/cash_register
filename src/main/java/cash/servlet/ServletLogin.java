@@ -20,6 +20,7 @@ public class ServletLogin extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println("do post");
         UserDaoImpl userDao = new UserDaoImpl();
         String user = request.getParameter("user");
         String userPassword = request.getParameter("password");
