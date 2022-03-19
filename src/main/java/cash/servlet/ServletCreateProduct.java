@@ -19,10 +19,9 @@ public class ServletCreateProduct extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (isCreateFormValid(request)) {
-            System.out.println("product valid");
-            Product product = getProduct(request);
-            if (new TransactionDAOImpl().createProductWithTranslate(product, getNames(request), getDescriptions(request))) {
+        if (isCreateProductFormValid(request)) {
+            Product product = getProductFromRequest(request);
+            if (TransactionDAOImpl.getInstance().createProductWithTranslate(product, getNames(request), getDescriptions(request))) {
                 request.getSession().setAttribute("message", "product was added!");
                 response.sendRedirect("/ServletBack");
             } else {
@@ -30,14 +29,13 @@ public class ServletCreateProduct extends HttpServlet {
                 request.getRequestDispatcher("/WEB-INF/jsp/product/createProduct.jsp").forward(request, response);
             }
         } else {
-            request.getSession().setAttribute("message", "not all fields are filled");
+            request.setAttribute("message", "required fields are empty");
             request.getRequestDispatcher("/WEB-INF/jsp/product/createProduct.jsp").forward(request, response);
         }
     }
 
 
-    private boolean isCreateFormValid(HttpServletRequest request) {
-        System.out.println(request.getParameter("code"));
+    private boolean isCreateProductFormValid(HttpServletRequest request) {
         return (request.getParameter("code") != ""
                 && request.getParameter("price") != ""
                 && request.getParameter("amount") != ""
@@ -49,7 +47,7 @@ public class ServletCreateProduct extends HttpServlet {
                 && request.getParameter("descriptionRu") != "");
         }
 
-    private Product getProduct(HttpServletRequest request) {
+    private Product getProductFromRequest(HttpServletRequest request) {
         String code = request.getParameter("code");
         Double price = Double.valueOf((request.getParameter("price")));
         Double amount = Double.valueOf(request.getParameter("amount"));

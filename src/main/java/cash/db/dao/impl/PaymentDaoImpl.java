@@ -18,9 +18,16 @@ import static cash.db.ConstantQueryDB.*;
 public class PaymentDaoImpl implements PaymentDao {
     private static final Logger logger = LogManager.getLogger(PaymentDaoImpl.class);
 
+    private PaymentDaoImpl() {
+    }
 
+    private static PaymentDaoImpl instance = null;
 
-    public PaymentDaoImpl() {
+    public static PaymentDaoImpl getInstance() {
+        if (instance == null) {
+            return new PaymentDaoImpl();
+        }
+        return instance;
     }
 
     @Override
@@ -40,7 +47,6 @@ public class PaymentDaoImpl implements PaymentDao {
         }
         return payments;
     }
-
 
     @Override
     public Payment findEntityById(Integer id) {

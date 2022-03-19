@@ -14,19 +14,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static cash.service.ServiceForServ.getId_lang;
-import static cash.service.ServiceReceiptProduct.updateAmountSumReceipt;
+import static cash.service.ServLetUtils.getIdLang;
+import static cash.service.ServiceReceiptProduct.setAmountSumReceipt;
 
 @WebServlet("/cashier/updateAmountReceipt")
 public class ServletUpdateAmountReceipt extends HttpServlet {
-    ReceiptImpl receiptDao = new ReceiptImpl();
+    ReceiptImpl receiptDao = ReceiptImpl.getInstance();
 
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         List<Receipt> receipts = receiptDao.findEntityByStatus(OperationStatus.CREATED);
         request.getSession().setAttribute("receipts", receipts);
-        List<Product> products = new ProductDaoImpl().findAllByLang(getId_lang(request));
+        List<Product> products = ProductDaoImpl.getInstance().findAllByLang(getIdLang(request));
         request.getSession().setAttribute("products", products);
         request.getRequestDispatcher("/WEB-INF/jsp/receipt/chooseNumberReceipt.jsp")
                 .forward(request, response);
@@ -38,9 +38,9 @@ public class ServletUpdateAmountReceipt extends HttpServlet {
         if (request.getParameter("number") != null) {
             String number = request.getParameter("number");
             Receipt receipt = receiptDao.findReceiptByNumber(number);
-            ArrayList<ReceiptProducts> products = receiptDao.getListProductsByIdReceiptLANG(receipt.getId(), getId_lang(request));
+            ArrayList<ReceiptProducts> products = receiptDao.getListProductsByIdReceiptLANG(receipt.getId(), getIdLang(request));
             receipt.setReceiptProducts(products);
-            updateAmountSumReceipt(receipt);
+            setAmountSumReceipt(receipt);
             request.getSession().setAttribute("receipt", receipt);
             request.getRequestDispatcher("/WEB-INF/jsp/receipt/updateReceipt.jsp")
                     .forward(request, response);

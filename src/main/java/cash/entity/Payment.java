@@ -1,6 +1,7 @@
 package cash.entity;
 
 import java.sql.Date;
+import java.util.Objects;
 
 
 public class Payment extends Entity {
@@ -13,6 +14,18 @@ public class Payment extends Entity {
     private String description;
 
     public Payment() {
+    }
+
+    public Payment(Double value, Integer idUser, OperationType type, String description) {
+        this.value = value;
+        this.idUser = idUser;
+        this.type = type;
+        this.description = description;
+    }
+    public Payment(Double value, Integer idUser, OperationType type) {
+        this.value = value;
+        this.idUser = idUser;
+        this.type = type;
     }
 
     public Integer getId() {
@@ -69,6 +82,19 @@ public class Payment extends Entity {
 
     public void setStatus(OperationStatus status) {
         this.status = status;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Payment)) return false;
+        Payment payment = (Payment) o;
+        return Objects.equals(getValue(), payment.getValue()) && Objects.equals(getIdUser(), payment.getIdUser()) && getType() == payment.getType();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getValue(), getIdUser(), getType());
     }
 
     @Override

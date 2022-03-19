@@ -24,7 +24,17 @@ public class Product extends Entity {
         this.uom = uom;
     }
 
-    public Product(String code,  Double price, Double amount, String uom) {
+    public Product(Integer productId, String code, String name,  Double price, Double amount, String uom, String description) {
+        this.productId = productId;
+        this.code = code;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.amount = amount;
+        this.uom = uom;
+    }
+
+    public Product(String code, Double price, Double amount, String uom) {
         this.code = code;
         this.price = price;
         this.amount = amount;
@@ -95,8 +105,7 @@ public class Product extends Entity {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Product)) return false;
-        Product product = (Product) o;
+        if (!(o instanceof Product product)) return false;
         return Objects.equals(getCode(), product.getCode());
     }
 

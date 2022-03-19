@@ -9,7 +9,7 @@ import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.sql.Date;
 
-import static cash.service.ReportService.*;
+import static cash.service.ReportUtils.*;
 
 @WebServlet("/chief/servletZReport")
 public class ServletZReport extends HttpServlet {
@@ -23,14 +23,14 @@ public class ServletZReport extends HttpServlet {
         if (request.getParameter("date") != "") {
             Date date = Date.valueOf(request.getParameter("date"));
             getXReport(request, date);
-            if (new ReceiptImpl().setFiscalStatusReceipt()) {
+            if (ReceiptImpl.getInstance().setFiscalStatusReceipt()) {
                 request.getSession().setAttribute("message1", "receipts were fiscalized");
                 System.out.println("receipts were fiscalized");
             } else {
                 request.getSession().setAttribute("message1", "receipts were not fiscalized");
                 System.out.println("receipts were not fiscalized");
             }
-            if (new PaymentDaoImpl().setFiscalStatusPayment()) {
+            if (PaymentDaoImpl.getInstance().setFiscalStatusPayment()) {
                 request.getSession().setAttribute("message2", "payments were fiscalized");
             } else {
                 request.getSession().setAttribute("message2", "payments were not fiscalized");

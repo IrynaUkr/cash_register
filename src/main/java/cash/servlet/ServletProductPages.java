@@ -9,16 +9,16 @@ import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.util.List;
 
-import static cash.service.ServiceForServ.getId_lang;
+import static cash.service.ServLetUtils.getIdLang;
 
 
 @WebServlet("/merch/ServletProductPages")
 public class ServletProductPages extends HttpServlet {
-    ProductDaoImpl productDao = new ProductDaoImpl();
+    ProductDaoImpl productDao = ProductDaoImpl.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        int id_lang = getId_lang(request);
+        int id_lang = getIdLang(request);
         int page = 1;
         int recordsPerPage = 4;
         int totalAmountRecords = 0;

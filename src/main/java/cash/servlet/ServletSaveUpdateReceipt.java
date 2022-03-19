@@ -11,13 +11,13 @@ import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
 
-import static cash.service.ServiceForServ.getId_lang;
-import static cash.service.ServiceForServ.isValidate;
+import static cash.service.ServLetUtils.getIdLang;
+import static cash.service.ServLetUtils.isValidate;
 import static cash.service.ServiceReceiptProduct.createReceiptProduct;
 
 @WebServlet("/cashier/servletSaveUpdateReceipt")
 public class ServletSaveUpdateReceipt extends HttpServlet {
-    ProductDaoImpl productDao = new ProductDaoImpl();
+    ProductDaoImpl productDao = ProductDaoImpl.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -30,17 +30,16 @@ public class ServletSaveUpdateReceipt extends HttpServlet {
             Product product = null;
             double amount = 0.0;
             if (request.getParameter("productNA") != null && (request.getParameter("amountNA") != null)) {
-                product = productDao.findProductByNameLang(request.getParameter("productNA"),getId_lang(request));
+                product = productDao.findProductByNameLang(request.getParameter("productNA"), getIdLang(request));
                 amount = Double.parseDouble(request.getParameter("amountNA"));
             } else if (request.getParameter("productCA") != null && request.getParameter("amountCA") != null) {
-                product = productDao.findProductByCodeLang(request.getParameter("productCA"),getId_lang(request));
+                product = productDao.findProductByCodeLang(request.getParameter("productCA"), getIdLang(request));
                 amount = Double.parseDouble(request.getParameter("amountCA"));
             }
             if (product != null) {
                 ReceiptProducts addReceiptProduct = createReceiptProduct(product, amount);
                 Receipt receipt = (Receipt) request.getSession().getAttribute("receipt");
-                TransactionDAOImpl t = new TransactionDAOImpl();
-                t.updateAmountReceipt(receipt, addReceiptProduct);
+                TransactionDAOImpl.getInstance().updateAmountReceipt(receipt, addReceiptProduct);
                 response.sendRedirect("/ServletBack");
             }
         } else {

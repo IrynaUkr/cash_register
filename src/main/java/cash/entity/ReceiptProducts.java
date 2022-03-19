@@ -10,16 +10,6 @@ public class ReceiptProducts extends Entity {
     private String code;
     private String uom;
 
-    public Double getTotal() {
-        return total;
-    }
-
-    public void setTotal(Double total) {
-        this.total = total;
-    }
-
-    private Double total;
-
     public String getUom() {
         return uom;
     }
@@ -93,9 +83,8 @@ public class ReceiptProducts extends Entity {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ReceiptProducts)) return false;
-        ReceiptProducts that = (ReceiptProducts) o;
-        return Double.compare(that.getAmount(), getAmount()) == 0 && Double.compare(that.getPrice(), getPrice()) == 0 && Objects.equals(getProductId(), that.getProductId());
+        if (!(o instanceof ReceiptProducts that)) return false;
+        return Double.compare(that.getAmount(), getAmount()) == 0 && Objects.equals(getProductId(), that.getProductId());
     }
 
     @Override

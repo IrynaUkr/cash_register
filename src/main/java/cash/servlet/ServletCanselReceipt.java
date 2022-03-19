@@ -12,26 +12,30 @@ import java.util.List;
 
 @WebServlet("/chief/canselReceipt")
 public class ServletCanselReceipt extends HttpServlet {
-    ReceiptImpl receiptDao = new ReceiptImpl();
+    ReceiptImpl receiptDao = ReceiptImpl.getInstance();
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         List<Receipt> receipts = receiptDao.findEntityByStatus(OperationStatus.CREATED);
         request.getSession().setAttribute("receipts", receipts);
-        request.getRequestDispatcher("/WEB-INF/jsp/receipt/canselReceipt.jsp").forward(request,response);
+        request.getRequestDispatcher("/WEB-INF/jsp/receipt/canselReceipt.jsp").forward(request, response);
 
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String number = request.getParameter("number");
-        Receipt receipt = receiptDao.findReceiptByNumber(number);
-        boolean closed = receiptDao.delete(receipt);
-        if( closed){
-            request.getSession().setAttribute("message", "receipt was cancelled!");
-            response.sendRedirect("/ServletBack");
-        }else {
-            request.getSession().setAttribute("message", "receipt was not cancelled!");
-            response.sendRedirect("/ServletBack");
+        if (request.getParameter("number") != "") {
+            Receipt receipt = receiptDao.findReceiptByNumber(request.getParameter("number"));
+            if (receiptDao.delete(receipt)) {
+                request.getSession().setAttribute("message", "receipt was cancelled!");
+                response.sendRedirect("/ServletBack");
+            } else {
+                request.getSession().setAttribute("message", "receipt was not cancelled!");
+                response.sendRedirect("/ServletBack");
+            }
+        } else {
+            request.setAttribute("message", "required fields are empty");
+            request.getRequestDispatcher("/WEB-INF/jsp/receipt/canselReceipt.jsp").forward(request, response);
         }
     }
 }

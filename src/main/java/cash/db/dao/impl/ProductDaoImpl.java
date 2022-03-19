@@ -16,8 +16,18 @@ import static cash.db.ConstantQueryDB.*;
 public class ProductDaoImpl implements ProductDao {
     private static final Logger logger = LogManager.getLogger(ProductDaoImpl.class);
 
-    public ProductDaoImpl() {
+    private ProductDaoImpl() {
     }
+
+    private static ProductDaoImpl instance = null;
+
+    public static ProductDaoImpl getInstance() {
+        if (instance == null) {
+            return new ProductDaoImpl();
+        }
+        return instance;
+    }
+
 
     private int totalAmountRecords;
 

@@ -12,7 +12,7 @@ import java.util.List;
 
 @WebServlet("/cashier/closeReceipt")
 public class ServletCloseReceipt extends HttpServlet {
-    ReceiptImpl receiptDao = new ReceiptImpl();
+    ReceiptImpl receiptDao = ReceiptImpl.getInstance();
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         List<Receipt> receipts = receiptDao.findEntityByStatus(OperationStatus.CREATED);

@@ -17,6 +17,18 @@ import static cash.db.ConstantQueryDB.*;
 public class ReceiptImpl implements ReceiptDao {
     private static final Logger logger = LogManager.getLogger(ReceiptImpl.class);
 
+    private ReceiptImpl() {
+    }
+
+    private static ReceiptImpl instance;
+
+    public static ReceiptImpl getInstance() {
+        if (instance == null) {
+            return new ReceiptImpl();
+        }
+        return instance;
+    }
+
 
     @Override
     public List<Receipt> findAll() {

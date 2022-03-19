@@ -12,17 +12,15 @@ import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.util.List;
 
-import static cash.service.ServiceForServ.getId_lang;
+import static cash.service.ServLetUtils.getIdLang;
 
 @WebServlet("/cashier/createReceipt")
 public class ServletSaveReceiptToDB extends HttpServlet {
-    ProductDao productDao = new ProductDaoImpl();
-    TransactionDao transactionDao = new TransactionDAOImpl();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        int id_lang = getId_lang(request);
-        List<Product> products = productDao.findAllByLang(id_lang);
+        int id_lang = getIdLang(request);
+        List<Product> products = ProductDaoImpl.getInstance().findAllByLang(id_lang);
         request.getSession().setAttribute("products", products);
         request.getRequestDispatcher("/WEB-INF/jsp/receipt/createReceipt.jsp").forward(request, response);
     }
@@ -30,7 +28,7 @@ public class ServletSaveReceiptToDB extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Receipt receipt = (Receipt) request.getSession().getAttribute("receipt");
-        transactionDao.saveReceiptToDB(receipt);
+        TransactionDAOImpl.getInstance().saveReceiptToDB(receipt);
         response.sendRedirect("/ServletBack");
     }
 

@@ -19,7 +19,16 @@ import static cash.db.ConstantQueryDB.*;
 public class UserDaoImpl implements UserDao {
     private static final Logger logger = LogManager.getLogger(UserDaoImpl.class);
 
-    public UserDaoImpl() {
+    private UserDaoImpl() {
+    }
+
+    private static UserDaoImpl instance = null;
+
+    public static UserDaoImpl getInstatnce() {
+        if (instance == null) {
+            return new UserDaoImpl();
+        }
+        return instance;
     }
 
 

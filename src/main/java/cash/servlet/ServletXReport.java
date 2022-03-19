@@ -10,14 +10,13 @@ import java.io.IOException;
 import java.sql.Date;
 import java.util.List;
 
-import static cash.service.ReportService.getXReport;
+import static cash.service.ReportUtils.getXReport;
 
 @WebServlet("/chief/servletXReport")
 public class ServletXReport extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        ReceiptImpl receiptDao = new ReceiptImpl();
-        List<Receipt> receipts = receiptDao.findAll();
+        List<Receipt> receipts = ReceiptImpl.getInstance().findAll();
         request.getSession().setAttribute("receipts", receipts);
         request.getRequestDispatcher("/WEB-INF/jsp/report/Xreport.jsp").forward(request, response);
     }
@@ -29,7 +28,7 @@ public class ServletXReport extends HttpServlet {
             getXReport(request, date);
             response.sendRedirect("/chief/servletXReport");
         }else{
-            request.getSession().setAttribute("message", "choose date");
+            request.setAttribute("message", "choose date");
             request.getRequestDispatcher("/WEB-INF/jsp/startChief.jsp").forward(request, response);
         }
     }

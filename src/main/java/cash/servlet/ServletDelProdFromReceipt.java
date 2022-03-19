@@ -13,18 +13,18 @@ import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.util.List;
 
-import static cash.service.ServiceForServ.*;
+import static cash.service.ServLetUtils.*;
 
 @WebServlet("/chief/delProdFromReceipt")
 public class ServletDelProdFromReceipt extends HttpServlet {
-    ReceiptImpl receiptDao = new ReceiptImpl();
-    ProductDaoImpl productDao = new ProductDaoImpl();
+    ReceiptImpl receiptDao = ReceiptImpl.getInstance();
+    ProductDaoImpl productDao = ProductDaoImpl.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         List<Receipt> receipts = receiptDao.findEntityByStatus(OperationStatus.CREATED);
         request.getSession().setAttribute("receipts", receipts);
-        List<Product> products = productDao.findAllByLang(getId_lang(request));
+        List<Product> products = productDao.findAllByLang(getIdLang(request));
         request.getSession().setAttribute("products", products);
         request.getRequestDispatcher("/WEB-INF/jsp/product/deleteProductFromReceipt.jsp")
                 .forward(request, response);
@@ -35,15 +35,13 @@ public class ServletDelProdFromReceipt extends HttpServlet {
         if (isValidateName(request)) {
             Product product = new Product();
             if (request.getParameter("productNA") != null) {
-                product = productDao.findProductByNameLang(request.getParameter("productNA"), getId_lang(request));
+                product = productDao.findProductByNameLang(request.getParameter("productNA"), getIdLang(request));
             } else if (request.getParameter("productCA") != null) {
-                product = productDao.findProductByCodeLang(request.getParameter("productCA"), getId_lang(request));
+                product = productDao.findProductByCodeLang(request.getParameter("productCA"), getIdLang(request));
             }
             String number =  request.getParameter("number");
             Receipt receipt = receiptDao.findReceiptByNumber(number);
-            System.out.println(receipt);
-            TransactionDAOImpl t = new TransactionDAOImpl();
-            t.delProductFromReceipt(receipt, product);
+            TransactionDAOImpl.getInstance().delProductFromReceipt(receipt, product);
             response.sendRedirect("/ServletBack");
         }
     }

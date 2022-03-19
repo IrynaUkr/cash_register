@@ -3,6 +3,7 @@ package cash.servlet;
 import cash.db.dao.impl.UserDaoImpl;
 import cash.entity.Role;
 import cash.entity.User;
+import cash.service.ServLetUtils;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -20,28 +21,23 @@ public class ServletLogin extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("do post");
-        UserDaoImpl userDao = new UserDaoImpl();
-        String user = request.getParameter("user");
+        UserDaoImpl userDao = UserDaoImpl.getInstatnce();
+        String login = request.getParameter("user");
         String userPassword = request.getParameter("password");
-        User entityByLogin = userDao.findEntityByLogin(user);
-        System.out.println(entityByLogin);
-        if (entityByLogin == null || !(entityByLogin.getPassword().equals(userPassword))) {
+        User user = userDao.findEntityByLogin(login);
+        System.out.println(user);
+        if (user == null || !(user.getPassword().equals(userPassword))) {
             request.getSession().setAttribute("message", "Not allowed!");
             response.sendRedirect("login.jsp");
         } else {
-            Role role = entityByLogin.getRole();
-            request.getSession().setAttribute("user", entityByLogin);
-            request.getSession().setAttribute("role", entityByLogin.getRole());
-            switch (role) {
-                case ADMIN -> request.getRequestDispatcher("/WEB-INF/jsp/admin.jsp").forward(request,response);
-                case CASHIER -> request.getRequestDispatcher("/WEB-INF/jsp/cashier.jsp").forward(request,response);
-                case MERCHANDISER -> request.getRequestDispatcher("/WEB-INF/jsp/startMerch.jsp").forward(request,response);
-                case CHIEF_CASHIER -> request.getRequestDispatcher("/WEB-INF/jsp/startChief.jsp").forward(request,response);
-            }
-            System.out.println(user);
+            Role role = user.getRole();
+            request.getSession().setAttribute("user", user);
+            request.getSession().setAttribute("role", user.getRole());
+            ServLetUtils.chooseStartPage(role,request,response);
+            System.out.println(login);
             System.out.println(userPassword);
 
         }
     }
+
 }

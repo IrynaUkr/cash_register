@@ -15,8 +15,6 @@ public class User extends Entity {
     public User() {
     }
 
-    ;
-
     public User(String login, String password, String surname, Role role) {
         this.login = login;
         this.password = password;
@@ -24,10 +22,13 @@ public class User extends Entity {
         this.role = role;
     }
 
-    public User(int idUser, String login, String password) {
-        this.idUser = idUser;
+    public User(String login, String password, String surname, String phoneNumber, String email, String address, Role role) {
         this.login = login;
         this.password = password;
+        this.surname = surname;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.address = address;
         this.role = role;
     }
 

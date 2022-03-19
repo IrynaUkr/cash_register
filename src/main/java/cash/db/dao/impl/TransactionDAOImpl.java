@@ -18,6 +18,18 @@ import static cash.db.ConstantQueryDB.*;
 
 public class TransactionDAOImpl implements TransactionDao {
     private static final Logger logger = LogManager.getLogger(TransactionDAOImpl.class);
+    private static TransactionDAOImpl instance;
+
+    private TransactionDAOImpl() {
+    }
+
+    public static TransactionDAOImpl getInstance() {
+        if (instance == null) {
+            return new TransactionDAOImpl();
+        }
+        return instance;
+    }
+
 
     //save receipt to db and get its ID, set product,product's amount in related table "product has receipt"
     @Override
@@ -243,7 +255,7 @@ public class TransactionDAOImpl implements TransactionDao {
         logger.info("query: add product to data base");
         int result = 0;
         try (PreparedStatement pst = con.prepareStatement(INSERT_PRODUCT, Statement.RETURN_GENERATED_KEYS)) {
-            new ProductDaoImpl().mapProduct(product, pst);
+            ProductDaoImpl.getInstance().mapProduct(product, pst);
             result = pst.executeUpdate();
             if (result > 0) {
                 try (ResultSet generatedKeys = pst.getGeneratedKeys()) {
@@ -266,7 +278,7 @@ public class TransactionDAOImpl implements TransactionDao {
     public boolean setNameDescription(int id_product, int id_lang, String name,
                                       String description, Connection con) {
         logger.info("query: set name description  to data base");
-        boolean isSet = false;
+        boolean isSet;
         try (PreparedStatement pst = con.prepareStatement(INSERT_INTO_TRANSLATE)) {
             pst.setInt(1, id_product);
             pst.setInt(2, id_lang);

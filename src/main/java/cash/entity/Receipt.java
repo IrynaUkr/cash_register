@@ -8,13 +8,24 @@ import java.util.Objects;
 public class Receipt extends Entity {
     private Integer id;
     private String number;
-    private Double sum; //cash
-    private Double amount;//quantity of goods
+    private Double sum;
+    private Double amount;
     private Date date;
     private Integer idUser;                     //author
     private OperationStatus status;
     private OperationType operationType;      //sale or refund of goods
     private ArrayList<ReceiptProducts> receiptProducts;
+
+    public Receipt() {
+    }
+
+    public Receipt(String number, Integer idUser, OperationStatus status, OperationType operationType, ArrayList<ReceiptProducts> receiptProducts) {
+        this.number = number;
+        this.idUser = idUser;
+        this.status = status;
+        this.operationType = operationType;
+        this.receiptProducts = receiptProducts;
+    }
 
     public Receipt(String number, Integer idUser, OperationStatus status, OperationType operationType) {
         this.number = number;
@@ -30,6 +41,14 @@ public class Receipt extends Entity {
         this.status = status;
         this.operationType = operationType;
     }
+    public Receipt(String number, Integer idUser, OperationStatus status, OperationType operationType, Double sum) {
+        this.number = number;
+        this.idUser = idUser;
+        this.status = status;
+        this.operationType = operationType;
+        this.sum = sum;
+    }
+
     public ArrayList<ReceiptProducts> getReceiptProducts() {
         return receiptProducts;
     }
@@ -66,12 +85,6 @@ public class Receipt extends Entity {
         this.id = id;
     }
 
-    public Receipt() {
-    }
-
-//
-
-
 
     public String getNumber() {
         return number;
@@ -84,16 +97,13 @@ public class Receipt extends Entity {
     public Date getDate() {
         return date;
     }
+
     public void setDate(Date date) {
         this.date = date;
     }
 
     public Integer getIdUser() {
         return idUser;
-    }
-
-    public void setIdUser(Integer idUser) {
-        this.idUser = idUser;
     }
 
     public OperationStatus getStatus() {

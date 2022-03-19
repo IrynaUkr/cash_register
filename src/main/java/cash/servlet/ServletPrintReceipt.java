@@ -11,12 +11,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static cash.service.ServiceForServ.getId_lang;
-import static cash.service.ServiceReceiptProduct.updateAmountSumReceipt;
+import static cash.service.ServLetUtils.getIdLang;
+import static cash.service.ServiceReceiptProduct.setAmountSumReceipt;
 
 @WebServlet("/cashier/printReceipt")
 public class ServletPrintReceipt extends HttpServlet {
-    ReceiptImpl receiptDao = new ReceiptImpl();
+    ReceiptImpl receiptDao = ReceiptImpl.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -30,12 +30,12 @@ public class ServletPrintReceipt extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        int id_lang = getId_lang(request);
+        int id_lang = getIdLang(request);
         String number = request.getParameter("number");
         Receipt receipt = receiptDao.findReceiptByNumber(number);
         ArrayList<ReceiptProducts> products = receiptDao.getListProductsByIdReceiptLANG(receipt.getId(), id_lang);
         receipt.setReceiptProducts(products);
-        updateAmountSumReceipt(receipt);
+        setAmountSumReceipt(receipt);
         request.getSession().setAttribute("receipt",receipt);
         request.getRequestDispatcher("/WEB-INF/jsp/receipt/showReceipt.jsp")
                 .forward(request, response);
