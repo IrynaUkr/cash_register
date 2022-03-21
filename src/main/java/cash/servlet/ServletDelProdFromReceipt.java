@@ -6,6 +6,8 @@ import cash.entity.OperationStatus;
 import cash.entity.Product;
 import cash.entity.Receipt;
 import cash.db.dao.impl.TransactionDAOImpl;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -17,11 +19,13 @@ import static cash.service.ServLetUtils.*;
 
 @WebServlet("/chief/delProdFromReceipt")
 public class ServletDelProdFromReceipt extends HttpServlet {
+    private static final Logger logger = LogManager.getLogger(ServletDelProdFromReceipt.class);
     ReceiptImpl receiptDao = ReceiptImpl.getInstance();
     ProductDaoImpl productDao = ProductDaoImpl.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        logger.info("Servlet: ServletDelProdFromReceipt. Method: Get");
         List<Receipt> receipts = receiptDao.findEntityByStatus(OperationStatus.CREATED);
         request.getSession().setAttribute("receipts", receipts);
         List<Product> products = productDao.findAllByLang(getIdLang(request));

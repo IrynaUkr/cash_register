@@ -1,6 +1,5 @@
 package cash.service;
 
-import cash.db.dao.impl.PaymentDaoImpl;
 import cash.entity.Product;
 import cash.entity.Receipt;
 import cash.entity.ReceiptProducts;
@@ -11,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 
 public class ServiceReceiptProduct {
-    private static final Logger logger = LogManager.getLogger(PaymentDaoImpl.class);
+    private static final Logger logger = LogManager.getLogger(ServiceReceiptProduct.class);
 
 
     public static ReceiptProducts createReceiptProduct(Product product, Double amount) {

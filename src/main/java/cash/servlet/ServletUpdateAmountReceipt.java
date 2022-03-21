@@ -6,6 +6,8 @@ import cash.entity.OperationStatus;
 import cash.entity.Product;
 import cash.entity.Receipt;
 import cash.entity.ReceiptProducts;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -19,11 +21,13 @@ import static cash.service.ServiceReceiptProduct.setAmountSumReceipt;
 
 @WebServlet("/cashier/updateAmountReceipt")
 public class ServletUpdateAmountReceipt extends HttpServlet {
+    private static final Logger logger = LogManager.getLogger(ServletBack.class);
     ReceiptImpl receiptDao = ReceiptImpl.getInstance();
 
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        logger.info("Servlet: ServletUpdateAmountReceipt. Method: Get");
         List<Receipt> receipts = receiptDao.findEntityByStatus(OperationStatus.CREATED);
         request.getSession().setAttribute("receipts", receipts);
         List<Product> products = ProductDaoImpl.getInstance().findAllByLang(getIdLang(request));
@@ -35,6 +39,7 @@ public class ServletUpdateAmountReceipt extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        logger.info("Servlet: ServletUpdateAmountReceipt. Method: Post");
         if (request.getParameter("number") != null) {
             String number = request.getParameter("number");
             Receipt receipt = receiptDao.findReceiptByNumber(number);

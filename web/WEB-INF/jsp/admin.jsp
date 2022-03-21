@@ -7,14 +7,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.1/css/bootstrap.min.css"
       integrity="sha512-T584yQ/tdRR5QwOpfvDfVQUidzfgc2339Lc8uBDtcp/wYu80d7jwBgAxbyMh0a9YM9F8N3tdErpFI8iaGx6x5g=="
       crossorigin="anonymous" referrerpolicy="no-referrer">
-<!-- jQuery (Cloudflare CDN) -->
-<script defer src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
-        integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<!-- Bootstrap Bundle JS (Cloudflare CDN) -->
-<script defer src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.1/js/bootstrap.min.js"
-        integrity="sha512-UR25UO94eTnCVwjbXozyeVd6ZqpaAE9naiEUBK/A+QDbfSTQFhPGj5lOR6d8tsgbBk84Ggb5A3EkjsOgPRPcKA=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <fmt:setLocale value="${sessionScope.lang}"/>
 <fmt:setBundle basename="languages"/>
@@ -43,11 +35,11 @@
             <option value="ADMIN">ADMIN</option>
             <option value="CASHIER">CASHIER</option>
             <option value="MERCHANDISER">MERCHANDISER</option>
-            <option value="CHEIF_CASHIER">CHEIF_CASHIER</option>
+            <option value="CHIEF_CASHIER">CHIEF_CASHIER</option>
         </select> role <br> <br>
-        <input type="text" name="adress"> address <br> <br>
-        <input type="tel" name="phone number"> phone number <br> <br>
-        <input type="email" name="e.mail"> e.mail <br> <br>
+        <input type="text" name="address"> address <br> <br>
+        <input type="tel" name="phone"> phone number <br> <br>
+        <input type="email" name="email"> e.mail <br> <br>
         <input type="submit" class="btn-warning" value="<fmt:message key="label.send"/>">
     </form>
     <form action="/logout" target="_blank" method="post">

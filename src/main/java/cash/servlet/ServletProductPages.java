@@ -2,6 +2,8 @@ package cash.servlet;
 
 import cash.db.dao.impl.ProductDaoImpl;
 import cash.entity.Product;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -14,10 +16,12 @@ import static cash.service.ServLetUtils.getIdLang;
 
 @WebServlet("/merch/ServletProductPages")
 public class ServletProductPages extends HttpServlet {
+    private static final Logger logger = LogManager.getLogger(ServletBack.class);
     ProductDaoImpl productDao = ProductDaoImpl.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        logger.info("Servlet: ServletProductPages. Method: Get");
         int id_lang = getIdLang(request);
         int page = 1;
         int recordsPerPage = 4;
@@ -55,6 +59,7 @@ public class ServletProductPages extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        logger.info("Servlet: ServletProductPages. Method: Post");
         boolean flag = false;
         if (request.getParameterValues("selected") != null) {
             String[] codes = request.getParameterValues("selected");

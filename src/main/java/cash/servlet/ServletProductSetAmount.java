@@ -2,6 +2,8 @@ package cash.servlet;
 
 import cash.db.dao.impl.ProductDaoImpl;
 import cash.entity.Product;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -14,10 +16,12 @@ import static cash.service.ServLetUtils.isValidate;
 
 @WebServlet("/merch/setAmountProduct")
 public class ServletProductSetAmount extends HttpServlet {
+    private static final Logger logger = LogManager.getLogger(ServletBack.class);
     ProductDaoImpl productDao = ProductDaoImpl.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        logger.info("Servlet: ServletProductSetAmount. Method: Get");
         List<Product> products = productDao.findAllByLang(getIdLang(request));
         request.getSession()
                 .setAttribute("products", products);
@@ -27,6 +31,7 @@ public class ServletProductSetAmount extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        logger.info("Servlet: ServletProductSetAmount. Method: Post");
         if (isValidate(request)) {
             Product product = null;
             double amount = 0;

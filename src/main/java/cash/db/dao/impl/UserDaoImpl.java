@@ -24,7 +24,7 @@ public class UserDaoImpl implements UserDao {
 
     private static UserDaoImpl instance = null;
 
-    public static UserDaoImpl getInstatnce() {
+    public static UserDaoImpl getInstance() {
         if (instance == null) {
             return new UserDaoImpl();
         }
@@ -104,7 +104,7 @@ public class UserDaoImpl implements UserDao {
                 pstmt.setInt(1, id);
                 executeUpdate = pstmt.executeUpdate();
             } catch (SQLException ex) {
-                //             logger.error("user was not deleted", ex);
+                logger.error("user was not deleted", ex);
                 throw new DBException("user was not deleted", ex);
             }
             return executeUpdate > 0;
@@ -118,6 +118,9 @@ public class UserDaoImpl implements UserDao {
         user.setPassword(rs.getString("password"));
         user.setRole(Role.valueOf(rs.getString("role")));
         user.setSurname(rs.getString("surname"));
+        user.setAddress(rs.getString("address"));
+        user.setPhoneNumber(rs.getString("phone"));
+        user.setEmail(rs.getString("email"));
         return user;
     }
 
@@ -154,10 +157,14 @@ public class UserDaoImpl implements UserDao {
     }
 
     private void mapUser(User user, PreparedStatement pstmt) throws SQLException {
-        pstmt.setString(1, user.getLogin());
-        pstmt.setString(2, user.getPassword());
-        pstmt.setString(3, String.valueOf(user.getRole()));
-        pstmt.setString(4, user.getSurname());
+        int k = 0;
+        pstmt.setString(++k, user.getLogin());
+        pstmt.setString(++k, user.getPassword());
+        pstmt.setString(++k, String.valueOf(user.getRole()));
+        pstmt.setString(++k, user.getSurname());
+        pstmt.setString(++k, user.getAddress());
+        pstmt.setString(++k, user.getPhoneNumber());
+        pstmt.setString(++k, user.getEmail());
     }
 
     @Override

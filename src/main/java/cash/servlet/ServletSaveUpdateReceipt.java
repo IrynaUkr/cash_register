@@ -5,6 +5,8 @@ import cash.entity.Product;
 import cash.entity.Receipt;
 import cash.entity.ReceiptProducts;
 import cash.db.dao.impl.TransactionDAOImpl;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -17,6 +19,7 @@ import static cash.service.ServiceReceiptProduct.createReceiptProduct;
 
 @WebServlet("/cashier/servletSaveUpdateReceipt")
 public class ServletSaveUpdateReceipt extends HttpServlet {
+    private static final Logger logger = LogManager.getLogger(ServletBack.class);
     ProductDaoImpl productDao = ProductDaoImpl.getInstance();
 
     @Override
@@ -26,6 +29,7 @@ public class ServletSaveUpdateReceipt extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        logger.info("Servlet: ServletSaveUpdateReceipt. Method: Get");
         if (isValidate(request)) {
             Product product = null;
             double amount = 0.0;

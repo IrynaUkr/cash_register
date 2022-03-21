@@ -4,6 +4,8 @@ import cash.db.dao.impl.ProductDaoImpl;
 import cash.entity.Product;
 import cash.entity.Receipt;
 import cash.entity.ReceiptProducts;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -16,6 +18,7 @@ import static cash.service.ServiceReceiptProduct.setAmountSumReceipt;
 
 @WebServlet("/cashier/deleteProductFromProductList")
 public class ServletOpenedReceiptDeleteProduct extends HttpServlet {
+    private static final Logger logger = LogManager.getLogger(ServletOpenedReceiptDeleteProduct.class);
     ProductDaoImpl productDao = ProductDaoImpl.getInstance();
 
     @Override
@@ -24,6 +27,7 @@ public class ServletOpenedReceiptDeleteProduct extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        logger.info("Servlet: ServletOpenedReceiptDeleteProduct. Method: Get");
         Product product = null;
         Double amount = null;
         if (isValidateDel(request)) {
@@ -52,6 +56,7 @@ public class ServletOpenedReceiptDeleteProduct extends HttpServlet {
     }
 
     private boolean isValidateDel(HttpServletRequest request) {
+        logger.info("Servlet: ServletOpenedReceiptDeleteProduct. Method: Get");
         return request.getParameter("productND") != ""
                 && request.getParameter("amountND") != ""
                 && request.getParameter("productCD") != ""

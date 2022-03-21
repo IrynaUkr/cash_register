@@ -2,6 +2,8 @@ package cash.servlet;
 
 import cash.db.dao.impl.TransactionDAOImpl;
 import cash.entity.Product;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -11,14 +13,17 @@ import java.util.HashMap;
 
 @WebServlet("/merch/createProduct")
 public class ServletCreateProduct extends HttpServlet {
+    private static final Logger logger = LogManager.getLogger(ServletCreateProduct.class);
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        logger.info("Servlet: merch/createProduct. Method: Get");
         request.getRequestDispatcher("/WEB-INF/jsp/product/createProduct.jsp").forward(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        logger.info("Servlet: merch/createProduct. Method: Post");
         if (isCreateProductFormValid(request)) {
             Product product = getProductFromRequest(request);
             if (TransactionDAOImpl.getInstance().createProductWithTranslate(product, getNames(request), getDescriptions(request))) {
@@ -36,6 +41,7 @@ public class ServletCreateProduct extends HttpServlet {
 
 
     private boolean isCreateProductFormValid(HttpServletRequest request) {
+        logger.info("Servlet: merch/createProduct. Method: isCreateProductFormValid");
         return (request.getParameter("code") != ""
                 && request.getParameter("price") != ""
                 && request.getParameter("amount") != ""
@@ -48,6 +54,7 @@ public class ServletCreateProduct extends HttpServlet {
         }
 
     private Product getProductFromRequest(HttpServletRequest request) {
+        logger.info("Servlet: merch/createProduct. Method: getProductFromRequest");
         String code = request.getParameter("code");
         Double price = Double.valueOf((request.getParameter("price")));
         Double amount = Double.valueOf(request.getParameter("amount"));
@@ -56,6 +63,7 @@ public class ServletCreateProduct extends HttpServlet {
     }
 
     private HashMap<Integer, String> getDescriptions(HttpServletRequest request) {
+        logger.info("Servlet: merch/createProduct. Method: getDescriptions with translate");
         HashMap<Integer, String> descriptions = new HashMap<>();
         descriptions.put(1, request.getParameter("descriptionEn"));
         descriptions.put(2, request.getParameter("descriptionUa"));
@@ -65,6 +73,7 @@ public class ServletCreateProduct extends HttpServlet {
     }
 
     private HashMap<Integer, String> getNames(HttpServletRequest request) {
+        logger.info("Servlet: merch/createProduct. Method: getNames with translate");
         HashMap<Integer, String> names = new HashMap<>();
         names.put(1, request.getParameter("nameEn"));
         names.put(2, request.getParameter("nameUa"));

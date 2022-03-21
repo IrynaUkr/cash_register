@@ -4,6 +4,8 @@ import cash.db.dao.impl.ProductDaoImpl;
 import cash.entity.Product;
 import cash.entity.Receipt;
 import cash.entity.ReceiptProducts;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -18,10 +20,12 @@ import static cash.service.ServiceReceiptProduct.setAmountSumReceipt;
 
 @WebServlet("/cashier/addProductToReceiptList")
 public class ServletOpenedReceiptAddProduct extends HttpServlet {
+    private static final Logger logger = LogManager.getLogger(ServletOpenedReceiptAddProduct.class);
     ProductDaoImpl productDao = ProductDaoImpl.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        logger.info("Servlet: ServletOpenedReceiptAddProduct. Method: Get");
         List<Product> products = productDao.findAllByLang(getIdLang(request));
         request.getSession().setAttribute("products", products);
         request.getRequestDispatcher("/WEB-INF/jsp/receipt/createReceipt.jsp")
@@ -30,6 +34,7 @@ public class ServletOpenedReceiptAddProduct extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        logger.info("Servlet: ServletOpenedReceiptAddProduct. Method: Post");
         if (isValidate(request)) {
             Product product = null;
             double amount = 0.0;
