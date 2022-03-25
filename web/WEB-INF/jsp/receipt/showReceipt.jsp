@@ -24,23 +24,34 @@
     <article>
         <h4> N: ${sessionScope.receipt.number} </h4>
 
-        ${sessionScope.receipt.date} -<br>
-        ${sessionScope.receipt.status}- <fmt:message key="label.status"/><br>
-        ${sessionScope.receipt.operationType} -<fmt:message key="label.type"/><br>
-        <c:forEach var="bean" items="${sessionScope.receipt.receiptProducts}">
-            ......................................<br>
-            <fmt:message key="label.code"/>.....  ${bean.code};<br>
-            <fmt:message key="label.name"/>..... ${bean.name};<br>
-            <fmt:message key="label.price"/>....  ${bean.price};<br>
-            <fmt:message key="label.amount"/>...  ${bean.amount};${bean.uom};<br>
-            <fmt:message key="label.sum"/> .... ${bean.amount*bean.price};<br>
-            ......................................<br><br>
+        <table class="table table-striped table-bordered table-hover">
+            <thread>
+                <td>
+                    <fmt:message key="label.code"/>
+                </td>
+                <td><fmt:message key="label.name"/></td>
+                <td><fmt:message key="label.price"/></td>
+                <td><fmt:message key="label.amount"/></td>
+                <td><fmt:message key="label.UOM"/></td>
+                <td><fmt:message key="label.sum"/></td>
+            </thread>
+            <c:forEach var="bean" items="${sessionScope.receipt.receiptProducts}">
+                <tr>
+                    <td> ${bean.code} </td>
+                    <td> ${bean.name} </td>
+                    <td> ${bean.price} </td>
+                    <td> ${bean.amount} </td>
+                    <td> ${bean.uom} </td>
+                    <td> ${bean.amount*bean.price} </td>
+                </tr>
+            </c:forEach>
+        </table>
+        <h4> <fmt:message key="label.total_amount"/> ${sessionScope.receipt.amount} </h4>
+        <h4> <fmt:message key="label.sum"/> ${sessionScope.receipt.sum}</h4>
+        <h4> <fmt:message key="label.cashier"/> ${sessionScope.user.surname}</h4>
 
-        </c:forEach>
-        <h4>${sessionScope.receipt.amount} <fmt:message key="label.total_amount"/></h4>
-        <h4>${sessionScope.receipt.sum} <fmt:message key="label.sum"/></h4>
-        ${sessionScope.user.surname} <br>
     </article>
+
     <form action="${pageContext.request.contextPath}/logout" target="_blank" method="post">
         <button><fmt:message key="label.logout"/></button>
     </form>
@@ -49,4 +60,5 @@
     </form>
 </div>
 </body>
+</html>
 </html>

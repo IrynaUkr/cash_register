@@ -41,7 +41,7 @@ public class ServletPrintReceipt extends HttpServlet {
         ArrayList<ReceiptProducts> products = receiptDao.getListProductsByIdReceiptLANG(receipt.getId(), id_lang);
         receipt.setReceiptProducts(products);
         setAmountSumReceipt(receipt);
-        request.getSession().setAttribute("receipt",receipt);
+        request.getSession().setAttribute("receipt", receipt);
         request.getRequestDispatcher("/WEB-INF/jsp/receipt/showReceipt.jsp")
                 .forward(request, response);
 
