@@ -19,15 +19,27 @@ public class ServLetUtils {
         return ProductDaoImpl.getInstance().getId_lang(language);
     }
 
-    public static boolean isValidate(HttpServletRequest request) {
+    public static boolean isNameAndAmountValid(HttpServletRequest request) {
         return request.getParameter("productNA") != ""
                 && request.getParameter("amountNA") != ""
+                && isPositiveNumeric(request.getParameter("amountNA"))
                 && request.getParameter("productCA") != ""
-                && request.getParameter("amountCA") != "";
-
+                && request.getParameter("amountCA") != ""
+                && isPositiveNumeric(request.getParameter("amountCA"));
     }
 
-    public static boolean isValidateName(HttpServletRequest request) {
+    public static boolean isPositiveNumeric(String str) {
+        double number;
+        try {
+            number = Double.parseDouble(str);
+            return number >= 0;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+
+    public static boolean isNameValid(HttpServletRequest request) {
         return request.getParameter("productNA") != ""
                 && request.getParameter("productCA") != ""
                 && request.getParameter("number") != "";
@@ -42,7 +54,10 @@ public class ServLetUtils {
                 && request.getParameter("address") != ""
                 && request.getParameter("phone number") != ""
                 && request.getParameter("email") != "";
-
+    }
+    public static boolean isLoginFormValid(HttpServletRequest request){
+        return request.getParameter("login") != ""
+                && request.getParameter("password") != "";
     }
 
     public static void chooseStartPage(Role role, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

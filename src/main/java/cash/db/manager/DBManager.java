@@ -1,5 +1,6 @@
 package cash.db.manager;
 
+import cash.db.dao.impl.PaymentDaoImpl;
 import cash.exceptions.DBException;
 import org.apache.logging.log4j.Logger;
 
@@ -10,8 +11,11 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 public class DBManager {
-  //  private static final Logger LOG = Logger.getLogger(DBManager.class);
+    private static final Logger logger = LogManager.getLogger(PaymentDaoImpl.class);
     private static DBManager instance;
     private DataSource ds;
 
@@ -29,17 +33,15 @@ public class DBManager {
             Context envContext = (Context) initContext.lookup("java:/comp/env");
             ds = (DataSource) envContext.lookup("jdbc/cashier");
             System.out.println("ds====>" + ds);
-            //   LOG.trace("Data source ==> " + ds);
-//        } catch (NamingException ex) {
-//         //   LOG.error("Cannot obtain data source", ex);
-//            throw new DBException("Cannot obtain data source", ex);
-//        }
-        } catch (NamingException e) {
-            e.printStackTrace();
+               logger.trace("Data source ==> " + ds);
+        } catch (NamingException ex) {
+           logger.error("Cannot obtain data source", ex);
+            throw new DBException("Cannot obtain data source", ex);
         }
+
     }
 
-        /**
+    /**
      * Returns a DB connection from the Pool Connections.
      *
      * @return DB connection.
@@ -49,43 +51,10 @@ public class DBManager {
         try {
             con = ds.getConnection();
         } catch (SQLException ex) {
-          //  LOG.error("Error cannot obtain connection", ex);
+            logger.error("Error cannot obtain connection", ex);
             throw new DBException("Error cannot obtain connection", ex);
         }
         return con;
-    }
-    // //////////////////////////////////////////////////////////
-    // DB util methods
-    // //////////////////////////////////////////////////////////
-
-    /**
-     * Commits and close the given connection.
-     *
-     * @param con
-     *            Connection to be committed and closed.
-     */
-    public void commitAndClose(Connection con) {
-        try {
-            con.commit();
-            con.close();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    /**
-     * Rollbacks and close the given connection.
-     *
-     * @param con
-     *            Connection to be rollbacked and closed.
-     */
-    public void rollbackAndClose(Connection con) {
-        try {
-            con.rollback();
-            con.close();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
     }
 
 }

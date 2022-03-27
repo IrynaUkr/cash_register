@@ -36,7 +36,7 @@ public class ServletDelProdFromReceipt extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (isValidateName(request)) {
+        if (isNameValid(request)) {
             Product product = new Product();
             if (request.getParameter("productNA") != null) {
                 product = productDao.findProductByNameLang(request.getParameter("productNA"), getIdLang(request));

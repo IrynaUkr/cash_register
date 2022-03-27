@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static cash.service.ServLetUtils.getIdLang;
-import static cash.service.ServLetUtils.isValidate;
+import static cash.service.ServLetUtils.isNameAndAmountValid;
 import static cash.service.ServiceReceiptProduct.createReceiptProduct;
 import static cash.service.ServiceReceiptProduct.setAmountSumReceipt;
 
@@ -35,7 +35,7 @@ public class ServletOpenedReceiptAddProduct extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         logger.info("Servlet: ServletOpenedReceiptAddProduct. Method: Post");
-        if (isValidate(request)) {
+        if (isNameAndAmountValid(request)) {
             Product product = null;
             double amount = 0.0;
             if (request.getParameter("productNA") != null && (request.getParameter("amountNA") != null)) {

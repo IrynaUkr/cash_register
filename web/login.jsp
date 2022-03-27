@@ -28,7 +28,10 @@
         </div>
     </nav>
 </header>
-<h2> ${message}</h2>
+<div class = container>
+    <h2> ${sessionScope.message}</h2>
+</div>
+
 <div class="container">
     <div class="row">
         <div class="col-md-4">
@@ -44,8 +47,8 @@
         <div class="col-md-8">
             <h2><fmt:message key="label.enter"/></h2>
             <form role="form" action="/login" method="post">
-                <input type="text" name="user" value="login"> <fmt:message key="label.login"/> <br> <br>
-                <input type="password" name="password" value="password"><fmt:message key="label.password"/> <br> <br>
+                <input type="text" name="login"> <fmt:message key="label.login"/> <br> <br>
+                <input type="password" name="password"><fmt:message key="label.password"/> <br> <br>
                 <input type="submit" class="btn btn-warning" value=<fmt:message key="label.send"/>>
             </form>
         </div>

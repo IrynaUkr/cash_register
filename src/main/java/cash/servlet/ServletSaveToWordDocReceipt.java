@@ -5,15 +5,13 @@ import cash.entity.Receipt;
 import cash.entity.ReceiptProducts;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.xhtmlrenderer.pdf.ITextRenderer;
+
 
 import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
+
 import java.util.ArrayList;
 
 import static cash.service.ServLetUtils.getIdLang;
@@ -34,7 +32,7 @@ public class ServletSaveToWordDocReceipt extends HttpServlet {
         ArrayList<ReceiptProducts> products = receiptDao.getListProductsByIdReceiptLANG(receipt.getId(), id_lang);
         receipt.setReceiptProducts(products);
         setAmountSumReceipt(receipt);
-        request.getSession().setAttribute("receipt",receipt);
+        request.getSession().setAttribute("receipt", receipt);
         request.getRequestDispatcher("/WEB-INF/jsp/receipt/saveToWordDocReceipt.jsp")
                 .forward(request, response);
 

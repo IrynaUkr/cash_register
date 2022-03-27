@@ -41,7 +41,6 @@ public class PaymentDaoImpl implements PaymentDao {
                 payments.add(extractPayment(rs));
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
             logger.error("cannot find payments", ex);
             throw new DBException("cannot find payments", ex);
         }

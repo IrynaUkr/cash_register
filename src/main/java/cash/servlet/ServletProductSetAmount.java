@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static cash.service.ServLetUtils.getIdLang;
-import static cash.service.ServLetUtils.isValidate;
+import static cash.service.ServLetUtils.isNameAndAmountValid;
 
 @WebServlet("/merch/setAmountProduct")
 public class ServletProductSetAmount extends HttpServlet {
@@ -32,7 +32,7 @@ public class ServletProductSetAmount extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         logger.info("Servlet: ServletProductSetAmount. Method: Post");
-        if (isValidate(request)) {
+        if (isNameAndAmountValid(request)) {
             Product product = null;
             double amount = 0;
             if (request.getParameter("productNA") != null && (request.getParameter("amountNA") != null)) {
@@ -40,7 +40,6 @@ public class ServletProductSetAmount extends HttpServlet {
                 amount = Double.parseDouble(request.getParameter("amountNA"));
             } else if (request.getParameter("productCA") != null && request.getParameter("amountCA") != null) {
                 product = productDao.findProductByCodeLang(request.getParameter("productCA"), getIdLang(request));
-
                 amount = Double.parseDouble(request.getParameter("amountCA"));
                 System.out.println(amount);
             }

@@ -30,24 +30,34 @@ public class ServletLogin extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         logger.info("Servlet: ServletLogin. Method: Post");
-        UserDaoImpl userDao = UserDaoImpl.getInstance();
-        String login = request.getParameter("user");
-        String userPassword = request.getParameter("password");
-        User user = userDao.findEntityByLogin(login);
-        try {
-            if (!HashUtils.validatePassword(userPassword, user.getPassword())) {
-                request.getSession().setAttribute("message", "Not allowed!");
-                response.sendRedirect("login.jsp");
+        if (ServLetUtils.isLoginFormValid(request)) {
+            String login = request.getParameter("login");
+            String userPassword = request.getParameter("password");
+            User user = UserDaoImpl.getInstance().findEntityByLogin(login);
+            if (user != null) {
+                try {
+                    if (!HashUtils.validatePassword(userPassword, user.getPassword())) {
+                        request.getSession().setAttribute("message", "Not allowed!");
+                        response.sendRedirect("login.jsp");
+                    } else {
+                        Role role = user.getRole();
+                        request.getSession().setAttribute("user", user);
+                        request.getSession().setAttribute("role", user.getRole());
+                        ServLetUtils.chooseStartPage(role, request, response);
+                        System.out.println(login);
+                        System.out.println(userPassword);
+                    }
+                } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+                    logger.error("Hashing password was not successful", e);
+                }
             } else {
-                Role role = user.getRole();
-                request.getSession().setAttribute("user", user);
-                request.getSession().setAttribute("role", user.getRole());
-                ServLetUtils.chooseStartPage(role, request, response);
-                System.out.println(login);
-                System.out.println(userPassword);
+                logger.info("user with login" + login +" and password "+ userPassword+ " not found");
+                request.getSession().setAttribute("message", "user with login " + login + " not found!");
+                response.sendRedirect("login.jsp");
             }
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-            e.printStackTrace();
+        }else{
+            request.getSession().setAttribute("message", "required fields are empty!");
+            response.sendRedirect("login.jsp");
         }
     }
 }
