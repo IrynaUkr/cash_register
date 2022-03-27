@@ -1,5 +1,6 @@
 package cash.service;
 
+import cash.ServiceReceiptProduct;
 import cash.entity.Product;
 import cash.entity.Receipt;
 import cash.entity.ReceiptProducts;

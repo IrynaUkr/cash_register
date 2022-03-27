@@ -13,9 +13,9 @@ import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
 
-import static cash.service.ServLetUtils.getIdLang;
-import static cash.service.ServLetUtils.isNameAndAmountValid;
-import static cash.service.ServiceReceiptProduct.createReceiptProduct;
+import static cash.ServLetUtils.getIdLang;
+import static cash.ServLetUtils.isNameAndAmountValid;
+import static cash.ServiceReceiptProduct.createReceiptProduct;
 
 @WebServlet("/cashier/servletSaveUpdateReceipt")
 public class ServletSaveUpdateReceipt extends HttpServlet {

@@ -1,4 +1,4 @@
-package cash.service;
+package cash;
 
 import cash.entity.Product;
 import cash.entity.Receipt;

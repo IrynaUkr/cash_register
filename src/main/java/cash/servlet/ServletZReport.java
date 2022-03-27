@@ -11,7 +11,7 @@ import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.sql.Date;
 
-import static cash.service.ReportUtils.*;
+import static cash.ReportUtils.*;
 
 @WebServlet("/chief/servletZReport")
 public class ServletZReport extends HttpServlet {
@@ -30,14 +30,14 @@ public class ServletZReport extends HttpServlet {
             Date date = Date.valueOf(request.getParameter("date"));
             getXReport(request, date);
             if (ReceiptImpl.getInstance().setFiscalStatusReceipt()) {
-                request.getSession().setAttribute("message1", "receipts were fiscalized");
+                request.getSession().setAttribute("messageReceipt", "receipts were fiscalized");
             } else {
-                request.getSession().setAttribute("message1", "receipts were not fiscalized");
+                request.getSession().setAttribute("messageReceipt", "receipts were not fiscalized");
             }
             if (PaymentDaoImpl.getInstance().setFiscalStatusPayment()) {
-                request.getSession().setAttribute("message2", "payments were fiscalized");
+                request.getSession().setAttribute("messagePayment", "payments were fiscalized");
             } else {
-                request.getSession().setAttribute("message2", "payments were not fiscalized");
+                request.getSession().setAttribute("messagePayment", "payments were not fiscalized");
             }
             response.sendRedirect("/chief/servletZReport");
 

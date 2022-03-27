@@ -1,8 +1,7 @@
 package cash.servlet;
 
-import cash.db.dao.impl.UserDaoImpl;
 import cash.entity.Role;
-import cash.service.ServLetUtils;
+import cash.ServLetUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -10,8 +9,6 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
-
-import static cash.entity.Role.*;
 
 @WebServlet(name = "ServletBack", value = "/ServletBack")
 public class ServletBack extends HttpServlet {

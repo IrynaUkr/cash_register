@@ -11,7 +11,7 @@ import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.util.List;
 
-import static cash.service.ServLetUtils.getIdLang;
+import static cash.ServLetUtils.getIdLang;
 
 
 @WebServlet("/merch/ServletProductPages")

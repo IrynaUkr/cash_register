@@ -14,8 +14,8 @@ import java.io.*;
 
 import java.util.ArrayList;
 
-import static cash.service.ServLetUtils.getIdLang;
-import static cash.service.ServiceReceiptProduct.setAmountSumReceipt;
+import static cash.ServLetUtils.getIdLang;
+import static cash.ServiceReceiptProduct.setAmountSumReceipt;
 
 @WebServlet("/cashier/servletSaveToWordDocReceipt")
 public class ServletSaveToWordDocReceipt extends HttpServlet {

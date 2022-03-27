@@ -11,8 +11,8 @@ import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.util.List;
 
-import static cash.service.ServLetUtils.getIdLang;
-import static cash.service.ServLetUtils.isNameAndAmountValid;
+import static cash.ServLetUtils.getIdLang;
+import static cash.ServLetUtils.isNameAndAmountValid;
 
 @WebServlet("/merch/setAmountProduct")
 public class ServletProductSetAmount extends HttpServlet {

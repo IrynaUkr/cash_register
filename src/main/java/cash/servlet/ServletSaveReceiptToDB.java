@@ -1,7 +1,5 @@
 package cash.servlet;
 
-import cash.db.dao.ProductDao;
-import cash.db.dao.TransactionDao;
 import cash.db.dao.impl.ProductDaoImpl;
 import cash.db.dao.impl.TransactionDAOImpl;
 import cash.entity.*;
@@ -14,7 +12,7 @@ import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.util.List;
 
-import static cash.service.ServLetUtils.getIdLang;
+import static cash.ServLetUtils.getIdLang;
 
 @WebServlet("/cashier/createReceipt")
 public class ServletSaveReceiptToDB extends HttpServlet {

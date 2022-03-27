@@ -13,8 +13,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static cash.service.ServLetUtils.getIdLang;
-import static cash.service.ServiceReceiptProduct.setAmountSumReceipt;
+import static cash.ServLetUtils.getIdLang;
+import static cash.ServiceReceiptProduct.setAmountSumReceipt;
 
 @WebServlet("/cashier/printReceipt")
 public class ServletPrintReceipt extends HttpServlet {

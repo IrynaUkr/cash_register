@@ -3,8 +3,8 @@ package cash.servlet;
 import cash.db.dao.impl.UserDaoImpl;
 import cash.entity.Role;
 import cash.entity.User;
-import cash.service.HashUtils;
-import cash.service.ServLetUtils;
+import cash.HashUtils;
+import cash.ServLetUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -14,7 +14,6 @@ import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.Objects;
 
 @WebServlet("/login")
 public class ServletLogin extends HttpServlet {
@@ -44,8 +43,7 @@ public class ServletLogin extends HttpServlet {
                         request.getSession().setAttribute("user", user);
                         request.getSession().setAttribute("role", user.getRole());
                         ServLetUtils.chooseStartPage(role, request, response);
-                        System.out.println(login);
-                        System.out.println(userPassword);
+                        logger.info("user "+user+" logged in");
                     }
                 } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
                     logger.error("Hashing password was not successful", e);

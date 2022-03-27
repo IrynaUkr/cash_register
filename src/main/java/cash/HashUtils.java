@@ -1,4 +1,4 @@
-package cash.service;
+package cash;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
@@ -55,7 +55,7 @@ public class HashUtils {
         return salt;
     }
 
-    static String toHex(byte[] array)  {
+    public static String toHex(byte[] array)  {
         BigInteger bi = new BigInteger(1, array);
         String hex = bi.toString(16);
             return hex;

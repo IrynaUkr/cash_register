@@ -1,4 +1,4 @@
-package cash.service;
+package cash;
 
 import cash.db.dao.impl.ProductDaoImpl;
 import cash.entity.Role;

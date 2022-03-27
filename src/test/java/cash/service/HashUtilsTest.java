@@ -1,5 +1,6 @@
 package cash.service;
 
+import cash.HashUtils;
 import org.junit.Test;
 
 import java.nio.charset.StandardCharsets;
