@@ -1,4 +1,4 @@
-package cash.servlet.filters;
+package cash.filters;
 
 import javax.servlet.*;
 import javax.servlet.annotation.*;

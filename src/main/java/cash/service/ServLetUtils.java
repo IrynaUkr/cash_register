@@ -2,6 +2,8 @@ package cash.service;
 
 import cash.db.dao.impl.ProductDaoImpl;
 import cash.entity.Role;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -9,6 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class ServLetUtils {
+    private static final Logger logger = LogManager.getLogger(ServLetUtils.class);
+
 
     public static int getIdLang(HttpServletRequest request) {
         String language = "en";
@@ -20,12 +24,13 @@ public class ServLetUtils {
     }
 
     public static boolean isNameAndAmountValid(HttpServletRequest request) {
+        logger.info("query: isNameAndAmountValid");
         return request.getParameter("productNA") != ""
                 && request.getParameter("amountNA") != ""
-                && isPositiveNumeric(request.getParameter("amountNA"))
+          //      && isPositiveNumeric(request.getParameter("amountNA"))
                 && request.getParameter("productCA") != ""
-                && request.getParameter("amountCA") != ""
-                && isPositiveNumeric(request.getParameter("amountCA"));
+                && request.getParameter("amountCA") != "";
+        //        && isPositiveNumeric(request.getParameter("amountCA"));
     }
 
     public static boolean isPositiveNumeric(String str) {

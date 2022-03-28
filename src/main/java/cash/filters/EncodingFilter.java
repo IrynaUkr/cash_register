@@ -1,4 +1,4 @@
-package cash.servlet.filters;
+package cash.filters;
 
 import javax.servlet.*;
 import javax.servlet.annotation.*;
@@ -7,6 +7,7 @@ import java.io.IOException;
 @WebFilter
 public class EncodingFilter implements Filter {
     private String encoding;
+
     public void init(FilterConfig config) throws ServletException {
         // читаем из конфигурации
         encoding = config.getInitParameter("requestEncoding");

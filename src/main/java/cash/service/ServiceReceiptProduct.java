@@ -24,7 +24,7 @@ public class ServiceReceiptProduct {
     }
 
     public static void setAmountSumReceipt(Receipt receipt) {
-        logger.info("query: updateAmountSumReceipt");
+        logger.info("query: setAmountSumReceipt");
         if (receipt != null) {
             ArrayList<ReceiptProducts> receiptProducts = receipt.getReceiptProducts();
             double sum = 0.0;

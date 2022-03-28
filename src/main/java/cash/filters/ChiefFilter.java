@@ -1,4 +1,4 @@
-package cash.servlet.filters;
+package cash.filters;
 
 import cash.entity.Role;
 
@@ -9,10 +9,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import static cash.entity.Role.CASHIER;
-import static cash.entity.Role.MERCHANDISER;
+import static cash.entity.Role.CHIEF_CASHIER;
 
-@WebFilter("/merch/*")
-public class MerchFilter implements Filter {
+@WebFilter("/chief/*")
+public class ChiefFilter implements Filter {
     public void init(FilterConfig config) throws ServletException {
     }
 
@@ -22,11 +22,11 @@ public class MerchFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {
         Role roleUser = Role.valueOf(String.valueOf(((HttpServletRequest) request).getSession().getAttribute("role")));
-        if (roleUser == MERCHANDISER) {
+        if (roleUser == CHIEF_CASHIER) {
             chain.doFilter(request, response);
         } else {
             ((HttpServletResponse) response).sendRedirect("login.jsp");
         }
+
     }
 }
-
