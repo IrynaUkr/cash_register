@@ -36,13 +36,10 @@
                         key="label.name"/></label></td>
                 <td><input type="radio" id="3" name="ProductPrice" value="ProductPrice"><label for="3"><fmt:message
                         key="label.price"/></label></td>
-                </td>
                 <td><input type="radio" id="4" name="ProductAmount" value="ProductAmount"><label for="4"><fmt:message
                         key="label.amount"/></label></td>
-                </td>
                 <td><input type="radio" id="5" name="ProductUOM" value="UOM"><label for="5"><fmt:message
                         key="label.UOM"/></label></td>
-                </td>
             </table>
             <button class="btn-default" type="submit"><fmt:message key="label.send"/></button>
         </form>
@@ -66,7 +63,7 @@
                     <td><input type="checkbox" name="selected" value="${bean.code}"></td>
                     <td> ${bean.code}</td>
                     <td> ${bean.name}</td>
-                    <td>${bean.price}</td>
+                    <td> ${bean.price}</td>
                     <td> ${bean.amount}</td>
                     <td> ${bean.uom}</td>
                     <td> ${bean.description}</td>

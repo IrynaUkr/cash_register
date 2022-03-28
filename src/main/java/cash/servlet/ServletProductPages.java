@@ -11,7 +11,7 @@ import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.util.List;
 
-import static cash.ServLetUtils.getIdLang;
+import static cash.service.ServLetUtils.getIdLang;
 
 
 @WebServlet("/merch/ServletProductPages")
@@ -60,16 +60,16 @@ public class ServletProductPages extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         logger.info("Servlet: ServletProductPages. Method: Post");
-        boolean flag = false;
+        boolean isProductDeleted = false;
         if (request.getParameterValues("selected") != null) {
             String[] codes = request.getParameterValues("selected");
-            flag = productDao.deleteProductsByCode(codes);
+            isProductDeleted = productDao.deleteProductsByCode(codes);
         }
-        if (flag) {
-            request.getSession().setAttribute("message", "products was deleted!");
+        if (isProductDeleted) {
+            request.getSession().setAttribute("message", "products were deleted!");
             response.sendRedirect("/ServletBack");
         } else {
-            request.getSession().setAttribute("message", "products was not deleted, they are in receipts! ");
+            request.getSession().setAttribute("message", "products were not deleted, they are in receipts! ");
             response.sendRedirect("/ServletBack");
         }
     }

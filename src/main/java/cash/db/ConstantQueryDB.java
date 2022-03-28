@@ -2,6 +2,7 @@ package cash.db;
 
 public class ConstantQueryDB {
     public static final String COUNT_PRODUCT = "SELECT COUNT(DISTINCT id_product)  FROM product ";
+    public static final String COUNT_RECEIPT = "SELECT COUNT(DISTINCT id_receipt)  FROM receipt ";
     public static final String SELECT_PRODUCT_BY_ID = "SELECT * FROM product  WHERE id_product = ?";
     public static final String SELECT_PRODUCT_BY_CODE = "SELECT * FROM product  WHERE code = ?";
     public static final String SELECT_PRODUCT_BY_CODE_LANG = "SELECT * FROM product JOIN translate WHERE product.id_product = translate.id_prod_tr and id_lang_tr=? and code=?";
@@ -9,6 +10,7 @@ public class ConstantQueryDB {
     public static final String SELECT_FROM_PRODUCT = "SELECT * FROM product";
     public static final String SELECT_FROM_PRODUCT_BY_LANG = "SELECT * FROM product JOIN translate WHERE product.id_product = translate.id_prod_tr and id_lang_tr=?";
     public static final String SELECT_FROM_PRODUCT_LIMIT = "SELECT * FROM product JOIN translate WHERE product.id_product = translate.id_prod_tr and id_lang_tr=? LIMIT ?, ?";
+    public static final String SELECT_FROM_RECEIPT_LIMIT = "SELECT * FROM receipt  LIMIT ?, ?";
     public static final String INSERT_PRODUCT = "INSERT INTO product" +
             " (code, price, amount, uom) VALUES (?, ?, ?, ?)";
     public static final String SET_AMOUNT_PRODUCT = "UPDATE product SET  amount= ? WHERE id_product = ?";

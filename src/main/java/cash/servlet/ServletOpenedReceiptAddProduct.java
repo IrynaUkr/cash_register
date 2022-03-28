@@ -13,10 +13,10 @@ import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.util.List;
 
-import static cash.ServLetUtils.getIdLang;
-import static cash.ServLetUtils.isNameAndAmountValid;
-import static cash.ServiceReceiptProduct.createReceiptProduct;
-import static cash.ServiceReceiptProduct.setAmountSumReceipt;
+import static cash.service.ServLetUtils.getIdLang;
+import static cash.service.ServLetUtils.isNameAndAmountValid;
+import static cash.service.ServiceReceiptProduct.createReceiptProduct;
+import static cash.service.ServiceReceiptProduct.setAmountSumReceipt;
 
 @WebServlet("/cashier/addProductToReceiptList")
 public class ServletOpenedReceiptAddProduct extends HttpServlet {

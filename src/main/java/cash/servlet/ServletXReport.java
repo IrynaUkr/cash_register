@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.sql.Date;
 import java.util.List;
 
-import static cash.ReportUtils.getXReport;
+import static cash.service.ReportUtils.getXReport;
 
 @WebServlet("/chief/servletXReport")
 public class ServletXReport extends HttpServlet {

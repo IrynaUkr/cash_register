@@ -12,9 +12,9 @@ import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
 
-import static cash.ServLetUtils.getIdLang;
-import static cash.ServiceReceiptProduct.createReceiptProduct;
-import static cash.ServiceReceiptProduct.setAmountSumReceipt;
+import static cash.service.ServLetUtils.getIdLang;
+import static cash.service.ServiceReceiptProduct.createReceiptProduct;
+import static cash.service.ServiceReceiptProduct.setAmountSumReceipt;
 
 @WebServlet("/cashier/deleteProductFromProductList")
 public class ServletOpenedReceiptDeleteProduct extends HttpServlet {

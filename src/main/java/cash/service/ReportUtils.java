@@ -1,4 +1,4 @@
-package cash;
+package cash.service;
 
 import cash.db.dao.impl.PaymentDaoImpl;
 import cash.db.dao.impl.ReceiptImpl;

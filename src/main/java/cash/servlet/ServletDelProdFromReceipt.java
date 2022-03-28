@@ -15,7 +15,7 @@ import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.util.List;
 
-import static cash.ServLetUtils.*;
+import static cash.service.ServLetUtils.*;
 
 @WebServlet("/chief/delProdFromReceipt")
 public class ServletDelProdFromReceipt extends HttpServlet {

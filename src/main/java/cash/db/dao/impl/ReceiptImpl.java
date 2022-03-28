@@ -29,6 +29,62 @@ public class ReceiptImpl implements ReceiptDao {
         return instance;
     }
 
+    private int totalAmountRecords;
+
+    public int getTotalAmountRecords() {
+        return totalAmountRecords;
+    }
+
+    public List<Receipt> findAllReceiptWithRestrict(int offset, int noOfRecords) {
+        logger.info("query: find all products with restrict amount of lines");
+        List<Receipt> receipts = new ArrayList<>();
+        try (Connection con = DBManager.getInstance().getConnection();
+             PreparedStatement pst = con.prepareStatement(SELECT_FROM_RECEIPT_LIMIT)) {
+            int k = 0;
+            pst.setInt(++k, offset);
+            pst.setInt(++k, noOfRecords);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                receipts.add(extractReceipt(rs));
+            }
+            rs = pst.executeQuery(COUNT_RECEIPT);
+            if (rs.next())
+                this.totalAmountRecords = rs.getInt(1);
+            rs.close();
+        } catch (SQLException ex) {
+            logger.error("receipts with restrict amount of lines were  not found", ex);
+            throw new DBException("receipts with restrict amount of lines were  not found", ex);
+        }
+        return receipts;
+    }
+
+    public List<Receipt> viewAllReceiptsWithSorting(int offset, int recordsOnPage, String sortingType) {
+        logger.info("query: find all receipts with restrict amount of lines");
+        List<Receipt> receipts = new ArrayList<>();
+        StringBuilder queryBuilder = new StringBuilder();
+        queryBuilder.append("SELECT * FROM receipt ORDER by ");
+        queryBuilder.append(sortingType);
+        queryBuilder.append(" LIMIT ?, ?");
+        try (Connection con = DBManager.getInstance().getConnection();
+             PreparedStatement pst = con.prepareStatement(queryBuilder.toString())) {
+            int k = 0;
+            pst.setInt(++k, offset);
+            pst.setInt(++k, recordsOnPage);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                receipts.add(extractReceipt(rs));
+            }
+            rs = pst.executeQuery(COUNT_RECEIPT);
+            if (rs.next())
+                this.totalAmountRecords = rs.getInt(1);
+            rs.close();
+        } catch (SQLException ex) {
+            logger.error("receipts with sorting  were  not found", ex);
+            throw new DBException("receipts with sorting  were  not found", ex);
+        }
+        return receipts;
+    }
+
 
     @Override
     public List<Receipt> findAll() {
@@ -55,7 +111,6 @@ public class ReceiptImpl implements ReceiptDao {
         receipt.setDate(rs.getDate("date"));
         receipt.setStatus(OperationStatus.valueOf(rs.getString("status")));
         receipt.setOperationType(OperationType.valueOf(rs.getString("type")));
-        receipt.setSum(rs.getDouble("total"));
         return receipt;
     }
 
@@ -86,8 +141,12 @@ public class ReceiptImpl implements ReceiptDao {
         if (receipt == null) {
             return false;
         }
+        if (receipt.getStatus()==OperationStatus.FISCALISED){
+            System.out.println("fiscalazed receipts could not be deleted");
+            return false;
+        }
         int id = receipt.getId();
-        if (findEntityById(id) == null) {
+        if (findEntityById(id) == null ) {
             return false;
         } else {
             int executeUpdate = 0;
@@ -101,6 +160,13 @@ public class ReceiptImpl implements ReceiptDao {
             }
             return executeUpdate > 0;
         }
+    }
+    public boolean deleteReceiptsByNumber(String... numbers) {
+        boolean flag = false;
+        for (String number : numbers) {
+            flag = delete(findReceiptByNumber(number));
+        }
+        return flag;
     }
 
     @Override

@@ -11,7 +11,7 @@ import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.sql.Date;
 
-import static cash.ReportUtils.*;
+import static cash.service.ReportUtils.*;
 
 @WebServlet("/chief/servletZReport")
 public class ServletZReport extends HttpServlet {

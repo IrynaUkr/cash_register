@@ -16,8 +16,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static cash.ServLetUtils.getIdLang;
-import static cash.ServiceReceiptProduct.setAmountSumReceipt;
+import static cash.service.ServLetUtils.getIdLang;
+import static cash.service.ServiceReceiptProduct.setAmountSumReceipt;
 
 @WebServlet("/cashier/updateAmountReceipt")
 public class ServletUpdateAmountReceipt extends HttpServlet {

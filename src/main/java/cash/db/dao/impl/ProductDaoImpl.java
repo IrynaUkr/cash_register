@@ -84,8 +84,8 @@ public class ProductDaoImpl implements ProductDao {
                 this.totalAmountRecords = rs.getInt(1);
             rs.close();
         } catch (SQLException ex) {
-            logger.error("products with restrict amount of lines and language were  not found", ex);
-            throw new DBException("products with restrict amount of lines and language were  not found", ex);
+            logger.error("products with sorting amount of lines and language were  not found", ex);
+            throw new DBException("products with sorting amount of lines and language were  not found", ex);
         }
         return products;
     }

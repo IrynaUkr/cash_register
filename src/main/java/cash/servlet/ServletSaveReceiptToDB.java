@@ -12,7 +12,7 @@ import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.util.List;
 
-import static cash.ServLetUtils.getIdLang;
+import static cash.service.ServLetUtils.getIdLang;
 
 @WebServlet("/cashier/createReceipt")
 public class ServletSaveReceiptToDB extends HttpServlet {
