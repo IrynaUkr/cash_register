@@ -30,7 +30,7 @@
     <br>
 
     <form action="${pageContext.request.contextPath}/cashier/printReceipt" target="_blank">
-        <button><fmt:message key="label.print_receipt"/></button>
+        <button><fmt:message key="label.handle_receipt"/></button>
     </form>
 
 

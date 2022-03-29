@@ -58,3 +58,16 @@ input{
     border-radius: 7px;
 
 }
+file{
+    color:brown;
+    background-color: gold;
+    font-size: 15px;
+    font-weight: bold;
+    border-radius: 20px;
+    border: outset;
+    height: 50px;
+    width: 250px;
+    text-align: center;
+    margin: 20px;
+    padding: 1px;
+}
