@@ -1,6 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib uri="/WEB-INF/currentDateTag.tld" prefix="m" %>
+
 <%@ page isELIgnored="false" %>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.1/css/bootstrap.min.css"
@@ -17,6 +19,7 @@
 <head>
     <title>Cash Register</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/style.css">
+    <fmt:message key="label.current_date"/> <m:currentDateTag/>
 </head>
 <body>
 <header>
