@@ -1,7 +1,10 @@
 package cash.service;
 
 import cash.db.dao.impl.ProductDaoImpl;
+import cash.db.dao.impl.UserDaoImpl;
+import cash.db.manager.DBManager;
 import cash.entity.Role;
+import cash.entity.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -9,6 +12,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.Connection;
+
+import static org.apache.logging.log4j.core.util.Closer.close;
 
 public class ServLetUtils {
     private static final Logger logger = LogManager.getLogger(ServLetUtils.class);
@@ -72,5 +78,15 @@ public class ServLetUtils {
             case MERCHANDISER -> request.getRequestDispatcher("/WEB-INF/jsp/startMerch.jsp").forward(request, response);
             case CHIEF_CASHIER -> request.getRequestDispatcher("/WEB-INF/jsp/startChief.jsp").forward(request, response);
         }
+    }
+    public static User getUserFromRequest(HttpServletRequest request){
+        String login = request.getParameter("login");
+        Connection connection = DBManager.getInstance().getConnection();
+        User user = UserDaoImpl.getInstance().findEntityByLoginWithCon(login,connection);
+        try {
+            close(connection);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }return user;
     }
 }

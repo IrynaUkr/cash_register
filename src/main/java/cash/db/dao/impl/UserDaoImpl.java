@@ -197,7 +197,7 @@ public class UserDaoImpl implements UserDao {
         logger.info("query: find users");
         List<User> users = new ArrayList<>();
         try (Connection con = DBManager.getInstance().getConnection();
-             PreparedStatement pstmt = con.prepareStatement("SELECT * FROM user  WHERE role = ?")) {
+             PreparedStatement pstmt = con.prepareStatement("SELECT * FROM employee  WHERE role = ?")) {
             pstmt.setString(1, role);
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
@@ -207,6 +207,63 @@ public class UserDaoImpl implements UserDao {
         } catch (SQLException ex) {
             logger.error("user was not found", ex);
             throw new DBException("user was not found", ex);
+        }
+        return users;
+    }
+
+    public boolean createWithCon(User user, Connection con) {
+        logger.info("query: create user");
+        if (user == null) {
+            throw new IllegalArgumentException();
+        }
+        int result;
+        try (PreparedStatement pstmt = con.prepareStatement(INSERT_USER, Statement.RETURN_GENERATED_KEYS)) {
+            mapUser(user, pstmt);
+            result = pstmt.executeUpdate();
+            if (result > 0) {
+                try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        user.setIdUser(generatedKeys.getInt(1));
+                    } else {
+                        throw new SQLException("Creating user failed, no ID obtained.");
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            logger.error("user was not created", ex);
+            throw new DBException("user was not created", ex);
+        }
+        return result > 0;
+    }
+
+    public User findEntityByLoginWithCon(String login, Connection con) {
+        logger.info("query: find user by login");
+        User user = null;
+        try (PreparedStatement pstmt = con.prepareStatement(SELECT_USER_BY_LOGIN)) {
+            pstmt.setString(1, login);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                user = extractUser(rs);
+            }
+            rs.close();
+        } catch (SQLException ex) {
+            logger.error("user by login was  not found", ex);
+            throw new DBException("user by login was  not found", ex);
+        }
+        return user;
+    }
+
+    public List<User> findAllWithCon(Connection con) {
+        logger.info("query: find users");
+        List<User> users = new ArrayList<>();
+        try (Statement stmt = con.createStatement();
+             ResultSet rs = stmt.executeQuery(SELECT_FROM_USER)) {
+            while (rs.next()) {
+                users.add(extractUser(rs));
+            }
+        } catch (SQLException ex) {
+            logger.error("users were  not found", ex);
+            throw new DBException("users were  not found", ex);
         }
         return users;
     }

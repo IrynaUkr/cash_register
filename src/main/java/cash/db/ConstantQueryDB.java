@@ -55,11 +55,11 @@ public class ConstantQueryDB {
     public static final String INCREASE_AMOUNT = " UPDATE product SET amount =(product.amount+?) WHERE id_product = ?";
     public static final String DECREASE_AMOUNT = " UPDATE product SET amount =(product.amount-?) WHERE id_product = ?";
 
-    public static final String SELECT_USER_BY_ID = "SELECT * FROM user  WHERE id_user = ?";
-    public static final String SELECT_USER_BY_LOGIN = "SELECT * FROM user  WHERE login = ?";
-    public static final String SELECT_USER_BY_ROLE = "SELECT * FROM user  WHERE role = ?";
-    public static final String SELECT_FROM_USER = "SELECT * FROM user";
-    public static final String INSERT_USER = "INSERT INTO user (login, password, role, surname, address, phone, email) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    public static final String SET_USER = "UPDATE user SET login = ?, password = ?, role = ?, surname =? WHERE id_user =?";
+    public static final String SELECT_USER_BY_ID = "SELECT * FROM employee  WHERE id_user = ?";
+    public static final String SELECT_USER_BY_LOGIN = "SELECT * FROM employee  WHERE login = ?";
+    public static final String SELECT_USER_BY_ROLE = "SELECT * FROM employee  WHERE role = ?";
+    public static final String SELECT_FROM_USER = "SELECT * FROM employee";
+    public static final String INSERT_USER = "INSERT INTO employee (login, password, role, surname, address, phone, email) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    public static final String SET_USER = "UPDATE employee SET login = ?, password = ?, role = ?, surname =? WHERE id_user =?";
     public static final String DELETE_USER_BY_ID = "DELETE FROM user WHERE id_user = ?";
 }
