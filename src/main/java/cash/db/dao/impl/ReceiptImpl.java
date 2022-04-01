@@ -113,6 +113,16 @@ public class ReceiptImpl implements ReceiptDao {
         receipt.setOperationType(OperationType.valueOf(rs.getString("type")));
         return receipt;
     }
+    private Receipt extractReceiptWithTotal(ResultSet rs) throws SQLException {
+        Receipt receipt = new Receipt();
+        receipt.setId(rs.getInt("id_receipt"));
+        receipt.setNumber(rs.getString("number"));
+        receipt.setDate(rs.getDate("date"));
+        receipt.setStatus(OperationStatus.valueOf(rs.getString("status")));
+        receipt.setOperationType(OperationType.valueOf(rs.getString("type")));
+        receipt.setSum(rs.getDouble("total"));
+        return receipt;
+    }
 
     @Override
     public Receipt findEntityById(Integer id) {
@@ -246,7 +256,7 @@ public class ReceiptImpl implements ReceiptDao {
             pstmt.setString(1, String.valueOf(date));
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
-                receipts.add(extractReceipt(rs));
+                receipts.add(extractReceiptWithTotal(rs));
             }
             rs.close();
         } catch (SQLException ex) {

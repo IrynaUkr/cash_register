@@ -267,7 +267,6 @@ public class UserDaoImpl implements UserDao {
                 logger.error("user was not deleted", ex);
                 throw new DBException("user was not deleted", ex);
             }
-           // close(con);
             return executeUpdate > 0;
         }
     }

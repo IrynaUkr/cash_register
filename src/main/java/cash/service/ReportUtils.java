@@ -13,17 +13,28 @@ import java.util.stream.Collectors;
 
 public class ReportUtils {
     public static void getXReport(HttpServletRequest request, Date date) {
+        System.out.println("getXReport");
         List<Receipt> receiptList = ReceiptImpl.getInstance().findReceiptByDate(date);
         List<Receipt> returns = getReceiptsByType(receiptList, OperationType.RETURN);
+        System.out.println(returns);
         List<Receipt> sales = getReceiptsByType(receiptList, OperationType.SALE);
+        System.out.println(sales);
         List<Payment> payments = PaymentDaoImpl.getInstance().findPaymentByDate(date);
         List<Payment> payIn = getPaymentsByType(payments, OperationType.SERVICE_CASH_INFLOW);
+        System.out.println(payments);
+        System.out.println(payIn);
         List<Payment> payOut = getPaymentsByType(payments, OperationType.SERVICE_CASH_OUTFLOW);
+        System.out.println(payOut);
         double returnSum = getReceiptsSum(returns);
+        System.out.println(returnSum);
         double salesSum = getReceiptsSum(sales);
+        System.out.println(salesSum);
         double payInSum = getPaymentsSum(payIn);
+        System.out.println(payInSum);
         double payOutSum = getPaymentsSum(payOut);
+        System.out.println(payOut);
         double resultSum = getResultSum(returnSum, salesSum, payInSum, payOutSum);
+        System.out.println(resultSum + "resultSum");
         setXReport(request, returns, sales, payIn, payOut, returnSum, salesSum, payInSum, payOutSum, resultSum);
     }
 
