@@ -24,7 +24,7 @@ public class DownLoadServlet extends HttpServlet {
         System.out.println("download in download servlet " + fileName);
         File file = new File(fileName);
         if (!file.exists()) {
-            System.out.println("File not found!!");
+            logger.info("Servlet: DownLoadServlet.File not found!!");
             request.getSession().setAttribute("message", "File not found.");
             response.sendRedirect("/WEB-INF/jsp/receipt/handleReceipt.jsp");
             return;
@@ -33,7 +33,6 @@ public class DownLoadServlet extends HttpServlet {
         response.setHeader("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"");
         OutputStream out = response.getOutputStream();
         try (FileInputStream fileInputStream = new FileInputStream(file)) {
-            System.out.println("write bytes into buffer");
             byte[] buffer = new byte[4096];
             int bytesRead = -1;
             while ((bytesRead = fileInputStream.read(buffer)) != -1) {
@@ -41,7 +40,7 @@ public class DownLoadServlet extends HttpServlet {
             }
             out.flush();
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            logger.error("file was not download");
         }
     }
 }

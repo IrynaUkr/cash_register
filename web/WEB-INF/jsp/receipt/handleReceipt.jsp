@@ -52,7 +52,7 @@
         </div>
         <div class="col-md-4">
             <br>
-            <h4>upload to the server </h4>
+            <h4><fmt:message key="label.upload_server"/></h4>
             <form action="${pageContext.request.contextPath}/cashier/upload" method="post"
                   enctype="multipart/form-data">
                 <input type="file" multiple name="multi_file">
@@ -66,7 +66,7 @@
 
         <div class="col-md-4">
             <br>
-            <h4>download from server </h4>
+            <h4><fmt:message key="label.download_server"/> </h4>
             <form action="${pageContext.request.contextPath}/cashier/downLoad">
                 <input type="text" name="filename">
                 <input type="submit" class="btn btn-warning border-radius: 10px;"
