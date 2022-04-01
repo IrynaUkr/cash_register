@@ -2,6 +2,7 @@ package cash.db;
 
 public class ConstantQueryDB {
     public static final String COUNT_PRODUCT = "SELECT COUNT(DISTINCT id_product)  FROM product ";
+    public static final String COUNT_EMPLOYEE = "SELECT COUNT(DISTINCT id_user)  FROM employee ";
     public static final String COUNT_RECEIPT = "SELECT COUNT(DISTINCT id_receipt)  FROM receipt ";
     public static final String SELECT_PRODUCT_BY_ID = "SELECT * FROM product  WHERE id_product = ?";
     public static final String SELECT_PRODUCT_BY_CODE = "SELECT * FROM product  WHERE code = ?";
@@ -10,6 +11,7 @@ public class ConstantQueryDB {
     public static final String SELECT_FROM_PRODUCT = "SELECT * FROM product";
     public static final String SELECT_FROM_PRODUCT_BY_LANG = "SELECT * FROM product JOIN translate WHERE product.id_product = translate.id_prod_tr and id_lang_tr=?";
     public static final String SELECT_FROM_PRODUCT_LIMIT = "SELECT * FROM product JOIN translate WHERE product.id_product = translate.id_prod_tr and id_lang_tr=? LIMIT ?, ?";
+    public static final String SELECT_FROM_EMPLOYEE_LIMIT = "SELECT * FROM employee LIMIT ?, ?";
     public static final String SELECT_FROM_RECEIPT_LIMIT = "SELECT * FROM receipt  LIMIT ?, ?";
     public static final String INSERT_PRODUCT = "INSERT INTO product" +
             " (code, price, amount, uom) VALUES (?, ?, ?, ?)";
@@ -57,9 +59,8 @@ public class ConstantQueryDB {
 
     public static final String SELECT_USER_BY_ID = "SELECT * FROM employee  WHERE id_user = ?";
     public static final String SELECT_USER_BY_LOGIN = "SELECT * FROM employee  WHERE login = ?";
-    public static final String SELECT_USER_BY_ROLE = "SELECT * FROM employee  WHERE role = ?";
     public static final String SELECT_FROM_USER = "SELECT * FROM employee";
     public static final String INSERT_USER = "INSERT INTO employee (login, password, role, surname, address, phone, email) VALUES (?, ?, ?, ?, ?, ?, ?)";
     public static final String SET_USER = "UPDATE employee SET login = ?, password = ?, role = ?, surname =? WHERE id_user =?";
-    public static final String DELETE_USER_BY_ID = "DELETE FROM user WHERE id_user = ?";
+    public static final String DELETE_USER_BY_LOGIN = "DELETE FROM employee WHERE login = ?";
 }

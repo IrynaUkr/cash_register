@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Connection;
+import java.util.List;
 
 import static org.apache.logging.log4j.core.util.Closer.close;
 
@@ -88,5 +89,17 @@ public class ServLetUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }return user;
+    }
+    public static List<User> getUsersFromRequestWithSorting(HttpServletRequest request, int page,int recordsPerPage,String sorting){
+        UserDaoImpl userDao = UserDaoImpl.getInstance();
+        Connection connection = DBManager.getInstance().getConnection();
+        List<User>  users = userDao.viewAllWithSortingWithCon((page - 1) * recordsPerPage, recordsPerPage, sorting, connection);
+        try {
+            close(connection);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return users;
     }
 }

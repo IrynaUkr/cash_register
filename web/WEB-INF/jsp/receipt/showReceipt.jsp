@@ -26,9 +26,7 @@
 
         <table class="table table-striped table-bordered table-hover">
             <thread>
-                <td>
-                    <fmt:message key="label.code"/>
-                </td>
+                <td><fmt:message key="label.code"/> </td>
                 <td><fmt:message key="label.name"/></td>
                 <td><fmt:message key="label.price"/></td>
                 <td><fmt:message key="label.amount"/></td>

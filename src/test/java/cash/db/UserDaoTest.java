@@ -2,20 +2,20 @@ package cash.db;
 
 import cash.db.dao.impl.UserDaoImpl;
 import cash.db.manager.DBManager;
+import cash.entity.Product;
 import cash.entity.Role;
 import cash.entity.User;
+import cash.exceptions.DBException;
 import org.junit.Ignore;
 import org.junit.jupiter.api.*;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static cash.db.ConstantQueryDB.COUNT_PRODUCT;
+import static org.junit.jupiter.api.Assertions.*;
 //"INSERT INTO employee (login, password, role, surname, address, phone, email) VALUES (?, ?, ?, ?, ?, ?, ?)"
 
 public class UserDaoTest {
@@ -95,5 +95,31 @@ public class UserDaoTest {
         assertEquals(expected, actual);
         assertNotEquals(bender, actual);
     }
+
+    @Test
+    public void deleteWithConnectionTest() {
+        User bender = new User("Ostap", "pass", "Bender", Role.ADMIN);
+        User vorobjaninov = new User("Kisa", "pass", "Vorobjaninov", Role.ADMIN);
+        userDao = UserDaoImpl.getInstance();
+        userDao.createWithCon(bender, con);
+
+        boolean isDeleted = userDao.deleteWithConnection(bender.getLogin(), con);
+        boolean isNotDeleted = userDao.deleteWithConnection(vorobjaninov.getLogin(), con);
+        assertTrue(isDeleted);
+        assertFalse(isNotDeleted);
+        User actual = userDao.findEntityByLoginWithCon(bender.getLogin(), con);
+        assertNull(actual);
+    }
+
+    @Test
+    public void findEntityByIdWithConTest() {
+        User bender = new User("Ostap", "pass", "Bender", Role.ADMIN);
+        userDao = UserDaoImpl.getInstance();
+        userDao.createWithCon(bender, con);
+        User benderInDBbyLogin = userDao.findEntityByLoginWithCon(bender.getLogin(), con);
+        User benderInDbById = userDao.findEntityByIdWithCon(benderInDBbyLogin.getId(), con);
+        assertEquals(benderInDBbyLogin, benderInDbById);
+    }
+
 
 }

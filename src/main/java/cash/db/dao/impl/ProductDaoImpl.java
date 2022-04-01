@@ -28,7 +28,6 @@ public class ProductDaoImpl implements ProductDao {
         return instance;
     }
 
-
     private int totalAmountRecords;
 
     @Override

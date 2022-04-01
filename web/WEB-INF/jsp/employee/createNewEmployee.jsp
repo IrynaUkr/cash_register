@@ -42,11 +42,6 @@
         <input type="email" name="email"> e.mail <br> <br>
         <input type="submit" class="btn-warning" value="<fmt:message key="label.send"/>">
     </form>
-    <br>
-    <form action="${pageContext.request.contextPath}/admin/servletEmployeePages" target="_blank">
-        <button><fmt:message key="label.delete_employee"/></button>
-    </form>
-    <br>
     <form action="/logout" target="_blank" method="post">
         <button><fmt:message key="label.logout"/></button>
     </form>

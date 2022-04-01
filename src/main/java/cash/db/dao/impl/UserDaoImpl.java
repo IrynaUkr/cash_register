@@ -3,6 +3,7 @@ package cash.db.dao.impl;
 
 import cash.db.dao.UserDao;
 import cash.db.manager.DBManager;
+import cash.entity.Product;
 import cash.entity.Role;
 import cash.entity.User;
 import cash.exceptions.DBException;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static cash.db.ConstantQueryDB.*;
+
 
 public class UserDaoImpl implements UserDao {
     private static final Logger logger = LogManager.getLogger(UserDaoImpl.class);
@@ -31,6 +33,11 @@ public class UserDaoImpl implements UserDao {
         return instance;
     }
 
+    private int totalAmountRecords;
+
+    public int getTotalAmountRecords() {
+        return totalAmountRecords;
+    }
 
     @Override
     public List<User> findAll() {
@@ -94,14 +101,13 @@ public class UserDaoImpl implements UserDao {
         if (user == null) {
             return false;
         }
-        int id = user.getId();
-        if (findEntityById(id) == null) {
+        if (findEntityByLogin(user.getLogin()) == null) {
             return false;
         } else {
             int executeUpdate = 0;
             try (Connection con = DBManager.getInstance().getConnection();
-                 PreparedStatement pstmt = con.prepareStatement(DELETE_USER_BY_ID)) {
-                pstmt.setInt(1, id);
+                 PreparedStatement pstmt = con.prepareStatement(DELETE_USER_BY_LOGIN)) {
+                pstmt.setString(1, user.getLogin());
                 executeUpdate = pstmt.executeUpdate();
             } catch (SQLException ex) {
                 logger.error("user was not deleted", ex);
@@ -192,35 +198,15 @@ public class UserDaoImpl implements UserDao {
     }
 
 
-    @Override
-    public List<User> findUserByRole(String role) {
-        logger.info("query: find users");
-        List<User> users = new ArrayList<>();
-        try (Connection con = DBManager.getInstance().getConnection();
-             PreparedStatement pstmt = con.prepareStatement("SELECT * FROM employee  WHERE role = ?")) {
-            pstmt.setString(1, role);
-            ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
-                users.add(extractUser(rs));
-            }
-            rs.close();
-        } catch (SQLException ex) {
-            logger.error("user was not found", ex);
-            throw new DBException("user was not found", ex);
-        }
-        return users;
-    }
-
     public boolean createWithCon(User user, Connection con) {
         logger.info("query: create user");
         if (user == null) {
             throw new IllegalArgumentException();
         }
-        int result;
+
         try (PreparedStatement pstmt = con.prepareStatement(INSERT_USER, Statement.RETURN_GENERATED_KEYS)) {
             mapUser(user, pstmt);
-            result = pstmt.executeUpdate();
-            if (result > 0) {
+            if (pstmt.executeUpdate() > 0) {
                 try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
                         user.setIdUser(generatedKeys.getInt(1));
@@ -229,11 +215,11 @@ public class UserDaoImpl implements UserDao {
                     }
                 }
             }
+            return pstmt.executeUpdate() > 0;
         } catch (SQLException ex) {
             logger.error("user was not created", ex);
             throw new DBException("user was not created", ex);
         }
-        return result > 0;
     }
 
     public User findEntityByLoginWithCon(String login, Connection con) {
@@ -267,5 +253,91 @@ public class UserDaoImpl implements UserDao {
         }
         return users;
     }
+
+    public boolean deleteWithConnection(String login, Connection con) {
+        logger.info("query: delete user");
+        if (findEntityByLoginWithCon(login, con) == null) {
+            return false;
+        } else {
+            int executeUpdate = 0;
+            try (PreparedStatement pstmt = con.prepareStatement(DELETE_USER_BY_LOGIN)) {
+                pstmt.setString(1, login);
+                executeUpdate = pstmt.executeUpdate();
+            } catch (SQLException ex) {
+                logger.error("user was not deleted", ex);
+                throw new DBException("user was not deleted", ex);
+            }
+           // close(con);
+            return executeUpdate > 0;
+        }
+    }
+
+    public User findEntityByIdWithCon(Integer id, Connection con) {
+        logger.info("query: find user");
+        User user = null;
+        try (PreparedStatement pstmt = con.prepareStatement(SELECT_USER_BY_ID)) {
+            pstmt.setInt(1, id);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                user = extractUser(rs);
+            }
+            rs.close();
+        } catch (SQLException ex) {
+            logger.error("user was  not found", ex);
+            throw new DBException("user was  not found", ex);
+        }
+        return user;
+    }
+
+    public List<User> viewAllWithSortingWithCon(
+            int offset, int recordsOnPage, String sortingType, Connection con) {
+        logger.info("query: view All With Sorting user");
+        List<User> users = new ArrayList<>();
+        StringBuilder queryBuilder = new StringBuilder();
+        queryBuilder.append("SELECT * FROM employee ORDER by ");
+        queryBuilder.append(sortingType);
+        queryBuilder.append(" LIMIT ?, ?");
+        try (PreparedStatement pst = con.prepareStatement(queryBuilder.toString())) {
+            int k = 0;
+            pst.setInt(++k, offset);
+            pst.setInt(++k, recordsOnPage);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                users.add(extractUser(rs));
+            }
+            rs = pst.executeQuery(COUNT_EMPLOYEE);
+            if (rs.next())
+                this.totalAmountRecords = rs.getInt(1);
+            rs.close();
+        } catch (SQLException ex) {
+            logger.error("employees with sorting amount of lines and language were  not found", ex);
+            throw new DBException("employees with sorting amount of lines and language were  not found", ex);
+        }
+        return users;
+    }
+
+    public List<User> findAllWithRestrictWithCon(int offset, int noOfRecords, Connection con) {
+        logger.info("query: find all products with restrict amount of lines");
+        List<User> users = new ArrayList<>();
+        try (PreparedStatement pst = con.prepareStatement(SELECT_FROM_EMPLOYEE_LIMIT)) {
+            int k = 0;
+            pst.setInt(++k, offset);
+            pst.setInt(++k, noOfRecords);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                users.add(extractUser(rs));
+            }
+            rs = pst.executeQuery(COUNT_EMPLOYEE);
+            if (rs.next())
+                this.totalAmountRecords = rs.getInt(1);
+            rs.close();
+        } catch (SQLException ex) {
+            logger.error("products with restrict amount of lines were  not found", ex);
+            throw new DBException("products with restrict amount of lines were  not found", ex);
+        }
+        return users;
+    }
+
 }
+
 

@@ -16,7 +16,7 @@ import static cash.service.ServLetUtils.getIdLang;
 
 @WebServlet("/merch/ServletProductPages")
 public class ServletProductPages extends HttpServlet {
-    private static final Logger logger = LogManager.getLogger(ServletBack.class);
+    private static final Logger logger = LogManager.getLogger(ServletProductPages.class);
     ProductDaoImpl productDao = ProductDaoImpl.getInstance();
 
     @Override
