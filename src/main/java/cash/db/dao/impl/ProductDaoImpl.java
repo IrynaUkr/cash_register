@@ -178,7 +178,7 @@ public class ProductDaoImpl implements ProductDao {
         if (findEntityById(id) == null) {
             return false;
         } else {
-            int executeUpdate = 0;
+            int executeUpdate;
             try (Connection con = DBManager.getInstance().getConnection();
                  PreparedStatement pstmt = con.prepareStatement(DELETE_PRODUCT_BY_ID)) {
                 pstmt.setInt(1, id);
@@ -194,7 +194,7 @@ public class ProductDaoImpl implements ProductDao {
     @Override
     public boolean deleteProductByCode(String code) {
         logger.info("query: delete product by code");
-        int executeUpdate = 0;
+        int executeUpdate;
         if (findProductByCode(code) == null) {
             return false;
         } else {
@@ -241,7 +241,7 @@ public class ProductDaoImpl implements ProductDao {
             return false;
         }
         Double storeAmount = product.getAmount();
-        int result = 0;
+        int result;
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement pstmt = con.prepareStatement(SET_AMOUNT_PRODUCT)) {
             pstmt.setDouble(1, storeAmount + amount);

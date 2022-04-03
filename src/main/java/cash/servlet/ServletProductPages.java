@@ -5,9 +5,11 @@ import cash.entity.Product;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
-import javax.servlet.annotation.*;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
@@ -44,7 +46,7 @@ public class ServletProductPages extends HttpServlet {
         }
         if (request.getSession().getAttribute("sorting") != null) {
             String sorting = String.valueOf(request.getSession().getAttribute("sorting"));
-            products = productDao.viewAllWithSorting((page - 1) * recordsPerPage, recordsPerPage, sorting,id_lang );
+            products = productDao.viewAllWithSorting((page - 1) * recordsPerPage, recordsPerPage, sorting, id_lang);
         } else {
             products = productDao.findAllWithRestrict((page - 1) * recordsPerPage, recordsPerPage, id_lang);
         }

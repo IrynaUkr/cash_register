@@ -35,12 +35,12 @@ public class HashUtils {
         byte[] testHash = skf.generateSecret(spec).getEncoded();
         boolean diff = hash.length == testHash.length;
         for (int i = 0; i < hash.length && i < testHash.length; i++) {
-            diff=(hash[i]==testHash[i]);
+            diff = (hash[i] == testHash[i]);
         }
         return diff;
     }
 
-    static byte[] fromHex(String hex) {
+    private static byte[] fromHex(String hex) {
         byte[] bytes = new byte[hex.length() / 2];
         for (int i = 0; i < bytes.length; i++) {
             bytes[i] = (byte) Integer.parseInt(hex.substring(2 * i, 2 * i + 2), 16);
@@ -48,17 +48,17 @@ public class HashUtils {
         return bytes;
     }
 
-    static byte[] getSalt() throws NoSuchAlgorithmException {
+    private static byte[] getSalt() throws NoSuchAlgorithmException {
         SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
         byte[] salt = new byte[16];
         sr.nextBytes(salt);
         return salt;
     }
 
-    public static String toHex(byte[] array)  {
+    public static String toHex(byte[] array) {
         BigInteger bi = new BigInteger(1, array);
         String hex = bi.toString(16);
-            return hex;
-   }
+        return hex;
+    }
 
 }

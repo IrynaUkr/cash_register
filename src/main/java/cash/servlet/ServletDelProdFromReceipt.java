@@ -2,20 +2,23 @@ package cash.servlet;
 
 import cash.db.dao.impl.ProductDaoImpl;
 import cash.db.dao.impl.ReceiptImpl;
+import cash.db.dao.impl.TransactionDAOImpl;
 import cash.entity.OperationStatus;
 import cash.entity.Product;
 import cash.entity.Receipt;
-import cash.db.dao.impl.TransactionDAOImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
-import javax.servlet.annotation.*;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-import static cash.service.ServLetUtils.*;
+import static cash.service.ServLetUtils.getIdLang;
+import static cash.service.ServLetUtils.isNameValid;
 
 @WebServlet("/chief/delProdFromReceipt")
 public class ServletDelProdFromReceipt extends HttpServlet {
@@ -43,7 +46,7 @@ public class ServletDelProdFromReceipt extends HttpServlet {
             } else if (request.getParameter("productCA") != null) {
                 product = productDao.findProductByCodeLang(request.getParameter("productCA"), getIdLang(request));
             }
-            String number =  request.getParameter("number");
+            String number = request.getParameter("number");
             Receipt receipt = receiptDao.findReceiptByNumber(number);
             TransactionDAOImpl.getInstance().delProductFromReceipt(receipt, product);
             response.sendRedirect("/ServletBack");

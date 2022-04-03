@@ -1,13 +1,13 @@
 package cash.filters;
 
 import javax.servlet.*;
-import javax.servlet.annotation.*;
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 @WebFilter(filterName = "SessionLocaleFilter", urlPatterns = {"/*"})
 public class SessionLocaleFilter implements Filter {
-    public void init(FilterConfig config) throws ServletException {
+    public void init(FilterConfig config) {
     }
 
     public void destroy() {

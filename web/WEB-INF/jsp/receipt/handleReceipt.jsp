@@ -50,29 +50,29 @@
                        value="<fmt:message key="label.save_receipt_to_word"/>">
             </form>
         </div>
-        <div class="col-md-4">
-            <br>
-            <h4><fmt:message key="label.upload_server"/></h4>
-            <form action="${pageContext.request.contextPath}/cashier/upload" method="post"
-                  enctype="multipart/form-data">
-                <input type="file" multiple name="multi_file">
-                <br><br>
-                <input type="file" name="file">
-                <br><br>
-                <input type="submit" class="btn btn-warning border-radius: 10px;"
-                       value="<fmt:message key="label.send"/>">
-            </form>
-        </div>
+<%--        <div class="col-md-4">--%>
+<%--            <br>--%>
+<%--            <h4><fmt:message key="label.upload_server"/></h4>--%>
+<%--            <form action="${pageContext.request.contextPath}/cashier/upload" method="post"--%>
+<%--                  enctype="multipart/form-data">--%>
+<%--                <input type="file" multiple name="multi_file">--%>
+<%--                <br><br>--%>
+<%--                <input type="file" name="file">--%>
+<%--                <br><br>--%>
+<%--                <input type="submit" class="btn btn-warning border-radius: 10px;"--%>
+<%--                       value="<fmt:message key="label.send"/>">--%>
+<%--            </form>--%>
+<%--        </div>--%>
 
-        <div class="col-md-4">
-            <br>
-            <h4><fmt:message key="label.download_server"/> </h4>
-            <form action="${pageContext.request.contextPath}/cashier/downLoad">
-                <input type="text" name="filename">
-                <input type="submit" class="btn btn-warning border-radius: 10px;"
-                       value="<fmt:message key="label.send"/>">
-            </form>
-        </div>
+<%--        <div class="col-md-4">--%>
+<%--            <br>--%>
+<%--            <h4><fmt:message key="label.download_server"/> </h4>--%>
+<%--            <form action="${pageContext.request.contextPath}/cashier/downLoad">--%>
+<%--                <input type="text" name="filename">--%>
+<%--                <input type="submit" class="btn btn-warning border-radius: 10px;"--%>
+<%--                       value="<fmt:message key="label.send"/>">--%>
+<%--            </form>--%>
+<%--        </div>--%>
     </div>
 
     <form action="${pageContext.request.contextPath}/ServletBack" target="_blank">

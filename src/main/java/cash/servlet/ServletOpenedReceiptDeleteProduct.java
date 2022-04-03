@@ -22,10 +22,6 @@ public class ServletOpenedReceiptDeleteProduct extends HttpServlet {
     ProductDaoImpl productDao = ProductDaoImpl.getInstance();
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    }
-
-    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         logger.info("Servlet: ServletOpenedReceiptDeleteProduct. Method: Get");
         Product product = null;
@@ -38,7 +34,8 @@ public class ServletOpenedReceiptDeleteProduct extends HttpServlet {
                 product = productDao.findProductByCodeLang(request.getParameter("productCD"), getIdLang(request));
                 amount = Double.valueOf(request.getParameter("amountCD"));
             }
-            ReceiptProducts receiptProducts = createReceiptProduct( product, amount);
+            assert product != null;
+            ReceiptProducts receiptProducts = createReceiptProduct(product, amount);
             Receipt receipt = (Receipt) request.getSession().getAttribute("receipt");
             boolean remove = receipt.getReceiptProducts().remove(receiptProducts);
             if (remove) {
@@ -49,7 +46,7 @@ public class ServletOpenedReceiptDeleteProduct extends HttpServlet {
             }
             request.getSession().setAttribute("receipt", receipt);
             response.sendRedirect("/cashier/addProductToReceiptList");
-        }else{
+        } else {
             request.getRequestDispatcher("/WEB-INF/jsp/receipt/createReceipt.jsp")
                     .forward(request, response);
         }

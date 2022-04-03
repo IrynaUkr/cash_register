@@ -34,7 +34,6 @@ public class ServletUpdateAmountReceipt extends HttpServlet {
         request.getSession().setAttribute("products", products);
         request.getRequestDispatcher("/WEB-INF/jsp/receipt/chooseNumberReceipt.jsp")
                 .forward(request, response);
-
     }
 
     @Override

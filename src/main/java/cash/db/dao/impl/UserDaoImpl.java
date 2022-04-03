@@ -3,11 +3,9 @@ package cash.db.dao.impl;
 
 import cash.db.dao.UserDao;
 import cash.db.manager.DBManager;
-import cash.entity.Product;
 import cash.entity.Role;
 import cash.entity.User;
 import cash.exceptions.DBException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -104,7 +102,7 @@ public class UserDaoImpl implements UserDao {
         if (findEntityByLogin(user.getLogin()) == null) {
             return false;
         } else {
-            int executeUpdate = 0;
+            int executeUpdate;
             try (Connection con = DBManager.getInstance().getConnection();
                  PreparedStatement pstmt = con.prepareStatement(DELETE_USER_BY_LOGIN)) {
                 pstmt.setString(1, user.getLogin());
@@ -179,12 +177,10 @@ public class UserDaoImpl implements UserDao {
         if (user == null) {
             throw new IllegalArgumentException();
         }
-        user.getId();
         if (findEntityById(user.getId()) != null) {
-            int result = 0;
-            try (
-                    Connection con = DBManager.getInstance().getConnection();
-                    PreparedStatement pstmt = con.prepareStatement(SET_USER)) {
+            int result;
+            try (Connection con = DBManager.getInstance().getConnection();
+                 PreparedStatement pstmt = con.prepareStatement(SET_USER)) {
                 mapUser(user, pstmt);
                 result = pstmt.executeUpdate();
             } catch (SQLException ex) {
@@ -203,7 +199,6 @@ public class UserDaoImpl implements UserDao {
         if (user == null) {
             throw new IllegalArgumentException();
         }
-
         try (PreparedStatement pstmt = con.prepareStatement(INSERT_USER, Statement.RETURN_GENERATED_KEYS)) {
             mapUser(user, pstmt);
             if (pstmt.executeUpdate() > 0) {
@@ -259,13 +254,13 @@ public class UserDaoImpl implements UserDao {
         if (findEntityByLoginWithCon(login, con) == null) {
             return false;
         } else {
-            int executeUpdate = 0;
+            int executeUpdate;
             try (PreparedStatement pstmt = con.prepareStatement(DELETE_USER_BY_LOGIN)) {
                 pstmt.setString(1, login);
                 executeUpdate = pstmt.executeUpdate();
             } catch (SQLException ex) {
-                logger.error("user was not deleted", ex);
-                throw new DBException("user was not deleted", ex);
+                logger.error("the user cannot be deleted");
+                throw new DBException("user could not be deleted, he created documents", ex);
             }
             return executeUpdate > 0;
         }
@@ -297,9 +292,8 @@ public class UserDaoImpl implements UserDao {
         queryBuilder.append(sortingType);
         queryBuilder.append(" LIMIT ?, ?");
         try (PreparedStatement pst = con.prepareStatement(queryBuilder.toString())) {
-            int k = 0;
-            pst.setInt(++k, offset);
-            pst.setInt(++k, recordsOnPage);
+            pst.setInt(1, offset);
+            pst.setInt(2, recordsOnPage);
             ResultSet rs = pst.executeQuery();
             while (rs.next()) {
                 users.add(extractUser(rs));
@@ -336,7 +330,6 @@ public class UserDaoImpl implements UserDao {
         }
         return users;
     }
-
 }
 
 

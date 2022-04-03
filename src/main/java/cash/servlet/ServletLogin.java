@@ -1,7 +1,5 @@
 package cash.servlet;
 
-import cash.db.dao.impl.UserDaoImpl;
-import cash.db.manager.DBManager;
 import cash.entity.Role;
 import cash.entity.User;
 import cash.service.HashUtils;
@@ -9,15 +7,14 @@ import cash.service.ServLetUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
-import javax.servlet.annotation.*;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.sql.Connection;
-
-import static org.apache.logging.log4j.core.util.Closer.close;
 
 @WebServlet("/login")
 public class ServletLogin extends HttpServlet {
@@ -27,7 +24,6 @@ public class ServletLogin extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         logger.info("Servlet: ServletLogin. Method: Get");
         response.sendRedirect("login.jsp");
-
     }
 
     @Override

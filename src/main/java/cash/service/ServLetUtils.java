@@ -34,10 +34,8 @@ public class ServLetUtils {
         logger.info("query: isNameAndAmountValid");
         return request.getParameter("productNA") != ""
                 && request.getParameter("amountNA") != ""
-          //      && isPositiveNumeric(request.getParameter("amountNA"))
                 && request.getParameter("productCA") != ""
                 && request.getParameter("amountCA") != "";
-        //        && isPositiveNumeric(request.getParameter("amountCA"));
     }
 
     public static boolean isPositiveNumeric(String str) {
@@ -50,12 +48,10 @@ public class ServLetUtils {
         }
     }
 
-
     public static boolean isNameValid(HttpServletRequest request) {
         return request.getParameter("productNA") != ""
                 && request.getParameter("productCA") != ""
                 && request.getParameter("number") != "";
-
     }
 
     public static boolean isCreateUserFormValid(HttpServletRequest request) {
@@ -99,7 +95,6 @@ public class ServLetUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return users;
     }
 }

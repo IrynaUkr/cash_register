@@ -13,6 +13,7 @@ import java.util.ArrayList;
 @WebServlet("/cashier/openReceipt")
 public class ServletOpenReceipt extends HttpServlet {
     private static final Logger logger = LogManager.getLogger(ServletOpenReceipt.class);
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.getRequestDispatcher("/WEB-INF/jsp/receipt/openReceipt.jsp")

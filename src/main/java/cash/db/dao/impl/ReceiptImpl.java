@@ -2,7 +2,10 @@ package cash.db.dao.impl;
 
 import cash.db.dao.ReceiptDao;
 import cash.db.manager.DBManager;
-import cash.entity.*;
+import cash.entity.OperationStatus;
+import cash.entity.OperationType;
+import cash.entity.Receipt;
+import cash.entity.ReceiptProducts;
 import cash.exceptions.DBException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -113,15 +116,16 @@ public class ReceiptImpl implements ReceiptDao {
         receipt.setOperationType(OperationType.valueOf(rs.getString("type")));
         return receipt;
     }
+
     private Receipt extractReceiptWithTotal(ResultSet rs) throws SQLException {
-        Receipt receipt = new Receipt();
-        receipt.setId(rs.getInt("id_receipt"));
-        receipt.setNumber(rs.getString("number"));
-        receipt.setDate(rs.getDate("date"));
-        receipt.setStatus(OperationStatus.valueOf(rs.getString("status")));
-        receipt.setOperationType(OperationType.valueOf(rs.getString("type")));
-        receipt.setSum(rs.getDouble("total"));
-        return receipt;
+        Receipt rec = new Receipt();
+        rec.setId(rs.getInt("id_receipt"));
+        rec.setNumber(rs.getString("number"));
+        rec.setDate(rs.getDate("date"));
+        rec.setStatus(OperationStatus.valueOf(rs.getString("status")));
+        rec.setOperationType(OperationType.valueOf(rs.getString("type")));
+        rec.setSum(rs.getDouble("total"));
+        return rec;
     }
 
     @Override
@@ -151,15 +155,15 @@ public class ReceiptImpl implements ReceiptDao {
         if (receipt == null) {
             return false;
         }
-        if (receipt.getStatus()==OperationStatus.FISCALISED){
+        if (receipt.getStatus() == OperationStatus.FISCALISED) {
             System.out.println("fiscalazed receipts could not be deleted");
             return false;
         }
         int id = receipt.getId();
-        if (findEntityById(id) == null ) {
+        if (findEntityById(id) == null) {
             return false;
         } else {
-            int executeUpdate = 0;
+            int executeUpdate;
             try (Connection con = DBManager.getInstance().getConnection();
                  PreparedStatement pstmt = con.prepareStatement(DELETE_RECEIPT_BY_ID)) {
                 pstmt.setInt(1, id);
@@ -171,6 +175,7 @@ public class ReceiptImpl implements ReceiptDao {
             return executeUpdate > 0;
         }
     }
+
     public boolean deleteReceiptsByNumber(String... numbers) {
         boolean flag = false;
         for (String number : numbers) {
@@ -193,7 +198,7 @@ public class ReceiptImpl implements ReceiptDao {
             return false;
         }
         if (findEntityById(receipt.getId()) != null) {
-            int result = 0;
+            int result;
             try (Connection con = DBManager.getInstance().getConnection();
                  PreparedStatement pstmt = con.prepareStatement(SET_RECEIPT)) {
                 pstmt.setString(1, String.valueOf(status));
@@ -289,7 +294,7 @@ public class ReceiptImpl implements ReceiptDao {
     @Override
     public boolean setFiscalStatusReceipt() {
         logger.info("query: set fiscal status to receipt ");
-        int result = 0;
+        int result;
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement pstmt = con.prepareStatement(RECEIPT_SET_FISCALISED)) {
             result = pstmt.executeUpdate();

@@ -87,7 +87,6 @@
     <form action="${pageContext.request.contextPath}/logout" target="_blank" method="post">
         <button class="btn-default"><fmt:message key="label.logout"/></button>
     </form>
-
 </div>
 </body>
 </html>

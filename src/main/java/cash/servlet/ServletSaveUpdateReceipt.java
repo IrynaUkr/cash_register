@@ -23,11 +23,6 @@ public class ServletSaveUpdateReceipt extends HttpServlet {
     ProductDaoImpl productDao = ProductDaoImpl.getInstance();
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-    }
-
-    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         logger.info("Servlet: ServletSaveUpdateReceipt. Method: Get");
         if (isNameAndAmountValid(request)) {

@@ -47,7 +47,6 @@ public class ServletCanselReceipt extends HttpServlet {
         } else {
             receipts = receiptDao.findAllReceiptWithRestrict((page - 1) * recordsPerPage, recordsPerPage);
         }
-
         totalAmountRecords = receiptDao.getTotalAmountRecords();
         totalAmPages = (int) Math.ceil(totalAmountRecords * 1.0 / recordsPerPage);
         request.getSession().setAttribute("receipts", receipts);

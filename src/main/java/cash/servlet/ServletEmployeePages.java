@@ -1,22 +1,19 @@
 package cash.servlet;
 
-import cash.db.dao.impl.ProductDaoImpl;
 import cash.db.dao.impl.UserDaoImpl;
 import cash.db.manager.DBManager;
-import cash.entity.Product;
 import cash.entity.User;
-import cash.service.ServLetUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
-import javax.servlet.annotation.*;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Connection;
 import java.util.List;
-
-import static cash.service.ServLetUtils.getIdLang;
 
 @WebServlet("/admin/servletEmployeePages")
 public class ServletEmployeePages extends HttpServlet {
@@ -29,9 +26,9 @@ public class ServletEmployeePages extends HttpServlet {
         logger.info("Servlet: ServletEmployeePages. Method: Get");
         int page = 1;
         int recordsPerPage = 4;
-        int totalAmountRecords = 0;
-        int totalAmPages = 0;
-        List<User> users = null;
+        int totalAmountRecords;
+        int totalAmPages;
+        List<User> users;
         connection = DBManager.getInstance().getConnection();
         if (request.getParameter("page") != null) {
             page = Integer.parseInt(request.getParameter("page"));
@@ -45,7 +42,6 @@ public class ServletEmployeePages extends HttpServlet {
         }
         if (request.getSession().getAttribute("sorting") != null) {
             String sorting = String.valueOf(request.getSession().getAttribute("sorting"));
-
             users = userDao.viewAllWithSortingWithCon((page - 1) * recordsPerPage, recordsPerPage, sorting, connection);
         } else {
             users = userDao.findAllWithRestrictWithCon((page - 1) * recordsPerPage, recordsPerPage, connection);
@@ -63,17 +59,22 @@ public class ServletEmployeePages extends HttpServlet {
         logger.info("Servlet: ServletEmployeePages. Method: Post");
         boolean isUserDeleted = false;
         if (request.getParameterValues("selected") != null) {
-            String[] loginList = request.getParameterValues("selected");
-            for(String login: loginList){
-                isUserDeleted =userDao.deleteWithConnection(login,connection);
-            }
+            isUserDeleted = isUsersDeleted(request.getParameterValues("selected"));
         }
         if (isUserDeleted) {
             request.getSession().setAttribute("message", "users were deleted!");
             response.sendRedirect("/ServletBack");
         } else {
-            request.getSession().setAttribute("message", "users were not deleted ");
+            request.getSession().setAttribute("message", "user could not be deleted, he created documents ");
             response.sendRedirect("/ServletBack");
         }
+    }
+
+    private boolean isUsersDeleted(String[] loginList) {
+        boolean isUserDeleted = false;
+        for (String login : loginList) {
+            isUserDeleted= userDao.deleteWithConnection(login, connection);
+        }
+        return isUserDeleted;
     }
 }

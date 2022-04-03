@@ -6,8 +6,8 @@ import cash.entity.OperationStatus;
 import cash.entity.OperationType;
 import cash.entity.Payment;
 import cash.exceptions.DBException;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -165,6 +165,5 @@ public class PaymentDaoImpl implements PaymentDao {
         payment.setStatus(OperationStatus.valueOf(rs.getString("status")));
         return payment;
     }
-
 }
 

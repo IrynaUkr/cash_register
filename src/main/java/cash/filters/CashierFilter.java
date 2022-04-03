@@ -3,17 +3,16 @@ package cash.filters;
 import cash.entity.Role;
 
 import javax.servlet.*;
-import javax.servlet.annotation.*;
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static cash.entity.Role.ADMIN;
 import static cash.entity.Role.CASHIER;
 
 @WebFilter("/cashier/*")
 public class CashierFilter implements Filter {
-    public void init(FilterConfig config) throws ServletException {
+    public void init(FilterConfig config) {
     }
 
     public void destroy() {
@@ -28,5 +27,4 @@ public class CashierFilter implements Filter {
             ((HttpServletResponse) response).sendRedirect("login.jsp");
         }
     }
-
 }

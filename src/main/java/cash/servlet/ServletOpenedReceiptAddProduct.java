@@ -7,13 +7,16 @@ import cash.entity.ReceiptProducts;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
-import javax.servlet.annotation.*;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-import static cash.service.ServLetUtils.*;
+import static cash.service.ServLetUtils.getIdLang;
+import static cash.service.ServLetUtils.isNameAndAmountValid;
 import static cash.service.ServiceReceiptProduct.createReceiptProduct;
 import static cash.service.ServiceReceiptProduct.setAmountSumReceipt;
 
@@ -63,7 +66,6 @@ public class ServletOpenedReceiptAddProduct extends HttpServlet {
             }
         } else {
             response.sendRedirect("/cashier/addProductToReceiptList");
-
         }
     }
 }

@@ -15,7 +15,7 @@ public class Product extends Entity {
     public Product() {
     }
 
-    public Product(String code, String name,  Double price, Double amount, String uom,String description) {
+    public Product(String code, String name, Double price, Double amount, String uom, String description) {
         this.code = code;
         this.name = name;
         this.description = description;
@@ -24,7 +24,7 @@ public class Product extends Entity {
         this.uom = uom;
     }
 
-    public Product(Integer productId, String code, String name,  Double price, Double amount, String uom, String description) {
+    public Product(Integer productId, String code, String name, Double price, Double amount, String uom, String description) {
         this.productId = productId;
         this.code = code;
         this.name = name;

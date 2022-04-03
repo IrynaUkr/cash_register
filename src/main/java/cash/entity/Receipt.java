@@ -2,7 +2,6 @@ package cash.entity;
 
 import java.sql.Date;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public class Receipt extends Entity {
@@ -41,6 +40,7 @@ public class Receipt extends Entity {
         this.status = status;
         this.operationType = operationType;
     }
+
     public Receipt(String number, Integer idUser, OperationStatus status, OperationType operationType, Double sum) {
         this.number = number;
         this.idUser = idUser;
@@ -125,9 +125,8 @@ public class Receipt extends Entity {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Receipt)) return false;
-        Receipt receipt = (Receipt) o;
-        return getId() == receipt.getId() && Objects.equals(getNumber(), receipt.getNumber());
+        if (!(o instanceof Receipt receipt)) return false;
+        return getId().equals(receipt.getId()) && Objects.equals(getNumber(), receipt.getNumber());
     }
 
     @Override
