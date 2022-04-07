@@ -61,6 +61,6 @@ public class ConstantQueryDB {
     public static final String SELECT_USER_BY_LOGIN = "SELECT * FROM employee  WHERE login = ?";
     public static final String SELECT_FROM_USER = "SELECT * FROM employee";
     public static final String INSERT_USER = "INSERT INTO employee (login, password, role, surname, address, phone, email) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    public static final String SET_USER = "UPDATE employee SET login = ?, password = ?, role = ?, surname =? WHERE id_user =?";
+    public static final String SET_USER_LOGIN = "UPDATE employee SET login = ? WHERE id_user =?";
     public static final String DELETE_USER_BY_LOGIN = "DELETE FROM employee WHERE login = ?";
 }

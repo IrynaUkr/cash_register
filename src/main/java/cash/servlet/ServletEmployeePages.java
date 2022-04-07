@@ -19,7 +19,6 @@ import java.util.List;
 public class ServletEmployeePages extends HttpServlet {
     private static final Logger logger = LogManager.getLogger(ServletEmployeePages.class);
     UserDaoImpl userDao = UserDaoImpl.getInstance();
-    Connection connection;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -29,7 +28,6 @@ public class ServletEmployeePages extends HttpServlet {
         int totalAmountRecords;
         int totalAmPages;
         List<User> users;
-        connection = DBManager.getInstance().getConnection();
         if (request.getParameter("page") != null) {
             page = Integer.parseInt(request.getParameter("page"));
         }
@@ -42,9 +40,9 @@ public class ServletEmployeePages extends HttpServlet {
         }
         if (request.getSession().getAttribute("sorting") != null) {
             String sorting = String.valueOf(request.getSession().getAttribute("sorting"));
-            users = userDao.viewAllWithSortingWithCon((page - 1) * recordsPerPage, recordsPerPage, sorting, connection);
+            users = userDao.viewAllWithSorting((page - 1) * recordsPerPage, recordsPerPage, sorting);
         } else {
-            users = userDao.findAllWithRestrictWithCon((page - 1) * recordsPerPage, recordsPerPage, connection);
+            users = userDao.findAllWithRestrict((page - 1) * recordsPerPage, recordsPerPage);
         }
         totalAmountRecords = userDao.getTotalAmountRecords();
         totalAmPages = (int) Math.ceil(totalAmountRecords * 1.0 / recordsPerPage);
@@ -73,7 +71,7 @@ public class ServletEmployeePages extends HttpServlet {
     private boolean isUsersDeleted(String[] loginList) {
         boolean isUserDeleted = false;
         for (String login : loginList) {
-            isUserDeleted= userDao.deleteWithConnection(login, connection);
+            isUserDeleted= userDao.delete(userDao.findEntityByLogin(login));
         }
         return isUserDeleted;
     }

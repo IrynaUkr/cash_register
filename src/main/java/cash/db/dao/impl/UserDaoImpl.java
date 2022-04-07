@@ -99,20 +99,16 @@ public class UserDaoImpl implements UserDao {
         if (user == null) {
             return false;
         }
-        if (findEntityByLogin(user.getLogin()) == null) {
-            return false;
-        } else {
-            int executeUpdate;
-            try (Connection con = DBManager.getInstance().getConnection();
-                 PreparedStatement pstmt = con.prepareStatement(DELETE_USER_BY_LOGIN)) {
-                pstmt.setString(1, user.getLogin());
-                executeUpdate = pstmt.executeUpdate();
-            } catch (SQLException ex) {
-                logger.error("user was not deleted", ex);
-                throw new DBException("user was not deleted", ex);
-            }
-            return executeUpdate > 0;
+        int executeUpdate;
+        try (Connection con = DBManager.getInstance().getConnection();
+             PreparedStatement pstmt = con.prepareStatement(DELETE_USER_BY_LOGIN)) {
+            pstmt.setString(1, user.getLogin());
+            executeUpdate = pstmt.executeUpdate();
+        } catch (SQLException ex) {
+            logger.error("user was not deleted", ex);
+            throw new DBException("user was not deleted", ex);
         }
+        return executeUpdate > 0;
     }
 
     private User extractUser(ResultSet rs) throws SQLException {
@@ -136,28 +132,24 @@ public class UserDaoImpl implements UserDao {
             throw new IllegalArgumentException();
         }
         int result;
-        if (findEntityByLogin(user.getLogin()) != null) {
-            return false;
-        } else {
-            try (Connection con = DBManager.getInstance().getConnection();
-                 PreparedStatement pstmt = con.prepareStatement(INSERT_USER, Statement.RETURN_GENERATED_KEYS)) {
-                mapUser(user, pstmt);
-                result = pstmt.executeUpdate();
-                if (result > 0) {
-                    try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
-                        if (generatedKeys.next()) {
-                            user.setIdUser(generatedKeys.getInt(1));
-                        } else {
-                            throw new SQLException("Creating user failed, no ID obtained.");
-                        }
+        try (Connection con = DBManager.getInstance().getConnection();
+             PreparedStatement pstmt = con.prepareStatement(INSERT_USER, Statement.RETURN_GENERATED_KEYS)) {
+            mapUser(user, pstmt);
+            result = pstmt.executeUpdate();
+            if (result > 0) {
+                try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        user.setIdUser(generatedKeys.getInt(1));
+                    } else {
+                        throw new SQLException("Creating user failed, no ID obtained.");
                     }
                 }
-            } catch (SQLException ex) {
-                logger.error("user was not created", ex);
-                throw new DBException("user was not created", ex);
             }
-            return result > 0;
+        } catch (SQLException ex) {
+            logger.error("user was not created", ex);
+            throw new DBException("user was not created", ex);
         }
+        return result > 0;
     }
 
     private void mapUser(User user, PreparedStatement pstmt) throws SQLException {
@@ -177,121 +169,30 @@ public class UserDaoImpl implements UserDao {
         if (user == null) {
             throw new IllegalArgumentException();
         }
-        if (findEntityById(user.getId()) != null) {
-            int result;
-            try (Connection con = DBManager.getInstance().getConnection();
-                 PreparedStatement pstmt = con.prepareStatement(SET_USER)) {
-                mapUser(user, pstmt);
-                result = pstmt.executeUpdate();
-            } catch (SQLException ex) {
-                logger.error("user was not updated", ex);
-                throw new DBException("user was not updated", ex);
-            }
-            return result > 0;
-        } else {
-            return false;
-        }
-    }
-
-
-    public boolean createWithCon(User user, Connection con) {
-        logger.info("query: create user");
-        if (user == null) {
-            throw new IllegalArgumentException();
-        }
-        try (PreparedStatement pstmt = con.prepareStatement(INSERT_USER, Statement.RETURN_GENERATED_KEYS)) {
-            mapUser(user, pstmt);
-            if (pstmt.executeUpdate() > 0) {
-                try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
-                    if (generatedKeys.next()) {
-                        user.setIdUser(generatedKeys.getInt(1));
-                    } else {
-                        throw new SQLException("Creating user failed, no ID obtained.");
-                    }
-                }
-            }
-            return pstmt.executeUpdate() > 0;
+        int result;
+        try (Connection con = DBManager.getInstance().getConnection();
+             PreparedStatement pstmt = con.prepareStatement(SET_USER_LOGIN)) {
+            pstmt.setString(1, user.getLogin());
+            pstmt.setInt(2, user.getId());
+            result = pstmt.executeUpdate();
         } catch (SQLException ex) {
-            logger.error("user was not created", ex);
-            throw new DBException("user was not created", ex);
+            logger.error("user was not updated", ex);
+            throw new DBException("user was not updated", ex);
         }
+        return result > 0;
     }
 
-    public User findEntityByLoginWithCon(String login, Connection con) {
-        logger.info("query: find user by login");
-        User user = null;
-        try (PreparedStatement pstmt = con.prepareStatement(SELECT_USER_BY_LOGIN)) {
-            pstmt.setString(1, login);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                user = extractUser(rs);
-            }
-            rs.close();
-        } catch (SQLException ex) {
-            logger.error("user by login was  not found", ex);
-            throw new DBException("user by login was  not found", ex);
-        }
-        return user;
-    }
 
-    public List<User> findAllWithCon(Connection con) {
-        logger.info("query: find users");
-        List<User> users = new ArrayList<>();
-        try (Statement stmt = con.createStatement();
-             ResultSet rs = stmt.executeQuery(SELECT_FROM_USER)) {
-            while (rs.next()) {
-                users.add(extractUser(rs));
-            }
-        } catch (SQLException ex) {
-            logger.error("users were  not found", ex);
-            throw new DBException("users were  not found", ex);
-        }
-        return users;
-    }
-
-    public boolean deleteWithConnection(String login, Connection con) {
-        logger.info("query: delete user");
-        if (findEntityByLoginWithCon(login, con) == null) {
-            return false;
-        } else {
-            int executeUpdate;
-            try (PreparedStatement pstmt = con.prepareStatement(DELETE_USER_BY_LOGIN)) {
-                pstmt.setString(1, login);
-                executeUpdate = pstmt.executeUpdate();
-            } catch (SQLException ex) {
-                logger.error("the user cannot be deleted");
-                throw new DBException("user could not be deleted, he created documents", ex);
-            }
-            return executeUpdate > 0;
-        }
-    }
-
-    public User findEntityByIdWithCon(Integer id, Connection con) {
-        logger.info("query: find user");
-        User user = null;
-        try (PreparedStatement pstmt = con.prepareStatement(SELECT_USER_BY_ID)) {
-            pstmt.setInt(1, id);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                user = extractUser(rs);
-            }
-            rs.close();
-        } catch (SQLException ex) {
-            logger.error("user was  not found", ex);
-            throw new DBException("user was  not found", ex);
-        }
-        return user;
-    }
-
-    public List<User> viewAllWithSortingWithCon(
-            int offset, int recordsOnPage, String sortingType, Connection con) {
+    public List<User> viewAllWithSorting(
+            int offset, int recordsOnPage, String sortingType) {
         logger.info("query: view All With Sorting user");
         List<User> users = new ArrayList<>();
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append("SELECT * FROM employee ORDER by ");
         queryBuilder.append(sortingType);
         queryBuilder.append(" LIMIT ?, ?");
-        try (PreparedStatement pst = con.prepareStatement(queryBuilder.toString())) {
+        try (Connection con = DBManager.getInstance().getConnection();
+             PreparedStatement pst = con.prepareStatement(queryBuilder.toString())) {
             pst.setInt(1, offset);
             pst.setInt(2, recordsOnPage);
             ResultSet rs = pst.executeQuery();
@@ -309,10 +210,11 @@ public class UserDaoImpl implements UserDao {
         return users;
     }
 
-    public List<User> findAllWithRestrictWithCon(int offset, int noOfRecords, Connection con) {
+    public List<User> findAllWithRestrict(int offset, int noOfRecords) {
         logger.info("query: find all products with restrict amount of lines");
         List<User> users = new ArrayList<>();
-        try (PreparedStatement pst = con.prepareStatement(SELECT_FROM_EMPLOYEE_LIMIT)) {
+        try (Connection con = DBManager.getInstance().getConnection();
+             PreparedStatement pst = con.prepareStatement(SELECT_FROM_EMPLOYEE_LIMIT)) {
             int k = 0;
             pst.setInt(++k, offset);
             pst.setInt(++k, noOfRecords);

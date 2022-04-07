@@ -63,7 +63,8 @@ public class ServLetUtils {
                 && request.getParameter("phone number") != ""
                 && request.getParameter("email") != "";
     }
-    public static boolean isLoginFormValid(HttpServletRequest request){
+
+    public static boolean isLoginFormValid(HttpServletRequest request) {
         return request.getParameter("login") != ""
                 && request.getParameter("password") != "";
     }
@@ -76,25 +77,10 @@ public class ServLetUtils {
             case CHIEF_CASHIER -> request.getRequestDispatcher("/WEB-INF/jsp/startChief.jsp").forward(request, response);
         }
     }
-    public static User getUserFromRequest(HttpServletRequest request){
+
+    public static User getUserFromRequest(HttpServletRequest request) {
         String login = request.getParameter("login");
-        Connection connection = DBManager.getInstance().getConnection();
-        User user = UserDaoImpl.getInstance().findEntityByLoginWithCon(login,connection);
-        try {
-            close(connection);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }return user;
-    }
-    public static List<User> getUsersFromRequestWithSorting(HttpServletRequest request, int page,int recordsPerPage,String sorting){
-        UserDaoImpl userDao = UserDaoImpl.getInstance();
-        Connection connection = DBManager.getInstance().getConnection();
-        List<User>  users = userDao.viewAllWithSortingWithCon((page - 1) * recordsPerPage, recordsPerPage, sorting, connection);
-        try {
-            close(connection);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return users;
+        User user = UserDaoImpl.getInstance().findEntityByLogin(login);
+        return user;
     }
 }

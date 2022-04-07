@@ -7,7 +7,7 @@ CREATE SCHEMA IF NOT EXISTS `cashier`;
 USE `cashier`;
 
 
-CREATE TABLE IF NOT EXISTS `cashier`.`user`
+CREATE TABLE IF NOT EXISTS `cashier`.`employee`
 (
     `id_user`  INT           NOT NULL AUTO_INCREMENT,
     `login`    VARCHAR(16)   NULL DEFAULT NULL,
@@ -110,13 +110,13 @@ CREATE TABLE IF NOT EXISTS `cashier`.`translate`
             ON DELETE CASCADE
 );
 
-INSERT INTO user (login, password, role, surname)
+INSERT INTO employee (login, password, role, surname)
 VALUES ('admin', '1', 'ADMIN', 'Mercury');
-INSERT INTO user (login, password, role, surname)
+INSERT INTO employee (login, password, role, surname)
 VALUES ('merch', '1', 'MERCHANDISER', 'Jupiter');
-INSERT INTO user (login, password, role, surname)
+INSERT INTO employee (login, password, role, surname)
 VALUES ('chief', '1', 'CHIEF_CASHIER', 'Saturn');
-INSERT INTO user (login, password, role, surname)
+INSERT INTO employee (login, password, role, surname)
 VALUES ('cashier', '1', 'CASHIER', 'Mars');
 
 INSERT INTO language (id_lang, short_name, full_name)

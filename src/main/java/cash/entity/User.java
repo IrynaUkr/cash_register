@@ -100,7 +100,8 @@ public class User extends Entity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof User user)) return false;
-        return Objects.equals(getId(), user.getId()) && Objects.equals(getLogin(), user.getLogin());
+        return Objects.equals(getPassword(), user.getPassword())
+                && Objects.equals(getLogin(), user.getLogin());
     }
 
     @Override
