@@ -111,20 +111,6 @@ public class UserDaoImpl implements UserDao {
         return executeUpdate > 0;
     }
 
-    private User extractUser(ResultSet rs) throws SQLException {
-        User user = new User();
-        user.setIdUser(rs.getInt("id_user"));
-        user.setLogin(rs.getString("login"));
-        user.setPassword(rs.getString("password"));
-        user.setRole(Role.valueOf(rs.getString("role")));
-        user.setSurname(rs.getString("surname"));
-        user.setAddress(rs.getString("address"));
-        user.setPhoneNumber(rs.getString("phone"));
-        user.setEmail(rs.getString("email"));
-        return user;
-    }
-
-
     @Override
     public boolean create(User user) {
         logger.info("query: create user");
@@ -182,9 +168,8 @@ public class UserDaoImpl implements UserDao {
         return result > 0;
     }
 
-
-    public List<User> viewAllWithSorting(
-            int offset, int recordsOnPage, String sortingType) {
+    @Override
+    public List<User> viewAllWithSorting(int offset, int recordsOnPage, String sortingType) {
         logger.info("query: view All With Sorting user");
         List<User> users = new ArrayList<>();
         StringBuilder queryBuilder = new StringBuilder();
@@ -231,6 +216,19 @@ public class UserDaoImpl implements UserDao {
             throw new DBException("products with restrict amount of lines were  not found", ex);
         }
         return users;
+    }
+
+    private User extractUser(ResultSet rs) throws SQLException {
+        User user = new User();
+        user.setIdUser(rs.getInt("id_user"));
+        user.setLogin(rs.getString("login"));
+        user.setPassword(rs.getString("password"));
+        user.setRole(Role.valueOf(rs.getString("role")));
+        user.setSurname(rs.getString("surname"));
+        user.setAddress(rs.getString("address"));
+        user.setPhoneNumber(rs.getString("phone"));
+        user.setEmail(rs.getString("email"));
+        return user;
     }
 }
 
