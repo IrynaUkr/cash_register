@@ -175,40 +175,34 @@ public class ProductDaoImpl implements ProductDao {
             return false;
         }
         int id = product.getId();
-        if (findEntityById(id) == null) {
-            return false;
-        } else {
-            int executeUpdate;
-            try (Connection con = DBManager.getInstance().getConnection();
-                 PreparedStatement pstmt = con.prepareStatement(DELETE_PRODUCT_BY_ID)) {
-                pstmt.setInt(1, id);
-                executeUpdate = pstmt.executeUpdate();
-            } catch (SQLException ex) {
-                logger.error("product was not deleted", ex);
-                throw new DBException("product was not deleted", ex);
-            }
-            return executeUpdate > 0;
+        int executeUpdate;
+        try (Connection con = DBManager.getInstance().getConnection();
+             PreparedStatement pstmt = con.prepareStatement(DELETE_PRODUCT_BY_ID)) {
+            pstmt.setInt(1, id);
+            executeUpdate = pstmt.executeUpdate();
+        } catch (SQLException ex) {
+            logger.error("product was not deleted", ex);
+            throw new DBException("product was not deleted", ex);
         }
+        return executeUpdate > 0;
     }
+
 
     @Override
     public boolean deleteProductByCode(String code) {
         logger.info("query: delete product by code");
         int executeUpdate;
-        if (findProductByCode(code) == null) {
-            return false;
-        } else {
-            try (Connection con = DBManager.getInstance().getConnection();
-                 PreparedStatement pstmt = con.prepareStatement(DELETE_PRODUCT_BY_CODE)) {
-                pstmt.setString(1, code);
-                executeUpdate = pstmt.executeUpdate();
-            } catch (SQLException ex) {
-                logger.error("product by code was not deleted", ex);
-                throw new DBException("product by code was not deleted", ex);
-            }
-            return executeUpdate > 0;
+        try (Connection con = DBManager.getInstance().getConnection();
+             PreparedStatement pstmt = con.prepareStatement(DELETE_PRODUCT_BY_CODE)) {
+            pstmt.setString(1, code);
+            executeUpdate = pstmt.executeUpdate();
+        } catch (SQLException ex) {
+            logger.error("product by code was not deleted", ex);
+            throw new DBException("product by code was not deleted", ex);
         }
+        return executeUpdate > 0;
     }
+
 
     @Override
     public boolean create(Product product) {
@@ -339,7 +333,6 @@ public class ProductDaoImpl implements ProductDao {
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                 id_lang = rs.getInt(1);
-                System.out.println(id_lang + " id lang in get lang");
             }
             rs.close();
         } catch (SQLException ex) {

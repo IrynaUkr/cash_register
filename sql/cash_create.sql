@@ -43,8 +43,6 @@ CREATE TABLE IF NOT EXISTS `cashier`.`product`
 (
     `id_product`  INT           NOT NULL AUTO_INCREMENT,
     `code`        VARCHAR(255)  NULL     DEFAULT NULL,
-    `name`        VARCHAR(45)   NULL     DEFAULT NULL,
-    `description` VARCHAR(250)  NULL     DEFAULT NULL,
     `price`       DECIMAL(8, 2) NOT NULL DEFAULT '0.00',
     `amount`      DECIMAL(8, 2) NOT NULL DEFAULT '0',
     `uom`         VARCHAR(45)   NULL     DEFAULT NULL,
@@ -119,10 +117,6 @@ VALUES ('chief', '1', 'CHIEF_CASHIER', 'Saturn');
 INSERT INTO employee (login, password, role, surname)
 VALUES ('cashier', '1', 'CASHIER', 'Mars');
 
-INSERT INTO language (id_lang, short_name, full_name)
-VALUES (1, 'en', 'English');
-INSERT INTO language (id_lang, short_name, full_name)
-VALUES (2, 'ua', 'Ukrainian');
-INSERT INTO language (id_lang, short_name, full_name)
-VALUES (3, 'ru', 'Russian');
+INSERT INTO language (id_language, short_name, full_name)
+VALUES (1, 'en', 'English'),(2, 'ua', 'Ukrainian'),(3, 'ru', 'Russian');
 USE cashier;

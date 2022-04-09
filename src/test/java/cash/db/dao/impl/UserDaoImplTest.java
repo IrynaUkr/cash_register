@@ -125,6 +125,8 @@ public class UserDaoImplTest {
         MockedStatic<DBManager> dbManagerMockedStatic = Mockito.mockStatic(DBManager.class);
         dbManagerMockedStatic.when((MockedStatic.Verification) DBManager.getInstance()).thenReturn(dbManager);
         Mockito.when(dbManager.getConnection()).thenReturn(connection);
+
+        connection.createStatement().executeUpdate(DROP_TABLE_PAYMENT);
         connection.createStatement().executeUpdate(DROP_TABLE_EMPLOYEE);
         connection.createStatement().executeUpdate(CREATE_TABLE_EMPLOYEE);
         connection.createStatement().executeUpdate(SET_EMPLOYEE);
