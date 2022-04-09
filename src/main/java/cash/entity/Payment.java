@@ -89,7 +89,7 @@ public class Payment extends Entity {
         if (this == o) return true;
         if (!(o instanceof Payment)) return false;
         Payment payment = (Payment) o;
-        return Objects.equals(getValue(), payment.getValue()) && Objects.equals(getIdUser(), payment.getIdUser()) && getType() == payment.getType();
+        return Objects.equals(getValue(), payment.getValue()) && getType() == payment.getType();
     }
 
     @Override

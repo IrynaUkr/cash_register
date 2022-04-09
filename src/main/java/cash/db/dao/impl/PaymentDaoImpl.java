@@ -88,12 +88,12 @@ public class PaymentDaoImpl implements PaymentDao {
 
     @Override
     public boolean delete(Payment payment) {
-        logger.info("query: delete paymnet");
+        logger.info("query: delete payment");
         if (payment == null) {
             return false;
         } else {
             int id = payment.getId();
-            int executeUpdate = 0;
+            int executeUpdate;
             try (Connection con = DBManager.getInstance().getConnection();
                  PreparedStatement pst = con.prepareStatement(DELETE_PAYMENT_BY_ID)) {
                 pst.setInt(1, id);
@@ -135,7 +135,7 @@ public class PaymentDaoImpl implements PaymentDao {
     @Override
     public boolean setFiscalStatusPayment() {
         logger.info("query:set fiscal status payment");
-        int result = 0;
+        int result;
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement pstmt = con.prepareStatement(PAYMENT_SET_FISCALISED)) {
             result = pstmt.executeUpdate();

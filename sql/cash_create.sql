@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS `cashier`.`payment`
     CONSTRAINT `fk_payment_user`
         FOREIGN KEY (`id_user`)
             REFERENCES
-                `user` (`id_user`)
+                `employee` (`id_user`)
 )
 ;
 
@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS `cashier`.`receipt`
     INDEX `fk_receipt_user` (`id_user` ASC) VISIBLE,
     CONSTRAINT `fk_receipt_user`
         FOREIGN KEY (`id_user`)
-            REFERENCES `user` (`id_user`)
+            REFERENCES `employee` (`id_user`)
 )
 ;
 CREATE TABLE IF NOT EXISTS `product_has_receipt`
@@ -120,9 +120,9 @@ INSERT INTO employee (login, password, role, surname)
 VALUES ('cashier', '1', 'CASHIER', 'Mars');
 
 INSERT INTO language (id_lang, short_name, full_name)
-VALUES ('en', 'English');
+VALUES (1, 'en', 'English');
 INSERT INTO language (id_lang, short_name, full_name)
-VALUES ('ua', 'Ukrainian');
+VALUES (2, 'ua', 'Ukrainian');
 INSERT INTO language (id_lang, short_name, full_name)
-VALUES ('ru', 'Russian');
+VALUES (3, 'ru', 'Russian');
 USE cashier;
