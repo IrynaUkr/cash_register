@@ -33,8 +33,9 @@ public class TransactionDAOImpl implements TransactionDao {
 
     //save receipt to db and get its ID, set product,product's amount in related table "product has receipt"
     @Override
-    public void saveReceiptToDB(Receipt receipt) {
+    public boolean saveReceiptToDB(Receipt receipt) {
         logger.info("query: save receipt to data base with list of products");
+        boolean updateAmount = false;
         Connection connection = null;
         PreparedStatement pst = null;
         ArrayList<ReceiptProducts> products = receipt.getReceiptProducts();
@@ -54,15 +55,16 @@ public class TransactionDAOImpl implements TransactionDao {
             if (receipt.getType().equals(OperationType.SALE)) {
                 for (ReceiptProducts rp : products) {
                     addProductForReceipt(connection, receipt.getId(), rp.getProductId(), rp.getAmount(), rp.getPrice());
-                    decreaseAmount(connection, rp.getProductId(), rp.getAmount());
+                    updateAmount = decreaseAmount(connection, rp.getProductId(), rp.getAmount());
                 }
             } else {
                 for (ReceiptProducts rp : products) {
                     addProductForReceipt(connection, receipt.getId(), rp.getProductId(), rp.getAmount(), rp.getPrice());
-                    increaseAmount(connection, rp.getProductId(), rp.getAmount());
+                    updateAmount = increaseAmount(connection, rp.getProductId(), rp.getAmount());
                 }
             }
             connection.commit();
+
         } catch (SQLException ex) {
             rollback(connection);
             logger.error("Cannot execute operation", ex);
@@ -71,12 +73,14 @@ public class TransactionDAOImpl implements TransactionDao {
             close(pst);
             close(connection);
         }
+        return updateAmount;
     }
 
     @Override
-    public void updateAmountReceipt(Receipt receipt, ReceiptProducts receiptProducts) {
+    public boolean updateAmountReceipt(Receipt receipt, ReceiptProducts receiptProducts) {
         logger.info("query: update amount of product in receipt  and change amount of product on the store");
         Connection connection = null;
+        boolean update;
         try {
             connection = DBManager.getInstance().getConnection();
             connection.setAutoCommit(false);
@@ -85,9 +89,9 @@ public class TransactionDAOImpl implements TransactionDao {
             double changeAm = oldAmount - newAmount;
             setUpdateProductAmount(connection, receipt.getId(), receiptProducts.getProductId(), newAmount);
             if (receipt.getType().equals(OperationType.SALE)) {
-                increaseAmount(connection, receiptProducts.getProductId(), changeAm);
+                update = increaseAmount(connection, receiptProducts.getProductId(), changeAm);
             } else {
-                decreaseAmount(connection, receiptProducts.getProductId(), changeAm);
+                update = decreaseAmount(connection, receiptProducts.getProductId(), changeAm);
             }
             connection.commit();
         } catch (SQLException ex) {
@@ -97,21 +101,23 @@ public class TransactionDAOImpl implements TransactionDao {
         } finally {
             close(connection);
         }
+        return update;
     }
 
     @Override
-    public void delProductFromReceipt(Receipt receipt, Product p) {
+    public boolean delProductFromReceipt(Receipt receipt, Product p) {
         logger.info("query: delete  product in receipt and change amount of product on the store ");
         Connection connection = null;
+        boolean updateAmount;
         try {
             connection = DBManager.getInstance().getConnection();
             connection.setAutoCommit(false);
             Double amountInReceipt = getAmountByIdProdByIdReceipt(connection, receipt.getId(), p.getId());
             delProd(connection, receipt.getId(), p.getId());
             if (receipt.getType().equals(OperationType.SALE)) {
-                increaseAmount(connection, p.getId(), amountInReceipt);
+                updateAmount = increaseAmount(connection, p.getId(), amountInReceipt);
             } else {
-                decreaseAmount(connection, p.getId(), amountInReceipt);
+                updateAmount = decreaseAmount(connection, p.getId(), amountInReceipt);
             }
             connection.commit();
         } catch (SQLException ex) {
@@ -121,34 +127,39 @@ public class TransactionDAOImpl implements TransactionDao {
         } finally {
             close(connection);
         }
+        return updateAmount;
     }
 
     @Override
-    public void setUpdateProductAmount(Connection con, Integer idReceipt,
-                                       Integer idProduct, double newAmount) {
+    public boolean setUpdateProductAmount(Connection con, Integer idReceipt,
+                                          Integer idProduct, double newAmount) {
+        int update;
         logger.info("query: set new amount of  product in receipt");
         try (PreparedStatement pst = con.prepareStatement(SET_AMOUNT)) {
             pst.setDouble(1, newAmount);
             pst.setInt(2, idReceipt);
             pst.setInt(3, idProduct);
-            pst.executeUpdate();
+            update = pst.executeUpdate();
         } catch (SQLException ex) {
             logger.error("Cannot set new amount of  product in receipt", ex);
             throw new DBException("Cannot set new amount of  product in receipt", ex);
         }
+        return update > 0;
     }
 
     @Override
-    public void delProd(Connection con, Integer idReceipt, Integer idProduct) {
+    public boolean delProd(Connection con, Integer idReceipt, Integer idProduct) {
         logger.info("query: delete product from receipt");
+        int update;
         try (PreparedStatement pst = con.prepareStatement(DELETE_PRODUCT)) {
             pst.setInt(1, idProduct);
             pst.setInt(2, idReceipt);
-            pst.executeUpdate();
+            update = pst.executeUpdate();
         } catch (SQLException ex) {
             logger.error("Cannot delete product from receipt", ex);
             throw new DBException("Cannot delete of  product from receipt", ex);
         }
+        return update > 0;
     }
 
     @Override
@@ -179,48 +190,54 @@ public class TransactionDAOImpl implements TransactionDao {
     }
 
     @Override
-    public void addProductForReceipt(Connection con, Integer idReceipt, Integer idProduct,
-                                     double amount, double price) {
+    public boolean addProductForReceipt(Connection con, Integer idReceipt, Integer idProduct,
+                                        double amount, double price) {
         logger.info("query: add product to receipt");
+        int update;
         try (PreparedStatement pst = con.prepareStatement(INSERT_PRODUCT_AMOUNT)) {
             pst.setInt(1, idProduct);
             pst.setInt(2, idReceipt);
             pst.setDouble(3, amount);
             pst.setDouble(4, price);
-            pst.executeUpdate();
+            update = pst.executeUpdate();
         } catch (SQLException ex) {
             logger.error("Cannot add product to receipt", ex);
             throw new DBException("Cannot add product to receipt", ex);
         }
+        return update > 0;
     }
 
 
     //if we delete Product from SALE Receipt we have to decrease amount of product in the store
     @Override
-    public void decreaseAmount(Connection con, Integer idProduct, double amount) {
+    public boolean decreaseAmount(Connection con, Integer idProduct, double amount) {
+        int update;
         logger.info("query: decrease amount of product in receipt");
         try (PreparedStatement pst = con.prepareStatement(DECREASE_AMOUNT)) {
             pst.setDouble(1, amount);
             pst.setInt(2, idProduct);
-            pst.executeUpdate();
+            update = pst.executeUpdate();
         } catch (SQLException ex) {
             logger.error("Cannot decrease amount of product in receipt", ex);
             throw new DBException("Cannot decrease amount of product in receipt", ex);
         }
+        return update > 0;
     }
 
     //if we delete Product from RETURN Receipt we have to increase amount of product on the store
     @Override
-    public void increaseAmount(Connection con, Integer idProduct, double amount) {
+    public boolean increaseAmount(Connection con, Integer idProduct, double amount) {
+        int update;
         logger.info("query: increase amount of product in receipt");
         try (PreparedStatement pst = con.prepareStatement(INCREASE_AMOUNT)) {
             pst.setDouble(1, amount);
             pst.setInt(2, idProduct);
-            pst.executeUpdate();
+            update = pst.executeUpdate();
         } catch (SQLException ex) {
             logger.error("Cannot increase amount of product in receipt", ex);
             throw new DBException("Cannot increase amount of product in receipt", ex);
         }
+        return update > 0;
     }
 
     @Override
@@ -228,7 +245,7 @@ public class TransactionDAOImpl implements TransactionDao {
                                               HashMap<Integer, String> names,
                                               HashMap<Integer, String> descriptions) {
         logger.info("query: create product with translate");
-        boolean isCreateProduct = false;
+        boolean isCreateProduct;
         Connection connection = null;
         int amountLanguages = 3;
         try {
@@ -236,7 +253,6 @@ public class TransactionDAOImpl implements TransactionDao {
             connection.setAutoCommit(false);
             isCreateProduct = addToDataBase(product, connection);
             for (int i = 1; i <= amountLanguages; i++) {
-                System.out.println(product.getId() + i + names.get(i) + descriptions.get(i));
                 isCreateProduct = setNameDescription(product.getId(), i, names.get(i), descriptions.get(i), connection);
             }
             connection.commit();
@@ -253,7 +269,7 @@ public class TransactionDAOImpl implements TransactionDao {
     @Override
     public boolean addToDataBase(Product product, Connection con) {
         logger.info("query: add product to data base");
-        int result = 0;
+        int result ;
         try (PreparedStatement pst = con.prepareStatement(INSERT_PRODUCT, Statement.RETURN_GENERATED_KEYS)) {
             ProductDaoImpl.getInstance().mapProduct(product, pst);
             result = pst.executeUpdate();

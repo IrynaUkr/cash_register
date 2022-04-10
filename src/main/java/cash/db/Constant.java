@@ -133,8 +133,8 @@ public class Constant {
 
     public static final String SET_RECEIPT_HAS_PRODUCT = "INSERT INTO product_has_receipt" +
             " (product_id_product,receipt_id_receipt,amount,price)VALUES" +
-            "(1, 2, 33, 5),"+
-            "(2, 2, 44, 500),"+
-            "(1, 1, 10, 5),"+
+            "(1, 2, 33, 5)," +
+            "(2, 2, 44, 500)," +
+            "(1, 1, 10, 5)," +
             "(2, 1, 100,500);";
 }

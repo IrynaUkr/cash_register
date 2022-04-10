@@ -9,27 +9,27 @@ import java.util.HashMap;
 
 
 public interface TransactionDao {
-    void saveReceiptToDB(Receipt receipt);
+    boolean saveReceiptToDB(Receipt receipt);
 
-    void updateAmountReceipt(Receipt receipt, ReceiptProducts receiptProducts);
+    boolean updateAmountReceipt(Receipt receipt, ReceiptProducts receiptProducts);
 
-    void delProductFromReceipt(Receipt receipt, Product p);
+    boolean delProductFromReceipt(Receipt receipt, Product p);
 
-    void setUpdateProductAmount(Connection con, Integer idReceipt,
-                                Integer idProduct, double newAmount);
+    boolean setUpdateProductAmount(Connection con, Integer idReceipt,
+                                   Integer idProduct, double newAmount);
 
-    void delProd(Connection con, Integer idReceipt, Integer idProduct);
+    boolean delProd(Connection con, Integer idReceipt, Integer idProduct);
 
     Double getAmountByIdProdByIdReceipt(Connection con,
                                         Integer idReceipt,
                                         Integer idProduct);
 
-    void addProductForReceipt(Connection con, Integer idReceipt, Integer idProduct,
+    boolean addProductForReceipt(Connection con, Integer idReceipt, Integer idProduct,
                               double amount, double price);
 
-    void decreaseAmount(Connection con, Integer idProduct, double amount);
+    boolean decreaseAmount(Connection con, Integer idProduct, double amount);
 
-    void increaseAmount(Connection con, Integer idProduct, double amount);
+    boolean increaseAmount(Connection con, Integer idProduct, double amount);
 
     boolean createProductWithTranslate(Product product,
                                        HashMap<Integer, String> names,
