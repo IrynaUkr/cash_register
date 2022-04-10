@@ -158,11 +158,8 @@ public class ReceiptImpl implements ReceiptDao {
         if (receipt.getStatus() == OperationStatus.FISCALISED) {
             System.out.println("fiscalazed receipts could not be deleted");
             return false;
-        }
-        int id = receipt.getId();
-        if (findEntityById(id) == null) {
-            return false;
         } else {
+            int id = receipt.getId();
             int executeUpdate;
             try (Connection con = DBManager.getInstance().getConnection();
                  PreparedStatement pstmt = con.prepareStatement(DELETE_RECEIPT_BY_ID)) {
@@ -197,21 +194,17 @@ public class ReceiptImpl implements ReceiptDao {
         if (receipt == null) {
             return false;
         }
-        if (findEntityById(receipt.getId()) != null) {
-            int result;
-            try (Connection con = DBManager.getInstance().getConnection();
-                 PreparedStatement pstmt = con.prepareStatement(SET_RECEIPT)) {
-                pstmt.setString(1, String.valueOf(status));
-                pstmt.setString(2, receipt.getNumber());
-                result = pstmt.executeUpdate();
-            } catch (SQLException ex) {
-                logger.error(" receipt's status was not update", ex);
-                throw new DBException(" receipt's status was not update", ex);
-            }
-            return result > 0;
-        } else {
-            return false;
+        int result;
+        try (Connection con = DBManager.getInstance().getConnection();
+             PreparedStatement pstmt = con.prepareStatement(SET_RECEIPT)) {
+            pstmt.setString(1, String.valueOf(status));
+            pstmt.setString(2, receipt.getNumber());
+            result = pstmt.executeUpdate();
+        } catch (SQLException ex) {
+            logger.error(" receipt's status was not update", ex);
+            throw new DBException(" receipt's status was not update", ex);
         }
+        return result > 0;
     }
 
     @Override
@@ -257,7 +250,7 @@ public class ReceiptImpl implements ReceiptDao {
         logger.info("query: find receipt by date");
         List<Receipt> receipts = new ArrayList<>();
         try (Connection con = DBManager.getInstance().getConnection();
-             PreparedStatement pstmt = con.prepareStatement(SELECT_RETURN_BY_DATE)) {
+             PreparedStatement pstmt = con.prepareStatement(SELECT_RECEIPT_BY_DATE)) {
             pstmt.setString(1, String.valueOf(date));
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {

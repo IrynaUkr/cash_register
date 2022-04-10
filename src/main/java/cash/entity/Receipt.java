@@ -126,7 +126,7 @@ public class Receipt extends Entity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Receipt receipt)) return false;
-        return getId().equals(receipt.getId()) && Objects.equals(getNumber(), receipt.getNumber());
+        return  Objects.equals(getNumber(), receipt.getNumber());
     }
 
     @Override

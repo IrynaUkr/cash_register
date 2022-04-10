@@ -68,7 +68,7 @@ public class PaymentDaoImplTest {
     }
 
     @org.junit.jupiter.api.Test
-    public void findPaymentByIdDate() throws SQLException {
+    public void findPaymentByDateTest() throws SQLException {
         try (MockedStatic<DBManager> dbManagerMockedStatic = Mockito.mockStatic(DBManager.class)) {
             setUp(dbManagerMockedStatic);
             List<Payment> paymentByDate = paymentDao.findPaymentByDate(Date.valueOf(LocalDate.now()));
