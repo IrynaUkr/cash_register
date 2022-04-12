@@ -181,10 +181,15 @@ public class ProductDaoImplTest {
         Mockito.when(dbManager.getConnection()).thenReturn(connection);
         connection.createStatement().executeUpdate(DROP_TABLE_TRANSLATE);
         connection.createStatement().executeUpdate(DROP_TABLE_LANGUAGE);
+        connection.createStatement().executeUpdate(DROP_TABLE_PRODUCT_HAS_RECEIPT);
         connection.createStatement().executeUpdate(DROP_TABLE_PRODUCT);
+        connection.createStatement().executeUpdate(DROP_TABLE_RECEIPT);
+
         connection.createStatement().executeUpdate(CREATE_TABLE_PRODUCT);
         connection.createStatement().executeUpdate(CREATE_TABLE_LANGUAGE);
         connection.createStatement().executeUpdate(CREATE_TABLE_TRANSLATE);
+        connection.createStatement().executeUpdate(CREATE_TABLE_RECEIPT);
+        connection.createStatement().executeUpdate(CREATE_TABLE_PRODUCT_HAS_RECEIPT);
         connection.createStatement().executeUpdate(SET_PRODUCT);
         connection.createStatement().executeUpdate(SET_LANGUAGE);
         connection.createStatement().executeUpdate(SET_TRANSLATE);

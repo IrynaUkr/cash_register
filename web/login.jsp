@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib uri="/WEB-INF/currentDateTag.tld" prefix="m" %>
+<%--<%@ taglib uri="/WEB-INF/currentDateTag.tld" prefix="m" %>--%>
 
 <%@ page isELIgnored="false" %>
 
@@ -19,7 +19,7 @@
 <head>
     <title>Cash Register</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/style.css">
-    <fmt:message key="label.current_date"/> <m:currentDateTag/>
+<%--    <fmt:message key="label.current_date"/> <m:currentDateTag/>--%>
 </head>
 <body>
 <header>
