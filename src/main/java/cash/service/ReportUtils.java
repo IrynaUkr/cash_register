@@ -5,6 +5,8 @@ import cash.db.dao.impl.ReceiptImpl;
 import cash.entity.OperationType;
 import cash.entity.Payment;
 import cash.entity.Receipt;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Date;
@@ -12,8 +14,20 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ReportUtils {
+    private ReportUtils() {
+    }
+    private static final Logger logger = LogManager.getLogger(ReportUtils.class);
+
+    private static ReportUtils instance = null;
+
+    public static ReportUtils getInstance() {
+        if (instance == null) {
+            return new ReportUtils();
+        }
+        return instance;
+    }
     public static void getXReport(HttpServletRequest request, Date date) {
-        System.out.println("getXReport");
+        logger.info("query: getXReport");
         List<Receipt> receiptList = ReceiptImpl.getInstance().findReceiptByDate(date);
         List<Receipt> returns = getReceiptsByType(receiptList, OperationType.RETURN);
         List<Receipt> sales = getReceiptsByType(receiptList, OperationType.SALE);
@@ -34,6 +48,7 @@ public class ReportUtils {
     }
 
     public static void setXReport(HttpServletRequest request, List<Receipt> returns, List<Receipt> sales, List<Payment> payIn, List<Payment> payOut, double returnSum, double salesSum, double payInSum, double payOutSum, double resultSum) {
+        logger.info("query: setXReport");
         request.getSession().setAttribute("returnList", returns);
         request.getSession().setAttribute("saleList", sales);
         request.getSession().setAttribute("returnSum", returnSum);
@@ -46,16 +61,19 @@ public class ReportUtils {
     }
 
     public static List<Receipt> getReceiptsByType(List<Receipt> receiptList, OperationType type) {
+        logger.info("query: getReceiptsByType");
         return receiptList.stream()
                 .filter(r -> r.getType() == type)
                 .collect(Collectors.toList());
     }
 
     public static List<Payment> getPaymentsByType(List<Payment> payments, OperationType type) {
+        logger.info("query: get Payments By Type");
         return payments.stream().filter(p -> p.getType() == type).toList();
     }
 
     public static double getReceiptsSum(List<Receipt> receipts) {
+        logger.info("query: getReceiptsBySum");
         return receipts
                 .stream()
                 .mapToDouble(Receipt::getSum)
@@ -63,6 +81,7 @@ public class ReportUtils {
     }
 
     public static double getPaymentsSum(List<Payment> payments) {
+        logger.info("query: getPaymentsBySum");
         return payments
                 .stream()
                 .mapToDouble(Payment::getValue)

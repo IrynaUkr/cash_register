@@ -1,40 +1,19 @@
 package cash.service;
 
-import cash.db.dao.impl.ProductDaoImpl;
 import cash.entity.Role;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.mockito.Mockito;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.*;
+
 public class ServletUtilsTest {
-    @Ignore
-    @Test
-    public void getId_lang_Test_UA_Input() {
-        ProductDaoImpl testProduct = Mockito.mock(ProductDaoImpl.class);
-        HttpServletRequest testRequest = mock(HttpServletRequest.class);
-        HttpSession testSession = mock(HttpSession.class);
-
-        when(testRequest.getSession()).thenReturn(testSession);
-        when(testSession.getAttribute("lang")).thenReturn("ua");
-        when(testProduct.getId_lang(eq("ua"))).thenReturn(2);
-
-        int expected = 2;
-        int actual = ServLetUtils.getIdLang(testRequest);
-        assertEquals(expected, actual);
-        verify(testRequest, times(2)).getSession().getAttribute("lang");
-
-    }
-
     @Test
     public void createFormUserValidTest() {
         HttpServletRequest testRequest = mock(HttpServletRequest.class);
@@ -96,6 +75,7 @@ public class ServletUtilsTest {
         when(testRequest.getParameter("password")).thenReturn("somePassword");
         assertTrue(ServLetUtils.isLoginFormValid(testRequest));
     }
+
     @Test
     public void isLoginFormNotValidTest() {
         HttpServletRequest testRequest = mock(HttpServletRequest.class);

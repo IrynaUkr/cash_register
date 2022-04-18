@@ -11,8 +11,21 @@ import java.util.ArrayList;
 public class ServiceReceiptProduct {
     private static final Logger logger = LogManager.getLogger(ServiceReceiptProduct.class);
 
+    private ServiceReceiptProduct() {
+    }
+
+    private static ServiceReceiptProduct instance = null;
+
+    public static ServiceReceiptProduct getInstance() {
+        if (instance == null) {
+            return new ServiceReceiptProduct();
+        }
+        return instance;
+    }
+
 
     public static ReceiptProducts createReceiptProduct(Product product, Double amount) {
+        logger.info("query: createReceiptProduct");
         ReceiptProducts receiptProducts = new ReceiptProducts();
         receiptProducts.setProductId(product.getId());
         receiptProducts.setAmount(amount);
