@@ -1,64 +1,27 @@
 # cash register
 Java. JSP. Servlets. JDBC. Filters. Log4j. I18n
+The application was developed according to requirements.
+###Functionality of application.
 
-## Касовий апарат
+Access for different user roles  is  restricted. 
+The cashier can create receipt or payment, add goods to the receipt by code or by it’s name, change quantity of goods in receipt, change status of receipt from created to closed
 
-Існують ролі: касир, старший касир, товарознавець.
-Товарознавець може створювати товари та зазначати їх кількість на складі.
-Касир має можливість:
-- створити замовлення (чек);
-- додати обрані товари по їх коду або по назві товару у замовлення;
-- вказати / змінити кількість певного товару або вагу;
-- закрити замовлення (чек).
-  Старший касир має змогу:
-- відмінити чек;                         
-- відмінити товар в чеку;
-- зробити  X і Z звіти.
-- ОПИС ПРОЕКТУ
-  Завдання фінального проекту - розробити веб-застосунок, що підтримує функціональність відповідно до
-  варіанту завдання.
- ## Вимоги до реалізації:
-1. На основі сутностей предметної області створити класи, які їм відповідають.
-2. Класи і методи повинні мати назви, що відображають їх функціональність, і повинні бути
-   рознесені по пакетам.
-3. Оформлення коду має відповідати Java Code Convention.
-4. Інформацію щодо предметної області зберігати у реляційній базі даних (в якості СУБД
-   рекомендується використовувати MySQL або PostgreSQL).
-5. Для доступу до даних використовувати JDBC API із застосуванням готового або ж
-   розробленого самостійно пулу з'єднань.
-   НЕ допускається використання ORM фреймворків
-6. Застосунок має підтримувати роботу з кирилицею (бути багатомовним), в тому числі при
-   зберіганні інформації в базі даних:
-   a. повинна бути можливість перемикання мови інтерфейсу;
-   b. повинна бути підтримка введення, виведення і зберігання інформації (в базі даних),
-   записаної на різних мовах;
-   c. в якості мов обрати мінімум дві: одна на основі кирилиці (українська або російська),
-   інша на основі латиниці (англійська).
-7. Архітектура застосунка повинна відповідати шаблону MVC.
-   НЕ допускається використання MVC-фреймворків
-8. При реалізації бізнес-логіки необхідно використовувати шаблони проектування: Команда,
-   Стратегія, Фабрика, Будівельник, Сінглтон, Фронт-контролер, Спостерігач, Адаптер та ін.
-   Використання шаблонів повинно бути обґрунтованим
-9. Використовуючи сервлети і JSP, реалізувати функціональність, наведену в постановці
-   завдання.
-10. Використовувати Apache Tomcat у якості контейнера сервлетів.
-11. На сторінках JSP застосовувати теги з бібліотеки JSTL та розроблені власні теги (мінімум: один
-    тег custom tag library і один тег tag file).
-12. Реалізувати захист від повторної відправки даних на сервер при оновленні сторінки
-    (реалізувати PRG).
-13. При розробці використовувати сесії, фільтри, слухачі.
-14. У застосунку повинні бути реалізовані аутентифікація і авторизація, розмежування прав
-    доступу користувачів системи до компонентів програми. Шифрування паролів заохочується.
-15. Впровадити у проект журнал подій із використанням бібліотеки log4j.
-16. Код повинен містити коментарі документації (всі класи верхнього рівня, нетривіальні методи
-    і конструктори).
-17. Застосунок має бути покритим модульними тестами (мінімальний відсоток покриття 40%).
-    Написання інтеграційних тестів заохочуються.
-18. Реалізувати механізм пагінації сторінок з даними.
-19. Всі поля введення повинні бути із валідацією даних.
-20. Застосунок має коректно реагувати на помилки та виключні ситуації різного роду (кінцевий
-    користувач не повинен бачити stack trace на стороні клієнта).
-21. Самостійне розширення постановки задачі по функціональності заохочується! (додавання
-    капчі, формування звітів у різних форматах, тощо)
-22. Використання HTML, CSS, JS фреймворків для інтерфейсу користувача (Bootstrap, Materialize,
-    ін.) заохочується!
+ The chief-cashier can cancel receipt, delete goods from receipt,create a full report with all receipts and payments(X-report),
+create a full report for the tax operations by the end of the day(Z-report) .
+
+ The manager can create goods, its description and add quantity in the storage. 
+ 
+When the sale’s receipt was created and saved, the amount of goods in the storage decreased.
+When the return’s receipt was created and saved. the amount of goods in the storage increased.
+
+The application contains back- end and front-end.
+The architecture of the application is monolith, and bases on the MVC pattern.
+The data is stored  in the relational database MySql. To get access for the data storage is used JDBC API with pool connection.
+The Data Access Object (DAO) pattern is used in application  to  isolate the business layer from the relational database layer. 
+CRUD operations and transactional services were implemented to satisfy the requirements of the task.
+The functionality of the application was realized by using Servlet API. Apache Tomcat was used as a container of servlets. The PRG design pattern was applied to prevent duplicate form submissions to the server. 
+For restriction of the access for different users in the  application was used Filter API.
+Authentication is used to verify that users really are in the database, and authorization is then used to grant the user permission to access different levels of information and perform specific functions, depending on the rules for different types of users.
+The application used library  log4j  and it was covered with tests(JUnit4).
+The inputted data was validated.The pagination mechanism is implemented.
+JSP, CSS, Bootstrap were actually applied to develop  the user interface .
